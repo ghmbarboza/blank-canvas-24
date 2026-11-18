@@ -10,7 +10,7 @@ const DEFAULT_DEBOUNCE = 2;
 /** Cliente ainda digitando: se a última mensagem chegou há menos que isto, espera mais um pouco. */
 const BURST_MS = 1_200;
 /** Espera fixa antes de responder, só para juntar mensagens em rajada (o BURST_MS cobre o resto). */
-const REPLY_DELAY_MS = 1_000;
+const REPLY_DELAY_MS = 500;
 // a resposta fora do horário espera a IA (debounce de ~8 s + resposta) para não falar por cima dela
 const AWAY_DELAY_MS = 45_000;
 

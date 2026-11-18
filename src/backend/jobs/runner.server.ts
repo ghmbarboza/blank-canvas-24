@@ -117,7 +117,7 @@ async function drainJobs(started: number, budgetMs: number, report: TickReport):
 
 const FAST_MS = 20_000;
 /** Esperas dentro da via rápida para pegar a resposta da IA sem depender da próxima batida. */
-const REPLY_WAITS_MS = [1_300, 1_000, 1_300] as const;
+const REPLY_WAITS_MS = [600, 800, 1_200] as const;
 
 /**
  * Via rápida (pg_cron a cada 5 s): só eventos e trabalhos vencidos, sem tarefas periódicas nem
