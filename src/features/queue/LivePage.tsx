@@ -1,3 +1,4 @@
+import { hasChannel } from "@/lib/edition";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Ear, Maximize2, Minimize2, MonitorPlay, Radio } from "lucide-react";
@@ -113,7 +114,7 @@ function AgentCard({
           />
         </span>
       </span>
-      {canSupervise && onCall && (
+      {canSupervise && onCall && hasChannel("phone") && (
         <Button
           size="sm"
           variant="outline"
@@ -165,12 +166,14 @@ function Board({
           tone={breached ? "alert" : "plain"}
           big={big}
         />
-        <Kpi
-          label="Abandono (ligações)"
-          value={pct(t.abandon_rate)}
-          hint={`${t.abandoned} desistiram hoje`}
-          big={big}
-        />
+        {hasChannel("phone") && (
+          <Kpi
+            label="Abandono (ligações)"
+            value={pct(t.abandon_rate)}
+            hint={`${t.abandoned} desistiram hoje`}
+            big={big}
+          />
+        )}
         <Kpi
           label="Espera média · TME"
           value={formatSeconds(t.tme_seconds)}
@@ -223,10 +226,12 @@ function Board({
               ))}
             </ul>
           )}
-          <p className="mt-4 text-[12px] text-muted-foreground">
-            Retornos de ligação esperando:{" "}
-            <strong className="tabular-nums">{data.callbacks_pending}</strong>
-          </p>
+          {hasChannel("phone") && (
+            <p className="mt-4 text-[12px] text-muted-foreground">
+              Retornos de ligação esperando:{" "}
+              <strong className="tabular-nums">{data.callbacks_pending}</strong>
+            </p>
+          )}
         </section>
 
         <section

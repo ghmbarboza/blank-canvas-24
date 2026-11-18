@@ -1,3 +1,4 @@
+import { hasChannel } from "@/lib/edition";
 import {
   Activity,
   Loader2,
@@ -115,7 +116,7 @@ export function ChannelCard({ channel, ownerName, canManage, busy, onIntent, onT
               <DropdownMenuItem onSelect={act("assign")}>
                 <UserRound aria-hidden /> Vendedor e compartilhamento
               </DropdownMenuItem>
-              {isZernioWhatsApp && (
+              {isZernioWhatsApp && hasChannel("phone") && (
                 <DropdownMenuItem onSelect={act("calling")}>
                   <PhoneCall aria-hidden /> Ligação pelo WhatsApp
                 </DropdownMenuItem>

@@ -1,3 +1,4 @@
+import { hasProvider } from "@/lib/edition";
 import { useState, type ReactNode } from "react";
 import { Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -33,7 +34,7 @@ import { errorMessage } from "@/lib/functions";
 
 import { useDeleteAgent, useUpdateAgent, type Agent } from "./api";
 import {
-  AGENT_CHANNELS,
+  agentChannelsFor,
   agentChannelLabel,
   agentSettingsV2,
   agentStyle,
@@ -189,7 +190,7 @@ export function AgentConfigForm({ accountId, agent, team, onDeleted }: Props) {
 
       <Group title="Onde atende e quando passa para a equipe">
         <div className="flex flex-wrap gap-3">
-          {AGENT_CHANNELS.map((c) => (
+          {agentChannelsFor().map((c) => (
             <label key={c.id} className="flex items-center gap-2 text-[13px]">
               <Checkbox
                 checked={f.channels.includes(c.id)}
@@ -248,7 +249,7 @@ export function AgentConfigForm({ accountId, agent, team, onDeleted }: Props) {
           disabled={disabled}
           onChange={(v) => setS({ ...s, business_hours_only: v })}
         />
-        <Field label="Página de agendamento" hint="Para ver horários e marcar reunião.">
+        <Field label="Página de agendamento" hint="Para ver horários e marcar um horário.">
           <Select
             value={s.booking_slug || "none"}
             disabled={disabled}
@@ -300,53 +301,57 @@ export function AgentConfigForm({ accountId, agent, team, onDeleted }: Props) {
             onChange={(e) => setSt({ ...st, robot_answer: e.target.value })}
           />
         </Field>
-        <Field label="Responder áudio com áudio">
-          <Select
-            value={st.voice_reply}
-            disabled={disabled}
-            onValueChange={(v) => setSt({ ...st, voice_reply: v as AgentStyle["voice_reply"] })}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="mirror">Quando o cliente mandar áudio</SelectItem>
-              <SelectItem value="always">Sempre em áudio</SelectItem>
-              <SelectItem value="never">Nunca</SelectItem>
-            </SelectContent>
-          </Select>
-        </Field>
-        <Field
-          label="Voz da casa"
-          hint="Ligado a um agente de voz, ele também passa a ter este jeito de falar, as regras e as ferramentas na próxima publicação em Ligações › Agentes de voz."
-        >
-          <Select
-            value={f.voice_agent_id ?? "none"}
-            disabled={disabled}
-            onValueChange={(v) => setF({ ...f, voice_agent_id: v === "none" ? null : v })}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="none">Escolher pelo código</SelectItem>
-              {(voices.data ?? []).map((v) => (
-                <SelectItem key={v.id} value={v.id}>
-                  {v.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {!f.voice_agent_id && (
-            <Input
-              className="mt-2"
-              value={f.voice_id}
-              placeholder="Código da voz (ElevenLabs)"
-              disabled={disabled}
-              onChange={(e) => setF({ ...f, voice_id: e.target.value })}
-            />
-          )}
-        </Field>
+        {hasProvider("elevenlabs") && (
+          <>
+            <Field label="Responder áudio com áudio">
+              <Select
+                value={st.voice_reply}
+                disabled={disabled}
+                onValueChange={(v) => setSt({ ...st, voice_reply: v as AgentStyle["voice_reply"] })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="mirror">Quando o cliente mandar áudio</SelectItem>
+                  <SelectItem value="always">Sempre em áudio</SelectItem>
+                  <SelectItem value="never">Nunca</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field
+              label="Voz da casa"
+              hint="Ligado a um agente de voz, ele também passa a ter este jeito de falar, as regras e as ferramentas na próxima publicação em Ligações › Agentes de voz."
+            >
+              <Select
+                value={f.voice_agent_id ?? "none"}
+                disabled={disabled}
+                onValueChange={(v) => setF({ ...f, voice_agent_id: v === "none" ? null : v })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Escolher pelo código</SelectItem>
+                  {(voices.data ?? []).map((v) => (
+                    <SelectItem key={v.id} value={v.id}>
+                      {v.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {!f.voice_agent_id && (
+                <Input
+                  className="mt-2"
+                  value={f.voice_id}
+                  placeholder="Código da voz (ElevenLabs)"
+                  disabled={disabled}
+                  onChange={(e) => setF({ ...f, voice_id: e.target.value })}
+                />
+              )}
+            </Field>
+          </>
+        )}
       </Group>
 
       <Group title="Coletar na conversa e perguntar a satisfação">

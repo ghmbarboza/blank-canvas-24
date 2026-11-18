@@ -1,3 +1,4 @@
+import { hasChannel } from "@/lib/edition";
 import { useState } from "react";
 import { Plus, Users, X } from "lucide-react";
 import { toast } from "sonner";
@@ -88,11 +89,13 @@ export function MemberRow({ row, accountId }: { row: TeamRow; accountId: string 
       <div className="flex flex-wrap items-center gap-3">
         <div className="min-w-0 flex-1">
           <p className="truncate text-[14px] font-semibold">{row.name}</p>
-          <p className="text-[12px] text-muted-foreground">
-            {row.extension
-              ? `ramal ${row.extension}`
-              : "sem ramal (não recebe ligação pela Zadarma)"}
-          </p>
+          {hasChannel("phone") && (
+            <p className="text-[12px] text-muted-foreground">
+              {row.extension
+                ? `ramal ${row.extension}`
+                : "sem ramal (não recebe ligação pela Zadarma)"}
+            </p>
+          )}
         </div>
         <label className="flex items-center gap-2 text-[13px]">
           <Switch
@@ -118,24 +121,28 @@ export function MemberRow({ row, accountId }: { row: TeamRow; accountId: string 
         <div className="mt-3 space-y-3">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <span className="text-[12px] font-medium">Ao mesmo tempo:</span>
-            <CapSelect
-              label="ligações"
-              value={cap.cap_voice}
-              max={3}
-              onChange={(v) => patch({ cap_voice: v })}
-            />
+            {hasChannel("phone") && (
+              <CapSelect
+                label="ligações"
+                value={cap.cap_voice}
+                max={3}
+                onChange={(v) => patch({ cap_voice: v })}
+              />
+            )}
             <CapSelect
               label="conversas"
               value={cap.cap_chat}
               max={12}
               onChange={(v) => patch({ cap_chat: v })}
             />
-            <CapSelect
-              label="e-mails"
-              value={cap.cap_email}
-              max={20}
-              onChange={(v) => patch({ cap_email: v })}
-            />
+            {hasChannel("email") && (
+              <CapSelect
+                label="e-mails"
+                value={cap.cap_email}
+                max={20}
+                onChange={(v) => patch({ cap_email: v })}
+              />
+            )}
             <CapSelect
               label="chamados"
               value={cap.cap_task}

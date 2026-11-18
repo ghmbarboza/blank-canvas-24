@@ -18,7 +18,12 @@ import { errorMessage } from "@/lib/functions";
 import { cn } from "@/lib/utils";
 
 import { useQualityAction, type QualityForm } from "./api";
-import { CHANNEL_LABEL, type QualityChannel, type QualityCriterion } from "./scoring";
+import {
+  CHANNEL_LABEL,
+  qualityChannelsFor,
+  type QualityChannel,
+  type QualityCriterion,
+} from "./scoring";
 
 type Draft = {
   id?: string | undefined;
@@ -35,7 +40,7 @@ function toDraft(f: QualityForm | null): Draft {
     return {
       name: "",
       description: "",
-      channels: ["call", "chat", "email"],
+      channels: qualityChannelsFor(),
       include_ai: true,
       is_active: true,
       criteria: [{ id: "", label: "", description: "", weight: 3, eliminatory: false }],
@@ -113,7 +118,7 @@ export function FormEditorDialog({
           <div className="grid gap-1.5">
             <Label>Vale para</Label>
             <div className="flex flex-wrap gap-2">
-              {(["call", "chat", "email"] as QualityChannel[]).map((c) => (
+              {qualityChannelsFor().map((c) => (
                 <button
                   key={c}
                   type="button"

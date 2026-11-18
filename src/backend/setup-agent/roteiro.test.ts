@@ -6,10 +6,23 @@ import {
   opener,
   PLACEHOLDER_COMPANY,
   ROTEIRO,
+  roteiroFor,
   roteiroState,
   roteiroText,
 } from "./roteiro";
-import { setupSystem, SETUP_TOOLS, type Fact, type SetupSnapshot } from "./spec";
+import {
+  setupSystem,
+  SETUP_TOOLS,
+  setupToolsFor,
+  toolInEdition,
+  zernioOptionAllowed,
+  type Fact,
+  type SetupSnapshot,
+} from "./spec";
+import { EDITION, FULL_EDITION, type Edition } from "@/lib/edition";
+
+/** A edição do produto hoje: WhatsApp por QR Code e Instagram. */
+const WA_ONLY: Edition = { channels: ["whatsapp_qr"], ownAiKey: false, allIntegrations: false };
 
 type Opened = ReturnType<typeof opener>;
 const blocksOf = (o: Opened) => o.messages.flatMap((m) => m.blocks);
@@ -40,12 +53,35 @@ const step = (r: ReturnType<typeof roteiroState>, id: string) => r.steps.find((s
 describe("roteiro da edição de pós-venda", () => {
   it("são seis passos principais, nesta ordem, e o resto fica em depois", () => {
     expect(MAIN_STEPS).toEqual(["empresa", "canal", "conhecimento", "agente", "regras", "teste"]);
-    expect(ROTEIRO.filter((s) => s.later).map((s) => s.id)).toEqual(["equipe", "email"]);
+    expect(ROTEIRO.filter((s) => s.later).map((s) => s.id)).toEqual(["equipe", "instagram"]);
     expect(ROTEIRO.filter((s) => s.required).map((s) => s.id)).toEqual(["empresa", "canal"]);
   });
 
-  it("nenhum texto do roteiro fala da marca antiga nem usa travessão", () => {
+  it("depois, se quiser: só o que a edição tem (sem e-mail; Instagram só com o canal)", () => {
+    const later = (e: Edition) =>
+      roteiroFor(e)
+        .filter((s) => s.later)
+        .map((s) => s.id);
+    expect(later(EDITION)).toEqual(["equipe", "instagram"]);
+    expect(later(WA_ONLY)).toEqual(["equipe"]);
+    expect(later(FULL_EDITION)).toEqual(["equipe", "instagram", "email"]);
+  });
+
+  it("o roteiro da edição não cita outro canal nem outra integração", () => {
     const all = JSON.stringify(ROTEIRO);
+    expect(all).not.toMatch(/Resend|número oficial|link_whatsapp|conectar_integracao|telefon|SMS/i);
+    expect(all).not.toMatch(/por e-mail/);
+    const canal = (e: Edition) => roteiroFor(e).find((s) => s.id === "canal")!.goal;
+    expect(canal(EDITION)).not.toContain("Zernio");
+    expect(canal(FULL_EDITION)).toContain("número oficial da Meta");
+    // o convite sai por link: o passo não manda configurar e-mail
+    const equipe = ROTEIRO.find((s) => s.id === "equipe")!;
+    expect(`${equipe.summary} ${equipe.goal}`).toContain("link");
+    expect(equipe.goal).toContain("não precisa configurar e-mail");
+  });
+
+  it("nenhum texto do roteiro fala da marca antiga nem usa travessão", () => {
+    const all = JSON.stringify(roteiroFor(FULL_EDITION));
     expect(all).not.toMatch(/Nexa|Nexus|Viver de IA|—/);
     expect(all).not.toMatch(/não oficia(l|is) de WhatsApp não são suportadas/);
   });
@@ -99,6 +135,21 @@ describe("isDone de cada passo", () => {
     const both = { ...live, firstWin: { received: true, replied: true, deal: false } };
     expect(isDone("teste", got)).toBe(false);
     expect(isDone("teste", both)).toBe(true);
+  });
+
+  it("depois: Instagram fica pronto com o canal do Instagram conectado", () => {
+    expect(isDone("instagram", live)).toBe(false);
+    expect(
+      isDone("instagram", {
+        ...live,
+        channels: [...whatsapp, { platform: "instagram", name: "@lojavita" }],
+      }),
+    ).toBe(true);
+    const r = roteiroState(live, []);
+    expect(step(r, "instagram").later).toBe(true);
+    // opcional: nunca vira o passo atual nem entra na conta do que falta
+    expect(r.current?.id).not.toBe("instagram");
+    expect(roteiroState(live, [], WA_ONLY).steps.map((s) => s.id)).not.toContain("instagram");
   });
 
   it("depois: equipe com mais de uma pessoa e e-mail com a integração conectada", () => {
@@ -227,6 +278,68 @@ describe("prompt e ferramentas da Vi", () => {
     expect(system).toContain("pós-venda");
     expect(system).toContain("Evolution");
     expect(system).not.toMatch(/Nexa|Nexus|Viver de IA|—/);
+  });
+
+  it("só fala de WhatsApp por QR Code e Instagram, e de nada mais", () => {
+    expect(system).toContain("WhatsApp por QR Code e Instagram, e nada mais");
+    expect(system).toContain("link_zernio");
+    expect(system).not.toMatch(/número oficial|link_whatsapp|conectar_integracao|Resend/);
+    const waOnly = setupSystem({
+      snapshot: live,
+      facts: [],
+      person: "Ana",
+      today: "18/11/2026",
+      edition: WA_ONLY,
+    });
+    expect(waOnly).toContain("só o WhatsApp por QR Code");
+    expect(waOnly).not.toMatch(/Instagram|Zernio/);
+    const full = setupSystem({
+      snapshot: live,
+      facts: [],
+      person: "Ana",
+      today: "18/11/2026",
+      edition: FULL_EDITION,
+    });
+    expect(full).toContain("número oficial da Meta");
+    expect(full).toContain("conectar_integracao");
+    expect(full).not.toMatch(/—/);
+  });
+
+  it("o modelo só recebe as ferramentas da edição", () => {
+    const names = (e: Edition) => setupToolsFor(e).map((t) => t.name);
+    const hidden = [
+      "criar_chat_do_site",
+      "escolher_ia",
+      "conectar_integracao",
+      "link_whatsapp",
+      "link_ferramenta",
+      "importar_drive",
+    ];
+    for (const n of hidden) {
+      expect(names(EDITION), n).not.toContain(n);
+      expect(toolInEdition(n), n).toBe(false);
+      expect(names(FULL_EDITION), n).toContain(n);
+    }
+    // Instagram passa pela Zernio: a chave e o botão de conectar continuam
+    for (const n of ["conectar_zernio", "conferir_zernio", "link_zernio"]) {
+      expect(names(EDITION), n).toContain(n);
+      expect(names(WA_ONLY), n).not.toContain(n);
+    }
+    expect(names(EDITION)).toEqual(SETUP_TOOLS.map((t) => t.name));
+    const text = JSON.stringify(SETUP_TOOLS);
+    expect(text).not.toMatch(
+      /Messenger|Telegram|TikTok|LinkedIn|anúncio|Resend|Zadarma|LiveKit|ElevenLabs|Composio|chat do site|número oficial/i,
+    );
+    expect(text).not.toContain("campanhas");
+    expect(JSON.stringify(setupToolsFor(FULL_EDITION))).toContain("campanhas");
+  });
+
+  it("pela Zernio só se conecta o que a edição oferece", () => {
+    expect(zernioOptionAllowed("instagram")).toBe(true);
+    for (const id of ["whatsapp", "facebook", "telegram", "metaads", "googlebusiness"]) {
+      expect(zernioOptionAllowed(id), id).toBe(false);
+      expect(zernioOptionAllowed(id, FULL_EDITION), id).toBe(true);
+    }
   });
 
   it("tem a ferramenta que abre a tela de cada passo principal", () => {

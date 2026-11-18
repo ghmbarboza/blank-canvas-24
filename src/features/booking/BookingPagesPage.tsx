@@ -1,3 +1,4 @@
+import { hasChannel } from "@/lib/edition";
 import { useMemo, useState } from "react";
 import { CalendarClock, Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -117,7 +118,11 @@ export function BookingPagesPage() {
           <EmptyState
             icon={CalendarClock}
             title="Crie seu primeiro link de agendamento"
-            description="Mande o link no WhatsApp, no e-mail ou no site. O cliente vê só os horários livres da sua agenda e recebe o convite com a sala da reunião."
+            description={
+              hasChannel("video")
+                ? "Mande o link no WhatsApp, no e-mail ou no site. O cliente vê só os horários livres da sua agenda e recebe o convite com a sala da reunião."
+                : "Mande o link no WhatsApp. O cliente vê só os horários livres da sua agenda e marca sozinho."
+            }
             action={
               <Button onClick={startNew}>
                 <Plus /> Novo link

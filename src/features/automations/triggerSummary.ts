@@ -1,3 +1,4 @@
+import { EDITION, hasChannel, type Edition } from "@/lib/edition";
 import type { Trigger } from "./engine";
 
 export const EVENT_LABEL: Record<string, string> = {
@@ -43,4 +44,11 @@ export function triggerSummary(t: Trigger): string {
     default:
       return "Inscrição manual";
   }
+}
+
+/** O gatilho existe nesta edição? Eventos de e-mail e de ligação dependem de outro canal. */
+export function eventInEdition(event: string, edition: Edition = EDITION): boolean {
+  if (event.startsWith("email.")) return hasChannel("email", edition);
+  if (event.startsWith("call.")) return hasChannel("phone", edition);
+  return true;
 }

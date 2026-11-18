@@ -1,3 +1,4 @@
+import { hasChannel } from "@/lib/edition";
 import { Link } from "@tanstack/react-router";
 import {
   BarChart3,
@@ -52,9 +53,11 @@ export function FormsPage() {
               <LayoutTemplate className="mr-1 size-3.5" /> Páginas
             </Link>
           </TabsTrigger>
-          <TabsTrigger value="chat">
-            <MessageCircle className="mr-1 size-3.5" /> Chat do site
-          </TabsTrigger>
+          {hasChannel("webchat") && (
+            <TabsTrigger value="chat">
+              <MessageCircle className="mr-1 size-3.5" /> Chat do site
+            </TabsTrigger>
+          )}
           <TabsTrigger value="responses">
             <Inbox className="mr-1 size-3.5" /> Respostas
           </TabsTrigger>
@@ -215,7 +218,7 @@ function Submissions({ accountId }: { accountId: string }) {
       <EmptyState
         icon={Inbox}
         title="Nenhuma resposta ainda"
-        description="Assim que alguém enviar um formulário, falar no chat ou chegar por anúncio, aparece aqui."
+        description="Assim que alguém enviar um formulário, aparece aqui."
       />
     );
   return (

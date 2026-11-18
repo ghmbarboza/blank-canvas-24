@@ -1,7 +1,14 @@
 // Textos da tela Fila e roteamento: a fila como uma frase que o gestor lê de bate-pronto,
 // com os pedaços que mudam destacados, e quem da equipe atende cada fila.
 
-import { OVERFLOW_LABEL, channelLabel, type AgentState } from "./lib";
+import { EDITION, hasChannel, type Edition } from "@/lib/edition";
+import {
+  OVERFLOW_LABEL,
+  OVERFLOW_NO_PHONE,
+  channelLabel,
+  queueChannelVisible,
+  type AgentState,
+} from "./lib";
 
 /** Bolinha de presença: verde só para disponível de verdade. */
 export const PRESENCE_DOT: Record<AgentState, string> = {
@@ -27,14 +34,18 @@ function orList(values: string[]): Segment[] {
 }
 
 /** "Se o cliente chegar por WhatsApp ou Telefone, vai para quem sabe suporte (nível 3 ou mais)." */
-export function queueSentence(q: {
-  channels: string[];
-  skills: string[];
-  required_level: number;
-  sla_seconds: number;
-  overflow: string;
-}): Segment[] {
-  const channels = q.channels.map(channelLabel);
+export function queueSentence(
+  q: {
+    channels: string[];
+    skills: string[];
+    required_level: number;
+    sla_seconds: number;
+    overflow: string;
+  },
+  edition: Edition = EDITION,
+): Segment[] {
+  const phone = hasChannel("phone", edition);
+  const channels = q.channels.filter((c) => queueChannelVisible(c, edition)).map(channelLabel);
   const head: Segment[] = channels.length
     ? [{ text: "Se o cliente chegar por " }, ...orList(channels), { text: ", " }]
     : [{ text: "Sem canal escolhido, nada entra aqui. " }];
@@ -46,10 +57,11 @@ export function queueSentence(q: {
         { text: q.required_level > 1 ? ` (nível ${q.required_level} ou mais)` : "" },
       ]
     : [{ text: "vai para " }, { text: "qualquer pessoa da equipe", strong: true }];
-  const sla: Segment[] = q.channels.includes("voice")
-    ? [{ text: ". Atender em até " }, { text: `${q.sla_seconds} s`, strong: true }]
-    : [];
-  const overflow = OVERFLOW_LABEL[q.overflow] ?? q.overflow;
+  const sla: Segment[] =
+    phone && q.channels.includes("voice")
+      ? [{ text: ". Atender em até " }, { text: `${q.sla_seconds} s`, strong: true }]
+      : [];
+  const overflow = phone ? (OVERFLOW_LABEL[q.overflow] ?? q.overflow) : OVERFLOW_NO_PHONE;
   return [
     ...head,
     ...who,

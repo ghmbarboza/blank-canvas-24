@@ -4,6 +4,7 @@
 // é opcional. "Pular" fica gravado, mas obrigatório pulado continua pendente.
 // Puro: prompt, abertura, indicador do layout e testes usam.
 import { BRAND } from "@/lib/brand";
+import { EDITION, hasChannel, type Edition, type EditionChannel } from "@/lib/edition";
 
 import type { StageAction, StageBlock, StageIcon } from "./stage";
 import type { Fact, SetupSnapshot } from "./spec";
@@ -37,7 +38,15 @@ export const SEGMENT_LABELS: { id: string; label: string; hint: string; icon: St
 ];
 
 export type StepId =
-  "empresa" | "canal" | "conhecimento" | "agente" | "regras" | "teste" | "equipe" | "email";
+  | "empresa"
+  | "canal"
+  | "conhecimento"
+  | "agente"
+  | "regras"
+  | "teste"
+  | "equipe"
+  | "instagram"
+  | "email";
 
 export interface RoteiroStep {
   id: StepId;
@@ -52,10 +61,19 @@ export interface RoteiroStep {
   goal: string;
   /** a pergunta com que ela abre o passo */
   ask: string;
+  /** canal de que o passo depende: fora da edição, o passo some (ver src/lib/edition.ts) */
+  channel?: EditionChannel;
 }
 
+const CANAL_GOAL =
+  "conectar o WhatsApp da empresa pelo QR Code: mostre o botão com abrir_passo canal; na tela a pessoa cola o endereço do servidor e a chave, clica em Conectar e lê o QR Code no celular (WhatsApp › Dispositivos conectados › Conectar dispositivo). Quem não tem servidor contrata um provedor de Evolution API (a Cloudfy é um exemplo), que passa o endereço e a chave; não diga preço. Não peça a chave da Evolution na conversa: ela é colada na tela e vai direto para o cofre. Se a tela mostrar erro, explique: endereço precisa começar com https://; chave recusada é a chave global errada; servidor fora do ar é com o provedor; QR Code vencido é só gerar outro.";
+/** Só na edição com número oficial da Meta. */
+const CANAL_GOAL_OFFICIAL =
+  " Caminho secundário, só se a pessoa pedir o número oficial da Meta: conectar_zernio e depois link_whatsapp (precisa de conta na Zernio).";
+
 // Edição de pós-venda: seis passos, nesta ordem, cada um com uma tela direta (abrir_passo).
-export const ROTEIRO: RoteiroStep[] = [
+// Lista completa: o que depende de um canal fora da edição é filtrado em roteiroFor.
+const ALL_STEPS: RoteiroStep[] = [
   {
     id: "empresa",
     title: "Sua empresa",
@@ -68,10 +86,11 @@ export const ROTEIRO: RoteiroStep[] = [
   {
     id: "canal",
     title: "Conectar o WhatsApp",
-    summary: "Leia um QR Code com o celular da empresa (não o seu pessoal) e o número entra na central.",
+    summary:
+      "Leia um QR Code com o celular da empresa (não o seu pessoal) e o número entra na central.",
     required: true,
     later: false,
-    goal: "conectar o WhatsApp da empresa. O caminho principal é o QR Code pela Evolution: mostre o botão com abrir_passo canal; na tela a pessoa cola o endereço do servidor e a chave, clica em Conectar e lê o QR Code no celular (WhatsApp › Dispositivos conectados › Conectar dispositivo). Quem não tem servidor contrata um provedor de Evolution API (a Cloudfy é um exemplo), que manda o endereço e a chave por e-mail; não diga preço. Não peça a chave da Evolution na conversa: ela é colada na tela e vai direto para o cofre. Se a tela mostrar erro, explique: endereço precisa começar com https://; chave recusada é a chave global errada; servidor fora do ar é com o provedor; QR Code vencido é só gerar outro. Caminho secundário, só se a pessoa pedir o número oficial da Meta: conectar_zernio e depois link_whatsapp (precisa de conta na Zernio).",
+    goal: CANAL_GOAL,
     ask: "vamos conectar o WhatsApp da empresa? Você já tem o endereço e a chave do servidor da Evolution?",
   },
   {
@@ -113,11 +132,21 @@ export const ROTEIRO: RoteiroStep[] = [
   {
     id: "equipe",
     title: "Convidar a equipe",
-    summary: "Chame quem atende com você.",
+    summary: "Gere o link de convite e mande para quem atende com você.",
     required: false,
     later: true,
-    goal: "convidar quem atende junto: convidar_pessoa gera o link de convite com o papel (admin, gestor, atendente ou vendedor) para a pessoa mandar.",
-    ask: "quem mais vai atender com você? Me passa o e-mail e o papel que eu gero o convite.",
+    goal: "convidar quem atende junto: convidar_pessoa gera o link de convite com o papel (admin, gestor, atendente ou vendedor). A pessoa copia o link e manda pelo WhatsApp; não precisa configurar e-mail. O e-mail do convidado só identifica quem vai entrar.",
+    ask: "quem mais vai atender com você? Me passa o e-mail da pessoa e o papel que eu gero o link de convite para você mandar.",
+  },
+  {
+    id: "instagram",
+    title: "Conectar o Instagram",
+    summary: "As mensagens diretas do Instagram chegam na mesma Caixa de entrada.",
+    required: false,
+    later: true,
+    channel: "instagram",
+    goal: 'trazer as mensagens diretas do Instagram da empresa para a Caixa de entrada. A conexão passa pela Zernio (serviço à parte, com conta da própria empresa). O jeito mais simples é pela tela: abrir_tela /canais com o rótulo "Conectar o Instagram"; no cartão Instagram a pessoa cola a chave da Zernio e autoriza a conta. Pela conversa: conectar_zernio com a chave que ela colar e depois link_zernio com a opção instagram. A conta do Instagram precisa ser profissional.',
+    ask: "quer receber as mensagens do Instagram da empresa aqui também?",
   },
   {
     id: "email",
@@ -125,10 +154,21 @@ export const ROTEIRO: RoteiroStep[] = [
     summary: "Convites e avisos saem com o e-mail de vocês.",
     required: false,
     later: true,
+    channel: "email",
     goal: 'ligar o e-mail pela Resend, para convites e avisos saírem com o domínio da empresa. Mostre o formulário (mostrar_formulario: "Chave da Resend" tipo segredo, "E-mail remetente" tipo email, "Nome do remetente" opcional) e salve com conectar_integracao provedor resend, que testa sozinho.',
     ask: "quer que os e-mails da central saiam com o e-mail da empresa? Eu ligo pela Resend.",
   },
 ];
+
+/** O roteiro da edição: sem os passos de canal ausente e com o texto do WhatsApp certo. */
+export function roteiroFor(edition: Edition = EDITION): RoteiroStep[] {
+  const official = hasChannel("whatsapp_official", edition);
+  return ALL_STEPS.filter((st) => !st.channel || hasChannel(st.channel, edition)).map((st) =>
+    st.id === "canal" && official ? { ...st, goal: `${st.goal}${CANAL_GOAL_OFFICIAL}` } : st,
+  );
+}
+
+export const ROTEIRO: RoteiroStep[] = roteiroFor();
 
 /** Passos da barra de progresso (os de "Depois, se quiser" ficam fora). */
 export const MAIN_STEPS = ROTEIRO.filter((st) => !st.later).map((st) => st.id);
@@ -147,6 +187,7 @@ export function isDone(id: StepId, s: SetupSnapshot, _facts: Fact[] = []): boole
   if (id === "regras") return s.rulesOn > 0;
   if (id === "teste") return s.firstWin.received && s.firstWin.replied;
   if (id === "email") return connected(s, "resend") || connected(s, "ses");
+  if (id === "instagram") return s.channels.some((c) => c.platform === "instagram");
   return s.team > 1;
 }
 
@@ -169,8 +210,12 @@ export interface RoteiroState {
   mainDone: number;
 }
 
-export function roteiroState(s: SetupSnapshot, facts: Fact[]): RoteiroState {
-  const steps = ROTEIRO.map((st) => {
+export function roteiroState(
+  s: SetupSnapshot,
+  facts: Fact[],
+  edition: Edition = EDITION,
+): RoteiroState {
+  const steps = roteiroFor(edition).map((st) => {
     const done = isDone(st.id, s, facts);
     const skipped = facts.some((f) => f.key === `pulou_${st.id}`);
     // pular obrigatório não resolve: fica gravado, e o passo continua pendente
@@ -217,7 +262,7 @@ Rótulos de ramo que a pessoa pode escolher (rótulo = valor de salvar_empresa):
 export const stepTarget = (id: StepId) => `passo:${id}`;
 
 export function stepAction(id: StepId): StageAction {
-  const st = ROTEIRO.find((x) => x.id === id);
+  const st = ALL_STEPS.find((x) => x.id === id);
   return {
     kind: "open",
     label: `Fazer pela tela: ${st?.title ?? id}`,
@@ -239,7 +284,7 @@ function stepBlock(id: StepId): StageBlock | null {
     return {
       kind: "steps",
       title: "WhatsApp por QR Code",
-      hint: "Sem servidor ainda? Um provedor de Evolution API, como a Cloudfy, manda o endereço e a chave por e-mail.",
+      hint: "Sem servidor ainda? Um provedor de Evolution API, como a Cloudfy, passa o endereço e a chave.",
       steps: [
         { label: "Colar o endereço e a chave do servidor", state: "agora" },
         { label: "Ler o QR Code com o celular da empresa", state: "depois" },

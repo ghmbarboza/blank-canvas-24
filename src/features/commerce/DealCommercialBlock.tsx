@@ -1,3 +1,4 @@
+import { EDITION } from "@/lib/edition";
 import { useState } from "react";
 import {
   CheckCircle2,
@@ -89,7 +90,7 @@ export function DealCommercialBlock({ accountId, deal }: { accountId: string; de
     <section aria-labelledby="deal-commercial" className="space-y-4">
       <div className="flex items-end justify-between gap-3">
         <p id="deal-commercial" className="eyebrow">
-          Proposta e cobrança
+          {EDITION.allIntegrations ? "Proposta e cobrança" : "Proposta"}
         </p>
         <div className="flex gap-2">
           {canCharge && (
@@ -138,8 +139,9 @@ export function DealCommercialBlock({ accountId, deal }: { accountId: string; de
         <Loader2 className="mx-auto size-4 animate-spin text-subtle" />
       ) : proposals.length === 0 ? (
         <p className="rounded-xl border border-dashed border-border px-3 py-3 text-[12px] text-muted-foreground">
-          Gere a proposta a partir dos itens aceitos do negócio. O cliente abre pelo link, aceita
-          online e, com o Asaas conectado, paga por Pix, boleto ou cartão.
+          {EDITION.allIntegrations
+            ? "Gere a proposta a partir dos itens aceitos do negócio. O cliente abre pelo link, aceita online e, com o Asaas conectado, paga por Pix, boleto ou cartão."
+            : "Gere a proposta a partir dos itens aceitos do negócio. O cliente abre pelo link e aceita online."}
         </p>
       ) : (
         <ul className="space-y-2">

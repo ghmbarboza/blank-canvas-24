@@ -1,3 +1,4 @@
+import { hasChannel } from "@/lib/edition";
 import { ChannelIcon } from "@/components/brand/ChannelIcon";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Download, Loader2, ShieldAlert, ShieldCheck, UserX } from "lucide-react";
@@ -14,7 +15,7 @@ import { errorMessage } from "@/lib/functions";
 import type { ContactRow } from "../../types";
 import { useContactConsentState } from "./hooks";
 
-const CHANNELS: {
+const ALL_CHANNELS: {
   id: "email" | "whatsapp" | "sms" | "voice" | "call_recording";
   label: string;
   addr: "email" | "phone" | null;
@@ -25,6 +26,15 @@ const CHANNELS: {
   { id: "voice", label: "Ligações", addr: "phone" },
   { id: "call_recording", label: "Gravar ligações e reuniões", addr: null },
 ];
+
+// só os canais da edição: sem e-mail, SMS e telefone, sobra o WhatsApp
+const CHANNELS = ALL_CHANNELS.filter((c) => {
+  if (c.id === "email") return hasChannel("email");
+  if (c.id === "sms") return hasChannel("sms");
+  if (c.id === "voice") return hasChannel("phone");
+  if (c.id === "call_recording") return hasChannel("phone") || hasChannel("video");
+  return true;
+});
 
 // Consentimento por canal (LGPD): o último registro vale; supressão (descadastro, bounce, DNC) vence tudo.
 export function ContactConsentCard({

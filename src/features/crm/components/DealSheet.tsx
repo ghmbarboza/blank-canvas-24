@@ -48,6 +48,7 @@ import { DealRoom } from "./DealRoom";
 import { DealTimeline } from "./DealTimeline";
 import { DealItemsEditor } from "@/features/opportunity/DealItemsEditor";
 import { EmailComposerDialog } from "@/features/email/EmailComposerDialog";
+import { hasChannel } from "@/lib/edition";
 import { EnrollDialog } from "@/features/automations/EnrollDialog";
 import { DealCommercialBlock } from "@/features/commerce/DealCommercialBlock";
 
@@ -246,13 +247,15 @@ function DealSheetBody({
           )}
           {contact && (
             <div className="flex flex-wrap items-center gap-3">
-              <button
-                type="button"
-                onClick={() => setEmailing(true)}
-                className="inline-flex w-fit items-center gap-1 text-[12px] text-primary hover:underline"
-              >
-                <Mail className="size-3" aria-hidden /> Enviar e-mail sobre este negócio
-              </button>
+              {hasChannel("email") && (
+                <button
+                  type="button"
+                  onClick={() => setEmailing(true)}
+                  className="inline-flex w-fit items-center gap-1 text-[12px] text-primary hover:underline"
+                >
+                  <Mail className="size-3" aria-hidden /> Enviar e-mail sobre este negócio
+                </button>
+              )}
               <CallButton contactId={contact.id} name={contact.name} size="sm" variant="ghost" />
             </div>
           )}

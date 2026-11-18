@@ -1,3 +1,4 @@
+import { hasChannel } from "@/lib/edition";
 import { Link, useNavigate } from "@tanstack/react-router";
 import {
   Code,
@@ -303,7 +304,7 @@ function NextDoor({
                 <LayoutTemplate /> Criar página
               </Link>
             </Button>
-            {!hasChat && (
+            {!hasChat && hasChannel("webchat") && (
               <Button variant="outline" onClick={onOpenChat}>
                 <MessageCircle /> Ligar o chat do site
               </Button>

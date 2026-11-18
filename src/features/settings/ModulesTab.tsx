@@ -7,7 +7,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useSetup } from "@/features/setup/SetupWizard";
-import { EXTRA_MODULES, enabledModules, type ModuleId } from "@/components/layout/modules";
+import {
+  EXTRA_MODULES,
+  enabledModules,
+  extraModulesFor,
+  type ModuleId,
+} from "@/components/layout/modules";
 import { ACCOUNT_QUERY_KEY, useAccount } from "@/lib/account";
 import { BRAND } from "@/lib/brand";
 import { errorMessage } from "@/lib/functions";
@@ -47,7 +52,7 @@ export function ModulesTab() {
           : { readOnlyNote: "Só o administrador da conta liga ou desliga recursos." })}
       >
         <ul className="divide-y divide-border">
-          {EXTRA_MODULES.map((m) => {
+          {extraModulesFor().map((m) => {
             const checked = on.has(m.id);
             return (
               <li key={m.id} className="flex items-start gap-4 py-4 first:pt-0 last:pb-0">

@@ -1,3 +1,4 @@
+import { EDITION } from "@/lib/edition";
 import { Link } from "@tanstack/react-router";
 import { MessagesSquare, Plug } from "lucide-react";
 
@@ -23,7 +24,11 @@ export function InboxEmpty({ accountId }: { accountId: string }) {
         className="flex-1"
         icon={Plug}
         title="Conecte seu primeiro canal"
-        description="Ligue o WhatsApp, Instagram ou outra rede para as conversas dos clientes chegarem aqui."
+        description={
+          EDITION.allIntegrations
+            ? "Ligue o WhatsApp, Instagram ou outra rede para as conversas dos clientes chegarem aqui."
+            : "Conecte o WhatsApp da empresa pelo QR Code para as conversas dos clientes chegarem aqui."
+        }
         action={
           <Button asChild>
             <Link to="/canais">Conectar canal</Link>

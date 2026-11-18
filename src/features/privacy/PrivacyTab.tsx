@@ -1,3 +1,4 @@
+import { hasChannel, hasPlatform } from "@/lib/edition";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Ban, Loader2, Plus, ShieldCheck, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -38,6 +39,9 @@ const CHANNEL: Record<string, string> = {
   voice: "Ligação",
 };
 
+/** Gravação só existe com telefone ou reunião por vídeo na edição. */
+const RECORDS = hasChannel("phone") || hasChannel("video");
+
 // LGPD na prática: aviso de gravação, retenção, opt-in e a lista de quem não pode ser contatado.
 export function PrivacyTab() {
   const { current, isManager } = useAccount();
@@ -66,7 +70,11 @@ export function PrivacyTab() {
     <div className="space-y-6">
       <SettingsCard
         title="Privacidade e LGPD"
-        description="Regras aplicadas em todas as gravações, ligações, reuniões e envios da conta. Uma vez por dia o sistema apaga sozinho as gravações e transcrições que passaram do prazo e registra isso na Auditoria."
+        description={
+          RECORDS
+            ? "Regras aplicadas em todas as gravações, ligações, reuniões e envios da conta. Uma vez por dia o sistema apaga sozinho as gravações e transcrições que passaram do prazo e registra isso na Auditoria."
+            : "Regras aplicadas em todos os envios da conta. O que passa do prazo é apagado sozinho e fica registrado no Histórico de alterações."
+        }
         readOnlyNote={isManager ? undefined : "Só gestores alteram a política."}
       >
         <form
@@ -76,57 +84,63 @@ export function PrivacyTab() {
             save.mutate();
           }}
         >
-          <div className="grid gap-1.5">
-            <Label htmlFor="pv-notice">
-              Aviso de gravação (lido no início da ligação e mostrado na entrada da reunião)
-            </Label>
-            <Textarea
-              id="pv-notice"
-              rows={3}
-              value={form.recording_notice}
-              onChange={(e) => set("recording_notice", e.target.value)}
-              disabled={!isManager}
-            />
-          </div>
+          {RECORDS && (
+            <div className="grid gap-1.5">
+              <Label htmlFor="pv-notice">
+                Aviso de gravação (lido no início da ligação e mostrado na entrada da reunião)
+              </Label>
+              <Textarea
+                id="pv-notice"
+                rows={3}
+                value={form.recording_notice}
+                onChange={(e) => set("recording_notice", e.target.value)}
+                disabled={!isManager}
+              />
+            </div>
+          )}
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="grid gap-1.5">
-              <Label>Guardar gravações por</Label>
-              <Select
-                value={String(form.retention_recordings_days)}
-                onValueChange={(v) => set("retention_recordings_days", Number(v))}
-                disabled={!isManager}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {[30, 90, 180, 365, 730].map((d) => (
-                    <SelectItem key={d} value={String(d)}>
-                      {d} dias
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid gap-1.5">
-              <Label>Guardar transcrições por</Label>
-              <Select
-                value={String(form.retention_transcripts_days)}
-                onValueChange={(v) => set("retention_transcripts_days", Number(v))}
-                disabled={!isManager}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {[90, 180, 365, 730, 1825].map((d) => (
-                    <SelectItem key={d} value={String(d)}>
-                      {d} dias
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {RECORDS && (
+              <div className="grid gap-1.5">
+                <Label>Guardar gravações por</Label>
+                <Select
+                  value={String(form.retention_recordings_days)}
+                  onValueChange={(v) => set("retention_recordings_days", Number(v))}
+                  disabled={!isManager}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[30, 90, 180, 365, 730].map((d) => (
+                      <SelectItem key={d} value={String(d)}>
+                        {d} dias
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            {RECORDS && (
+              <div className="grid gap-1.5">
+                <Label>Guardar transcrições por</Label>
+                <Select
+                  value={String(form.retention_transcripts_days)}
+                  onValueChange={(v) => set("retention_transcripts_days", Number(v))}
+                  disabled={!isManager}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[90, 180, 365, 730, 1825].map((d) => (
+                      <SelectItem key={d} value={String(d)}>
+                        {d} dias
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
             <div className="grid gap-1.5">
               <Label htmlFor="pv-qs">Não contatar a partir de</Label>
               <Input
@@ -191,7 +205,7 @@ export function PrivacyTab() {
 
 function Suppressions({ accountId, isManager }: { accountId: string; isManager: boolean }) {
   const qc = useQueryClient();
-  const [channel, setChannel] = useState("email");
+  const [channel, setChannel] = useState(hasChannel("email") ? "email" : "whatsapp");
   const [address, setAddress] = useState("");
   const [q, setQ] = useState("");
   const list = useQuery({
@@ -244,7 +258,11 @@ function Suppressions({ accountId, isManager }: { accountId: string; isManager: 
   return (
     <SettingsCard
       title="Não contatar"
-      description="Descadastros, bounces, reclamações e pedidos de “não me ligue”. Nenhum envio, campanha, automação ou discador alcança quem está aqui."
+      description={
+        hasChannel("phone")
+          ? "Descadastros, bounces, reclamações e pedidos de “não me ligue”. Nenhum envio, campanha, automação ou discador alcança quem está aqui."
+          : "Quem pediu para não receber mensagens. Nenhum envio ou automação alcança quem está aqui."
+      }
     >
       <form
         className="mb-4 flex flex-wrap gap-2"
@@ -258,11 +276,13 @@ function Suppressions({ accountId, isManager }: { accountId: string; isManager: 
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {Object.entries(CHANNEL).map(([k, v]) => (
-              <SelectItem key={k} value={k}>
-                {v}
-              </SelectItem>
-            ))}
+            {Object.entries(CHANNEL)
+              .filter(([k]) => hasPlatform(k))
+              .map(([k, v]) => (
+                <SelectItem key={k} value={k}>
+                  {v}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
         <Input

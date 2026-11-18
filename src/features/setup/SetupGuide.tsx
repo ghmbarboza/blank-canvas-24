@@ -177,6 +177,12 @@ export function SetupGuide({ accountId, open, onOpenChange, step, onStep, onAskV
     void navigate({ to });
   }
 
+  // "Conectar o Instagram" (opcional) acontece em Canais, no cartão do Instagram
+  function openInstagram() {
+    onOpenChange(false);
+    void navigate({ to: "/canais", hash: "instagram" });
+  }
+
   const main = r ? mainSteps(r) : [];
   const later = r ? laterSteps(r) : [];
   const next = r ? nextStepId(r) : null;
@@ -292,11 +298,15 @@ export function SetupGuide({ accountId, open, onOpenChange, step, onStep, onAskV
                               <span className="ml-1.5 text-muted-foreground">(feito)</span>
                             ) : null}
                           </span>
-                          {!s.done ? (
+                          {s.done ? null : s.id === "instagram" ? (
+                            <Button variant="ghost" size="sm" onClick={openInstagram}>
+                              Abrir Canais
+                            </Button>
+                          ) : (
                             <Button variant="ghost" size="sm" onClick={onAskVi}>
                               Fazer com a {BRAND.assistant}
                             </Button>
-                          ) : null}
+                          )}
                         </li>
                       ))}
                     </ul>

@@ -1,3 +1,4 @@
+import { EDITION, hasChannel } from "@/lib/edition";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
@@ -437,25 +438,30 @@ export function FormBuilder({ formId }: { formId: string }) {
                   aria-label="Texto do consentimento"
                 />
                 <div className="flex flex-wrap gap-4 text-[13px]">
-                  {(["email", "whatsapp", "sms"] as const).map((ch) => (
-                    <label key={ch} className="flex items-center gap-2">
-                      <Checkbox
-                        checked={draft.consent.channels.includes(ch)}
-                        onCheckedChange={(c) =>
-                          upd({
-                            consent: {
-                              ...draft.consent,
-                              channels: c
-                                ? [...draft.consent.channels, ch]
-                                : draft.consent.channels.filter((x) => x !== ch),
-                            },
-                          })
-                        }
-                        disabled={ro}
-                      />
-                      {ch === "email" ? "E-mail" : ch === "whatsapp" ? "WhatsApp" : "SMS"}
-                    </label>
-                  ))}
+                  {(["email", "whatsapp", "sms"] as const)
+                    .filter(
+                      (ch) =>
+                        ch === "whatsapp" || hasChannel(ch) || draft.consent.channels.includes(ch),
+                    )
+                    .map((ch) => (
+                      <label key={ch} className="flex items-center gap-2">
+                        <Checkbox
+                          checked={draft.consent.channels.includes(ch)}
+                          onCheckedChange={(c) =>
+                            upd({
+                              consent: {
+                                ...draft.consent,
+                                channels: c
+                                  ? [...draft.consent.channels, ch]
+                                  : draft.consent.channels.filter((x) => x !== ch),
+                              },
+                            })
+                          }
+                          disabled={ro}
+                        />
+                        {ch === "email" ? "E-mail" : ch === "whatsapp" ? "WhatsApp" : "SMS"}
+                      </label>
+                    ))}
                   <label className="flex items-center gap-2">
                     <Checkbox
                       checked={draft.consent.required}
@@ -615,8 +621,8 @@ export function FormBuilder({ formId }: { formId: string }) {
               </div>
             </div>
             <p className="mt-3 text-[12px] text-subtle">
-              Para mandar WhatsApp, e-mail ou criar tarefa depois do envio, crie uma automação com o
-              gatilho “Formulário enviado”.
+              Para mandar WhatsApp ou criar tarefa depois do envio, crie uma automação com o gatilho
+              “Formulário enviado”.
             </p>
           </section>
 
@@ -661,7 +667,11 @@ export function FormBuilder({ formId }: { formId: string }) {
             <Button size="sm" variant="outline" onClick={() => copyText(embed)}>
               <Copy /> Copiar código
             </Button>
-            <p className="mt-4 text-[13px] text-muted-foreground">
+            <p
+              className={
+                EDITION.allIntegrations ? "mt-4 text-[13px] text-muted-foreground" : "hidden"
+              }
+            >
               Leads dos anúncios da Meta e das outras redes entram pela Zernio, em{" "}
               <Link to="/canais" className="text-foreground underline underline-offset-2">
                 Canais

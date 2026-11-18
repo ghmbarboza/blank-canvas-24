@@ -1,4 +1,6 @@
 // Modelos prontos: cada um já nasce com gatilho, passos e regras de saída sensatos.
+import { EDITION, hasChannel, type Edition } from "@/lib/edition";
+
 import type { AutoNode, ExitRules, Graph, Trigger } from "./engine";
 
 export interface AutomationTemplate {
@@ -279,6 +281,26 @@ export const TEMPLATES: AutomationTemplate[] = [
     ]),
   },
 ];
+
+/** Algum passo depende de um canal que a edição não tem? */
+function needsMissingChannel(t: AutomationTemplate, edition: Edition): boolean {
+  return Object.values(t.graph.nodes).some((n) => {
+    if (n.type === "email") return !hasChannel("email", edition);
+    if (n.type === "sms") return !hasChannel("sms", edition);
+    if (n.type === "voice_call") return !hasChannel("phone", edition);
+    if (n.type === "task") {
+      const kind = n.config["type"];
+      if (kind === "call") return !hasChannel("phone", edition);
+      if (kind === "email") return !hasChannel("email", edition);
+    }
+    return false;
+  });
+}
+
+/** Modelos que a galeria mostra: fora os que usam e-mail, SMS ou ligação sem o canal. */
+export function templatesFor(edition: Edition = EDITION): AutomationTemplate[] {
+  return TEMPLATES.filter((t) => !needsMissingChannel(t, edition));
+}
 
 export function blankGraph(): Graph {
   return {

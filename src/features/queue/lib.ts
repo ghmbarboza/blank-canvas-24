@@ -3,6 +3,8 @@
 // A ordem e a capacidade espelham as funções do banco (claim_next_work_item / cc_fits): o banco
 // decide de verdade; aqui servem para a tela explicar e para os testes fixarem o contrato.
 
+import { EDITION, hasChannel, hasPlatform, type Edition } from "@/lib/edition";
+
 export type CapacityClass = "voice" | "chat" | "email" | "task";
 export type WorkStatus =
   "queued" | "reserved" | "assigned" | "wrap_up" | "done" | "abandoned" | "canceled";
@@ -136,6 +138,16 @@ export const CHANNEL_LABEL: Record<string, string> = {
   sms: "SMS",
   telegram: "Telegram",
 };
+
+/** O canal de fila aparece nesta edição? Telefone e ligação no WhatsApp pedem o canal "phone". */
+export function queueChannelVisible(ch: string, edition: Edition = EDITION): boolean {
+  if (ch === "voice" || ch === "whatsapp_call" || ch === "callback" || ch === "call")
+    return hasChannel("phone", edition);
+  return hasPlatform(ch, edition);
+}
+
+/** O que acontece sem ninguém livre quando a edição não tem telefone (as opções são de ligação). */
+export const OVERFLOW_NO_PHONE = "espera na fila até alguém ficar livre";
 
 export function channelLabel(ch: string): string {
   return CHANNEL_LABEL[ch] ?? ch.charAt(0).toUpperCase() + ch.slice(1);
@@ -402,19 +414,29 @@ export const OVERFLOW_LABEL: Record<string, string> = {
 };
 
 /** A fila em linguagem simples, para o gestor conferir de bate-pronto. */
-export function describeQueue(q: {
-  channels: string[];
-  skills: string[];
-  required_level: number;
-  sla_seconds: number;
-  overflow: string;
-}): string {
-  const ch = q.channels.map((c) => channelLabel(c).toLowerCase()).join(", ") || "nenhum canal";
+export function describeQueue(
+  q: {
+    channels: string[];
+    skills: string[];
+    required_level: number;
+    sla_seconds: number;
+    overflow: string;
+  },
+  edition: Edition = EDITION,
+): string {
+  const phone = hasChannel("phone", edition);
+  const ch =
+    q.channels
+      .filter((c) => queueChannelVisible(c, edition))
+      .map((c) => channelLabel(c).toLowerCase())
+      .join(", ") || "nenhum canal";
   const who = q.skills[0]
     ? `vai para quem sabe "${q.skills[0]}"${q.required_level > 1 ? ` (nível ${q.required_level} ou mais)` : ""}`
     : "vai para qualquer pessoa da equipe";
-  const prazo = q.channels.includes("voice")
-    ? `atender em até ${q.sla_seconds}s`
-    : "responder no prazo do canal";
-  return `Entra por ${ch}, ${who}. Meta: ${prazo}. Ninguém livre: ${OVERFLOW_LABEL[q.overflow] ?? q.overflow}.`;
+  const prazo =
+    phone && q.channels.includes("voice")
+      ? `atender em até ${q.sla_seconds}s`
+      : "responder no prazo do canal";
+  const overflow = phone ? (OVERFLOW_LABEL[q.overflow] ?? q.overflow) : OVERFLOW_NO_PHONE;
+  return `Entra por ${ch}, ${who}. Meta: ${prazo}. Ninguém livre: ${overflow}.`;
 }

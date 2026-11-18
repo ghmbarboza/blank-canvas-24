@@ -1,3 +1,4 @@
+import { hasChannel } from "@/lib/edition";
 import { Link } from "@tanstack/react-router";
 import { CheckCircle2, Loader2, MonitorPlay, PhoneCall, ShieldCheck, XCircle } from "lucide-react";
 import { toast } from "sonner";
@@ -85,23 +86,31 @@ function RulesPanel({ accountId }: { accountId: string }) {
           segundos para aceitar; depois ele volta para a fila.
         </p>
       </div>
-      <div className="space-y-3 rounded-xl border border-border bg-surface p-4">
-        <label className="flex items-center justify-between gap-3">
-          <span>Ligação perdida vira retorno na fila automaticamente</span>
-          <Switch
-            checked={v.auto_callback_on_abandon}
-            onCheckedChange={(x) => put({ auto_callback_on_abandon: x })}
-          />
-        </label>
-        <label className="flex items-center justify-between gap-3">
-          <span>Sem ninguém livre, a IA oferece retorno de ligação</span>
-          <Switch checked={v.offer_callback} onCheckedChange={(x) => put({ offer_callback: x })} />
-        </label>
-        <label className="flex items-center justify-between gap-3">
-          <span>Sem ninguém livre, a IA oferece continuar pelo WhatsApp</span>
-          <Switch checked={v.offer_whatsapp} onCheckedChange={(x) => put({ offer_whatsapp: x })} />
-        </label>
-      </div>
+      {hasChannel("phone") && (
+        <div className="space-y-3 rounded-xl border border-border bg-surface p-4">
+          <label className="flex items-center justify-between gap-3">
+            <span>Ligação perdida vira retorno na fila automaticamente</span>
+            <Switch
+              checked={v.auto_callback_on_abandon}
+              onCheckedChange={(x) => put({ auto_callback_on_abandon: x })}
+            />
+          </label>
+          <label className="flex items-center justify-between gap-3">
+            <span>Sem ninguém livre, a IA oferece retorno de ligação</span>
+            <Switch
+              checked={v.offer_callback}
+              onCheckedChange={(x) => put({ offer_callback: x })}
+            />
+          </label>
+          <label className="flex items-center justify-between gap-3">
+            <span>Sem ninguém livre, a IA oferece continuar pelo WhatsApp</span>
+            <Switch
+              checked={v.offer_whatsapp}
+              onCheckedChange={(x) => put({ offer_whatsapp: x })}
+            />
+          </label>
+        </div>
+      )}
     </div>
   );
 }
@@ -176,7 +185,7 @@ export function RoutingPage() {
       <div className="flex h-full flex-col">
         <PageHeader title="Fila e roteamento" />
         <EmptyState
-          icon={PhoneCall}
+          icon={ShieldCheck}
           title="Só gestores mexem aqui"
           description="Peça a um gestor para ajustar a equipe e as filas."
         />
@@ -188,7 +197,7 @@ export function RoutingPage() {
         <QueueHeader
           eyebrow="Configuração"
           title="Fila e roteamento"
-          description="Como as mensagens e ligações são distribuídas, e quanto cada pessoa aguenta ao mesmo tempo, para ninguém ficar sobrecarregado e o cliente ser atendido rápido."
+          description={`Como as ${hasChannel("phone") ? "mensagens e ligações" : "conversas"} são distribuídas, e quanto cada pessoa aguenta ao mesmo tempo, para ninguém ficar sobrecarregado e o cliente ser atendido rápido.`}
           actions={
             <Button asChild variant="outline">
               <Link to="/fila/painel">
@@ -208,15 +217,16 @@ export function RoutingPage() {
               Ajustes finos
             </h2>
             <p className="mt-1 text-[13px] text-muted-foreground">
-              Ordem de quem é atendido primeiro, quanto tempo esperar, discagem automática e escuta
-              de ligação.
+              {hasChannel("phone")
+                ? "Ordem de quem é atendido primeiro, quanto tempo esperar, discagem automática e escuta de ligação."
+                : "Ordem de quem é atendido primeiro e quanto tempo esperar."}
             </p>
           </div>
           <Tabs defaultValue="regras" className="mt-5">
             <TabsList className="mb-4 flex-wrap">
               <TabsTrigger value="regras">Ordem e espera</TabsTrigger>
-              <TabsTrigger value="discagem">Discagem</TabsTrigger>
-              <TabsTrigger value="supervisao">Supervisão</TabsTrigger>
+              {hasChannel("phone") && <TabsTrigger value="discagem">Discagem</TabsTrigger>}
+              {hasChannel("phone") && <TabsTrigger value="supervisao">Supervisão</TabsTrigger>}
             </TabsList>
             <TabsContent value="regras" className="max-w-3xl">
               <RulesPanel accountId={accountId} />

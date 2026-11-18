@@ -1,3 +1,4 @@
+import { hasChannel } from "@/lib/edition";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { Loader2, Video } from "lucide-react";
@@ -27,7 +28,7 @@ interface Props {
 }
 
 // "Iniciar reunião": abre a sala Vínculo do evento (ou cria uma agora) e leva o vendedor para dentro.
-export function StartMeetingButton({
+function StartMeetingButtonImpl({
   eventId,
   contactId,
   dealId,
@@ -105,4 +106,9 @@ export function StartMeetingButton({
       {label ?? (existing.data ? (done ? "Ver reunião" : "Entrar na sala") : "Iniciar reunião")}
     </Button>
   );
+}
+
+/** Só aparece quando a edição tem o canal (ver src/lib/edition.ts). */
+export function StartMeetingButton(props: Parameters<typeof StartMeetingButtonImpl>[0]) {
+  return hasChannel("video") ? <StartMeetingButtonImpl {...props} /> : null;
 }

@@ -19,7 +19,7 @@ describe("central de ajuda do operador", () => {
 
   it("acha FAQ e guia pelo assunto", () => {
     const r = searchHelp("QR");
-    expect(r.guias.map((g) => g.slug)).toContain("whatsapp-outras-formas");
+    expect(r.guias.map((g) => g.slug)).toContain("whatsapp-qr-code");
     expect(r.faq.length).toBeGreaterThan(0);
   });
 
@@ -31,7 +31,7 @@ describe("central de ajuda do operador", () => {
 
   it("slugs únicos e guia achado pelo slug", () => {
     expect(new Set(guias.map((g) => g.slug)).size).toBe(guias.length);
-    expect(guideBySlug("chat-do-site")?.titulo).toBe("Colocar o chat no site");
+    expect(guideBySlug("whatsapp-qr-code")?.titulo).toBe("Conectar o WhatsApp por QR Code");
     expect(guideBySlug("nao-existe")).toBeUndefined();
   });
 
@@ -48,31 +48,66 @@ describe("central de ajuda do operador", () => {
       expect(guideBySlug(slug)).toBeDefined();
   });
 
-  it("WhatsApp: QR Code é o caminho da edição de pós-venda, sem jargão de servidor", () => {
+  it("WhatsApp por QR Code vem primeiro, sem jargão de servidor", () => {
     const all = JSON.stringify({ faq, guias });
     // a ajuda explica a conexão por QR Code, mas sem variável de ambiente nem marcas de terceiros
     expect(all).not.toMatch(
       new RegExp(["AUTHENTICATION_API_KEY", "Z" + "-API", "três jeitos"].join("|")),
     );
-    expect(temas.find((t) => t.id === "whatsapp")?.guias[0]).toBe("whatsapp-oficial-zernio");
-    expect(guideBySlug("whatsapp-meta-direta")).toBeUndefined();
-    expect(guideBySlug("whatsapp-qr-evolution")).toBeUndefined();
+    expect(temas[0]?.guias).toEqual(["whatsapp-qr-code", "instagram"]);
+    expect(GUIA_DO_PROVEDOR["evolution"]).toBe("whatsapp-qr-code");
+    expect(GUIA_DO_PROVEDOR["zernio"]).toBe("instagram");
   });
 
-  it("tem guia de Ligações e de Campanhas de WhatsApp", () => {
-    expect(guideBySlug("ligacoes-zadarma-elevenlabs")?.passos.join(" ")).toMatch(/ElevenLabs/);
-    expect(guideBySlug("campanha-whatsapp")?.passos.join(" ")).toMatch(/Agendar/);
-    expect(guideBySlug("campanha-whatsapp")?.link?.to).toBe("/campanhas/whatsapp");
+  it("os guias essenciais do pós-venda existem, na ordem de quem está começando", () => {
+    expect(guias.map((g) => g.slug)).toEqual([
+      "whatsapp-qr-code",
+      "instagram",
+      "base-de-conhecimento",
+      "atendente-de-ia",
+      "regras-de-pos-venda",
+      "caixa-de-entrada",
+      "chamados",
+      "pesquisa-de-satisfacao",
+      "equipe-e-papeis",
+    ]);
+    expect(temas.map((t) => t.id)).toEqual(["canais", "agente", "posvenda", "atender", "equipe"]);
+    expect(guideBySlug("regras-de-pos-venda")?.link?.to).toBe("/pos-venda");
   });
 
-  it("FAQ cobre as dúvidas das mentorias", () => {
+  it("só fala dos dois canais do produto: WhatsApp por QR Code e Instagram", () => {
+    const all = JSON.stringify({ faq, guias, temas });
+    expect(all).not.toMatch(
+      /Messenger|Telegram|TikTok|LinkedIn|YouTube|Threads|Zadarma|ElevenLabs|LiveKit|Resend|OpenAI|Anthropic|Outlook|Microsoft|Google|chat do site|n[uú]mero oficial|WhatsApp Oficial|modelo aprovado|liga[cç][oõ]es|telefonia|\bSMS\b|campanha|funil|origem dos leads/i,
+    );
+    // a Zernio só aparece por causa do Instagram
+    for (const g of guias)
+      if (/zernio/i.test(JSON.stringify(g))) expect(g.slug, g.slug).toBe("instagram");
+    for (const slug of ["whatsapp-oficial-zernio", "ligacoes-zadarma-elevenlabs", "chat-do-site"])
+      expect(guideBySlug(slug), slug).toBeUndefined();
+  });
+
+  it("convite: link para copiar e mandar pelo WhatsApp, sem mandar configurar e-mail", () => {
+    const guia = guideBySlug("equipe-e-papeis")?.passos.join(" ") ?? "";
+    expect(guia).toMatch(/link/);
+    expect(guia).toMatch(/WhatsApp/);
+    expect(guia).not.toMatch(/vai por e-mail|sai por e-mail/);
+  });
+
+  it("texto sem travessão e sem o nome do produto antigo", () => {
+    const all = JSON.stringify({ faq, guias, temas });
+    expect(all).not.toMatch(/—|nexus|nexa|viver de ia/i);
+  });
+
+  it("FAQ cobre as dúvidas de quem está começando", () => {
     for (const termo of [
-      "não oficial",
-      "outra ferramenta",
+      "QR Code",
+      "caiu",
+      "Instagram",
       "convite",
-      "IA própria",
-      "tradução",
       "chaves",
+      "genérica",
+      "tradução",
       "Refazer",
     ])
       expect(searchHelp(termo).faq.length, termo).toBeGreaterThan(0);

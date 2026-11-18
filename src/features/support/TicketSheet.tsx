@@ -1,3 +1,4 @@
+import { hasChannel } from "@/lib/edition";
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import {
@@ -145,7 +146,10 @@ export function TicketSheet({ accountId, ticketId, onClose }: Props) {
     }
   }
 
-  const canReachCustomer = Boolean(t?.conversation_id || t?.contact?.email);
+  // resposta por e-mail só existe com o canal e-mail na edição; sem ele, vai pela conversa
+  const canReachCustomer = Boolean(
+    t?.conversation_id || (hasChannel("email") && t?.contact?.email),
+  );
 
   return (
     <Sheet open={Boolean(ticketId)} onOpenChange={(o) => !o && onClose()}>
@@ -331,7 +335,11 @@ export function TicketSheet({ accountId, ticketId, onClose }: Props) {
                     !canReachCustomer && "opacity-40",
                   )}
                   title={
-                    canReachCustomer ? undefined : "Chamado sem conversa nem e-mail do cliente"
+                    canReachCustomer
+                      ? undefined
+                      : hasChannel("email")
+                        ? "Chamado sem conversa nem e-mail do cliente"
+                        : "Chamado sem conversa com o cliente"
                   }
                 >
                   Responder ao cliente
@@ -412,7 +420,7 @@ function EventRow({ e, author }: { e: TicketEvent; author: string | undefined })
   if (e.kind === "assign") text = meta["to"] ? "Responsável alterado" : "Responsável removido";
   if (e.kind === "created") text = "Chamado aberto";
   if (e.kind === "csat")
-    text = `Cliente avaliou: ${meta["score"]}/5${e.body ? ` — “${e.body}”` : ""}`;
+    text = `Cliente avaliou: ${meta["score"]}/5${e.body ? `: “${e.body}”` : ""}`;
   return (
     <li className="flex items-center gap-2 text-[12px] text-muted-foreground">
       <Icon className={cn("size-3.5 shrink-0", e.kind === "sla" && "text-danger")} aria-hidden />

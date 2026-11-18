@@ -1,3 +1,4 @@
+import { hasChannel } from "@/lib/edition";
 import { useMemo, useState } from "react";
 import { AlertCircle, CalendarDays, Info, Loader2, Settings2 } from "lucide-react";
 import { toast } from "sonner";
@@ -110,7 +111,7 @@ export function StaffingTab({ accountId, canEdit }: { accountId: string; canEdit
       <EmptyState
         icon={CalendarDays}
         title="Ainda não dá para dizer quantas pessoas você precisa"
-        description="A previsão usa as últimas semanas de ligações, conversas e chamados. Assim que a operação rodar por uma semana, a resposta aparece aqui."
+        description="A previsão usa as últimas semanas de conversas e chamados. Assim que a operação rodar por uma semana, a resposta aparece aqui."
       />
     );
 
@@ -295,8 +296,8 @@ export function StaffingTab({ accountId, canEdit }: { accountId: string; canEdit
               ))}
               <li className="flex items-start gap-2 pt-2 text-[12px] text-muted-foreground">
                 <Info className="mt-0.5 size-3.5 shrink-0" aria-hidden />
-                Ligações e chat usam a fórmula de Erlang C (fila em tempo real). Chamados contam
-                como horas de trabalho.
+                {hasChannel("phone") ? "Ligações e chat usam" : "As conversas usam"} a fórmula de
+                Erlang C (fila em tempo real). Chamados contam como horas de trabalho.
               </li>
             </ul>
           )}

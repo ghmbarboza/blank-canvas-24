@@ -2,11 +2,9 @@ import { Link } from "@tanstack/react-router";
 import {
   ArrowRight,
   Bot,
-  CalendarDays,
   CircleHelp,
-  Headphones,
+  HeartHandshake,
   Inbox,
-  KanbanSquare,
   MessageCircle,
   Users,
   type LucideIcon,
@@ -22,12 +20,10 @@ import { atualizadoEm, faq, guideBySlug, temas, type HelpGuide } from "./content
 const dataBr = (iso: string) => iso.split("-").reverse().join("/");
 
 const ICONES: Record<string, LucideIcon> = {
-  whatsapp: MessageCircle,
+  canais: MessageCircle,
   agente: Bot,
-  ligacoes: Headphones,
-  agenda: CalendarDays,
+  posvenda: HeartHandshake,
   atender: Inbox,
-  vender: KanbanSquare,
   equipe: Users,
 };
 
@@ -101,12 +97,12 @@ export function HelpCenterPage() {
       />
       <div className="flex-1 overflow-y-auto px-4 py-5 sm:px-6">
         <HelpPage
-          placeholderBusca="Buscar: WhatsApp, campanha, ligação, convite, chave, IA…"
+          placeholderBusca="Buscar: WhatsApp, Instagram, regras, pesquisa, convite, IA…"
           secoes={secoes}
           atalhos={[
-            { pergunta: "Como conectar o WhatsApp da empresa", secao: "whatsapp" },
-            { pergunta: "Como ligar e atender pelo navegador", secao: "ligacoes" },
-            { pergunta: "O convite não chegou por e-mail", secao: "duvidas" },
+            { pergunta: "Como conectar o WhatsApp da empresa", secao: "canais" },
+            { pergunta: "Como ligar as regras de pós-venda", secao: "posvenda" },
+            { pergunta: "Como convidar a equipe", secao: "equipe" },
             { pergunta: "Por que a IA não respondeu?", secao: "duvidas" },
           ]}
           naoAchou={{

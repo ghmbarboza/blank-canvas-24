@@ -1,3 +1,4 @@
+import { hasChannel } from "@/lib/edition";
 import { useState } from "react";
 import { Loader2, Phone } from "lucide-react";
 import { toast } from "sonner";
@@ -19,7 +20,7 @@ interface Props {
 }
 
 // Clicar para ligar: usa o telefone do navegador quando montado; senão, só o callback da Zadarma.
-export function CallButton({
+function CallButtonImpl({
   contactId = null,
   phone = null,
   name = null,
@@ -63,4 +64,9 @@ export function CallButton({
       {size !== "icon" && label}
     </Button>
   );
+}
+
+/** Só aparece quando a edição tem o canal (ver src/lib/edition.ts). */
+export function CallButton(props: Parameters<typeof CallButtonImpl>[0]) {
+  return hasChannel("phone") ? <CallButtonImpl {...props} /> : null;
 }

@@ -67,7 +67,7 @@ export function AttributionTab({ accountId, range }: { accountId: string; range:
           rows={r.campaigns}
           rowKey={(c) => `${c.source ?? ""}:${c.campaign}`}
           caption="Leads, vendas e receita por campanha"
-          empty="Nenhum lead com campanha no período. Anúncios pela Zernio, formulários com UTM e links com ?utm_campaign= aparecem aqui."
+          empty="Nenhum lead com campanha no período. Formulários com UTM e links com ?utm_campaign= aparecem aqui."
           columns={[
             {
               label: "Campanha",

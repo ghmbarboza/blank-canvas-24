@@ -510,12 +510,12 @@ const SALES_SEGMENTS: SegmentTemplate[] = [
         {
           shortcut: "proposta",
           title: "Envio de proposta",
-          body: "Mandei a proposta no seu e-mail. Posso te ligar amanhã para passar os pontos principais?",
+          body: "Mandei a proposta por aqui. Posso te passar os pontos principais amanhã?",
         },
         {
           shortcut: "onboarding",
           title: "Boas-vindas",
-          body: "Bem-vindo(a), {{primeiro_nome}}. Vou te acompanhar na implantação. Qual o melhor horário para a primeira reunião?",
+          body: "Bem-vindo(a), {{primeiro_nome}}. Vou te acompanhar na implantação. Qual o melhor horário para a nossa primeira conversa?",
         },
       ],
       cadences: [

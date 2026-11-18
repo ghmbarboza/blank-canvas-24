@@ -1,5 +1,6 @@
+import { hasChannel } from "@/lib/edition";
 import { useState } from "react";
-import { Mail, MessageSquare, Phone, Settings2, Users } from "lucide-react";
+import { LifeBuoy, Mail, MessageSquare, Phone, Settings2, Users } from "lucide-react";
 
 import { EmptyState } from "@/components/common/EmptyState";
 import { Button } from "@/components/ui/button";
@@ -124,8 +125,16 @@ function MemberCard({
         </Button>
       </div>
       {on && row.agent && (
-        <div className={cn("mt-3 grid grid-cols-3 gap-2", away && "opacity-60")}>
-          <Cell icon={Phone} label="ligações" used={live?.voice ?? 0} cap={row.agent.cap_voice} />
+        <div
+          className={cn(
+            "mt-3 grid gap-2",
+            hasChannel("phone") ? "grid-cols-3" : "grid-cols-2",
+            away && "opacity-60",
+          )}
+        >
+          {hasChannel("phone") && (
+            <Cell icon={Phone} label="ligações" used={live?.voice ?? 0} cap={row.agent.cap_voice} />
+          )}
           <Cell
             icon={MessageSquare}
             label="conversas"
@@ -133,8 +142,8 @@ function MemberCard({
             cap={row.agent.cap_chat}
           />
           <Cell
-            icon={Mail}
-            label="e-mails e chamados"
+            icon={hasChannel("email") ? Mail : LifeBuoy}
+            label={hasChannel("email") ? "e-mails e chamados" : "chamados"}
             used={live?.other ?? 0}
             cap={row.agent.cap_email + row.agent.cap_task}
           />

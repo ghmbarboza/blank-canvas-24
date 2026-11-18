@@ -213,8 +213,9 @@ export const CAUTIONS: readonly { title: string; detail: string }[] = [
     detail: "Usado assim, ele pode ser bloqueado pelo WhatsApp.",
   },
   {
-    title: "Para volume, o caminho é o número oficial da Meta",
-    detail: "Quando a operação crescer, migre para a conexão oficial do WhatsApp.",
+    title: "Cresceu? Aumente o ritmo com calma",
+    detail:
+      "Mais clientes pedem mais mensagens. Suba o volume aos poucos e acompanhe as respostas.",
   },
 ];
 
@@ -229,8 +230,9 @@ export const AFTER_CLASS: readonly { title: string; detail: string }[] = [
     detail: "Um endereço onde o cliente acompanha pedidos e chamados sem precisar perguntar.",
   },
   {
-    title: "Ligue mais canais",
-    detail: "Instagram, e-mail e telefone caem na mesma Caixa de entrada.",
+    title: "Ligue o Instagram",
+    detail:
+      "Em Canais, conecte o Instagram da empresa. As mensagens diretas caem na mesma Caixa de entrada do WhatsApp.",
   },
   {
     title: "Ajuste os textos com a sua voz",

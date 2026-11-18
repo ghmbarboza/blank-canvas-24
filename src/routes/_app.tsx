@@ -4,7 +4,8 @@ import { Outlet, createFileRoute, useNavigate, useRouterState } from "@tanstack/
 import { useAuth } from "@/lib/auth";
 import { useAccount } from "@/lib/account";
 import { AppShell } from "@/components/layout/AppShell";
-import { ModuleOffPage } from "@/components/layout/ModuleOffPage";
+import { EditionOffPage, ModuleOffPage } from "@/components/layout/ModuleOffPage";
+import { isRouteHidden } from "@/lib/edition";
 import { enabledModules, moduleForPath } from "@/components/layout/modules";
 import { FullScreenLoader } from "@/components/layout/FullScreenLoader";
 import { useEnsurePlatform } from "@/features/setup/ensure";
@@ -40,6 +41,14 @@ function AppLayout() {
   // Recurso extra desligado: a rota mostra onde ligar, em vez da tela (o servidor também recusa).
   const extra = moduleForPath(path);
   const off = extra && !enabledModules(current?.settings).has(extra.id) ? extra : null;
+
+  // Tela de um canal que esta edição não tem (ligações, reuniões, campanhas): não abre.
+  if (isRouteHidden(path))
+    return (
+      <AppShell>
+        <EditionOffPage />
+      </AppShell>
+    );
 
   return (
     <AppShell>{off ? <ModuleOffPage module={off} canEnable={isAdmin} /> : <Outlet />}</AppShell>

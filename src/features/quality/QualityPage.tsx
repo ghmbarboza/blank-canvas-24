@@ -23,7 +23,7 @@ export function QualityPage({ tab, onTab }: { tab: QualityTab; onTab: (t: Qualit
         title="Qualidade"
         description={
           isManager
-            ? "Toda ligação, conversa e e-mail com nota da IA, motivo e trecho como prova"
+            ? "Toda conversa com nota da IA, motivo e trecho como prova"
             : "Suas notas, com o motivo e o trecho da conversa"
         }
       />

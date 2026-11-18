@@ -1,6 +1,8 @@
 // Catálogo da equipe de IA (compartilhado entre a tela e o servidor): papéis, ferramentas internas,
 // ritmo de gente e os modelos prontos por papel. Nada aqui chama rede.
 
+import { EDITION, hasPlatform, hasProvider, type Edition } from "@/lib/edition";
+
 export type AgentRole =
   "reception" | "sdr" | "sac" | "collection" | "scheduling" | "post_sale" | "supervisor" | "custom";
 
@@ -277,6 +279,11 @@ export const INTERNAL_TOOLS: InternalToolDef[] = [
 ];
 
 /** Ferramentas que todo agente tem: passar para outro agente e para humano. */
+/** Ferramentas que a tela oferece: a que exige uma integração fora da edição (Asaas) some. */
+export function internalToolsFor(edition: Edition = EDITION): InternalToolDef[] {
+  return INTERNAL_TOOLS.filter((t) => t.requires !== "asaas" || hasProvider("asaas", edition));
+}
+
 export const CONTROL_TOOLS = ["route_to", "handoff_to_human"] as const;
 
 export function internalTool(slug: string): InternalToolDef | undefined {
@@ -818,6 +825,11 @@ export const AGENT_CHANNELS = [
 ] as const;
 
 export type AgentChannel = (typeof AGENT_CHANNELS)[number]["id"];
+
+/** Canais que a edição oferece para escolher no agente (ver src/lib/edition.ts). */
+export function agentChannelsFor(edition: Edition = EDITION) {
+  return AGENT_CHANNELS.filter((c) => hasPlatform(c.id, edition));
+}
 
 export function agentChannelLabel(id: string): string {
   return AGENT_CHANNELS.find((c) => c.id === id)?.label ?? id;

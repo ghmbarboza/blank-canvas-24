@@ -2,12 +2,15 @@ import { Loader2, Plus } from "lucide-react";
 
 import { NODE_ICON } from "./nodeMeta";
 import { buildSentence } from "./sentence";
-import { TEMPLATES, type AutomationTemplate } from "./templates";
+import { templatesFor, type AutomationTemplate } from "./templates";
 
 type Props = { busy: boolean; onPick: (t: AutomationTemplate | null) => void };
 
 // "Comece por um modelo": os modelos prontos do produto, cada um com o desenho dos seus passos.
 export function TemplateGallery({ busy, onPick }: Props) {
+  const templates = templatesFor();
+  // edição em que nenhum modelo se aplica (todos usam um canal ausente): a seção some
+  if (templates.length === 0) return null;
   return (
     <section aria-labelledby="tpl-title" className="space-y-4">
       <div>
@@ -20,7 +23,7 @@ export function TemplateGallery({ busy, onPick }: Props) {
         </p>
       </div>
       <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        {TEMPLATES.map((t) => {
+        {templates.map((t) => {
           const s = buildSentence(t.trigger, t.graph, 3);
           return (
             <li key={t.key}>

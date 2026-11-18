@@ -21,7 +21,7 @@ import { formatNumber } from "@/lib/format";
 
 import { useAutomationAction, type Automation } from "./api";
 import { DEFAULT_GUARDS, type ExitRules, type Guards, type Trigger } from "./engine";
-import { EVENT_LABEL } from "./triggerSummary";
+import { EVENT_LABEL, eventInEdition } from "./triggerSummary";
 
 interface Props {
   accountId: string;
@@ -32,7 +32,7 @@ interface Props {
 
 const DAYS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 const EXITS: { key: keyof ExitRules; label: string }[] = [
-  { key: "on_reply", label: "Respondeu em qualquer canal (pausa a cadência)" },
+  { key: "on_reply", label: "Respondeu (pausa a cadência)" },
   { key: "on_meeting", label: "Marcou uma reunião" },
   { key: "on_customer", label: "Virou cliente" },
   { key: "on_unsubscribe", label: "Descadastrou ou marcou como spam" },
@@ -174,11 +174,13 @@ export function SettingsPanel({ accountId, automation, readOnly, onChange }: Pro
                   <SelectValue placeholder="Escolha" />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.entries(EVENT_LABEL).map(([k, v]) => (
-                    <SelectItem key={k} value={k}>
-                      {v}
-                    </SelectItem>
-                  ))}
+                  {Object.entries(EVENT_LABEL)
+                    .filter(([k]) => eventInEdition(k))
+                    .map(([k, v]) => (
+                      <SelectItem key={k} value={k}>
+                        {v}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>

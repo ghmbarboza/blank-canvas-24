@@ -1,3 +1,4 @@
+import { hasChannel } from "@/lib/edition";
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import {
@@ -79,7 +80,7 @@ function SourceLink({ item }: { item: MyItem }) {
         </Link>
       </Button>
     );
-  if (item.source_table === "calls" && item.source_id)
+  if (item.source_table === "calls" && item.source_id && hasChannel("phone"))
     return (
       <Button asChild size="sm" variant="outline" className="rounded-full">
         <Link to="/ligacoes" search={{ chamada: item.source_id }}>
@@ -237,7 +238,7 @@ function ActiveCard({ item, accountId }: { item: MyItem; accountId: string }) {
       )}
       <div className="mt-3 flex flex-wrap gap-2">
         <SourceLink item={item} />
-        {item.kind === "callback" && item.phone && sp && (
+        {item.kind === "callback" && item.phone && sp && hasChannel("phone") && (
           <Button
             size="sm"
             className="rounded-full"
@@ -332,8 +333,8 @@ function WrapCard({ item, accountId }: { item: MyItem; accountId: string }) {
       {!ready ? (
         <div className="mt-3 space-y-2" aria-live="polite">
           <p className="text-[13px] text-muted-foreground">
-            A IA está lendo o atendimento para preencher o resumo. Leva alguns segundos (ligação
-            espera a transcrição).
+            A IA está lendo o atendimento para preencher o resumo. Leva alguns segundos
+            {hasChannel("phone") ? " (ligação espera a transcrição)" : ""}.
           </p>
           <Skeleton className="h-14 w-full" />
         </div>
@@ -543,10 +544,14 @@ export function MyQueuePage() {
   const header = (
     <PageHeader
       title="Minha fila"
-      description="Ligações, conversas, chamados e retornos numa fila só."
+      description={
+        hasChannel("phone")
+          ? "Ligações, conversas, chamados e retornos numa fila só."
+          : "Conversas, chamados e tarefas numa fila só."
+      }
       actions={
         <>
-          {isAgent && (
+          {isAgent && hasChannel("phone") && (
             <Button variant="outline" className="rounded-full" onClick={() => setCallback(true)}>
               <PhoneForwarded className="size-4" />{" "}
               <span className="hidden sm:inline">Agendar retorno</span>
@@ -659,8 +664,9 @@ export function MyQueuePage() {
                 <Skeleton className="h-24 w-full" />
               ) : active.length === 0 ? (
                 <p className="rounded-xl border border-dashed border-border p-5 text-[13px] text-muted-foreground">
-                  Nada com você agora. Fique disponível e use “Pegar o próximo”, ou espere: ligação
-                  chega sozinha no seu ramal quando você é a melhor pessoa para atender.
+                  {hasChannel("phone")
+                    ? "Nada com você agora. Fique disponível e use “Pegar o próximo”, ou espere: ligação chega sozinha no seu ramal quando você é a melhor pessoa para atender."
+                    : "Nada com você agora. Fique disponível e use “Pegar o próximo”."}
                 </p>
               ) : (
                 active.map((i) => <ActiveCard key={i.id} item={i} accountId={accountId} />)
@@ -670,17 +676,28 @@ export function MyQueuePage() {
           <aside className="space-y-3 text-[13px] text-muted-foreground">
             <div className="rounded-xl border border-border bg-surface p-4">
               <p className="eyebrow mb-2">Sua capacidade</p>
-              <p>
-                Ao mesmo tempo: {me.data?.agent?.cap_voice ?? 1} ligação, ou{" "}
-                {me.data?.agent?.cap_chat ?? 4} conversas, ou {me.data?.agent?.cap_email ?? 6}{" "}
-                e-mails. Misturar canais soma a carga.
-              </p>
+              {hasChannel("phone") ? (
+                <p>
+                  Ao mesmo tempo: {me.data?.agent?.cap_voice ?? 1} ligação, ou{" "}
+                  {me.data?.agent?.cap_chat ?? 4} conversas, ou {me.data?.agent?.cap_email ?? 6}{" "}
+                  e-mails. Misturar canais soma a carga.
+                </p>
+              ) : (
+                <p>
+                  Ao mesmo tempo: {me.data?.agent?.cap_chat ?? 4} conversas e{" "}
+                  {me.data?.agent?.cap_task ?? 6} chamados ou tarefas.
+                </p>
+              )}
             </div>
             <div className="rounded-xl border border-border bg-surface p-4">
-              <p className="eyebrow mb-2">Depois de cada ligação</p>
+              <p className="eyebrow mb-2">
+                {hasChannel("phone") ? "Depois de cada ligação" : "Depois de cada atendimento"}
+              </p>
               <p>
-                A IA escreve o resumo, o motivo e a próxima ação. Você só confere e confirma. Por{" "}
-                {me.data?.agent?.wrap_up_seconds ?? 60}s nenhuma ligação nova toca para você.
+                A IA escreve o resumo, o motivo e a próxima ação. Você só confere e confirma.
+                {hasChannel("phone")
+                  ? ` Por ${me.data?.agent?.wrap_up_seconds ?? 60}s nenhuma ligação nova toca para você.`
+                  : ""}
               </p>
             </div>
           </aside>

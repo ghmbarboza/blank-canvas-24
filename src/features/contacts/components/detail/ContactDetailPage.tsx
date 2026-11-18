@@ -32,6 +32,7 @@ import { useClassifyContact, useContact, useContactConversations } from "../../a
 import { isPlatformSource, lifecycleLabel } from "../../types";
 import { ContactFormDialog } from "../ContactFormDialog";
 import { EmailComposerDialog } from "@/features/email/EmailComposerDialog";
+import { hasChannel } from "@/lib/edition";
 import { NewTicketDialog } from "@/features/support/NewTicketDialog";
 import { LeadScoreCard } from "@/features/sdr/LeadScoreCard";
 import { ContactAiPanel } from "./ContactAiPanel";
@@ -142,14 +143,16 @@ export function ContactDetailPage({ contactId }: Props) {
             >
               <MessageSquare aria-hidden /> Abrir conversa
             </Button>
-            <Button
-              variant="outline"
-              onClick={() => setEmailing(true)}
-              disabled={!c.email}
-              title={c.email ? undefined : "Cadastre um e-mail para enviar"}
-            >
-              <Mail aria-hidden /> Enviar e-mail
-            </Button>
+            {hasChannel("email") && (
+              <Button
+                variant="outline"
+                onClick={() => setEmailing(true)}
+                disabled={!c.email}
+                title={c.email ? undefined : "Cadastre um e-mail para enviar"}
+              >
+                <Mail aria-hidden /> Enviar e-mail
+              </Button>
+            )}
             <CallButton contactId={c.id} phone={c.phone} name={c.name} />
             <AiCallButton contactId={c.id} phone={c.phone} name={c.name} />
             <StartMeetingButton

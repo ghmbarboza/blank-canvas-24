@@ -42,8 +42,8 @@ export function QualitySetupStep({ accountId, onDone }: { accountId: string; onD
       <div>
         <h3 className="font-display text-[18px] font-medium">Qualidade em todas as conversas</h3>
         <p className="mt-1 text-[13px] text-muted-foreground">
-          A IA confere cada ligação, conversa e e-mail que termina, dá nota e mostra o trecho como
-          prova. Escolha um modelo pronto; dá para ajustar depois em Qualidade.
+          A IA confere cada conversa que termina, dá nota e mostra o trecho como prova. Escolha um
+          modelo pronto; dá para ajustar depois em Qualidade.
         </p>
       </div>
 

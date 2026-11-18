@@ -39,7 +39,7 @@ export function useEnsurePlatform(accountId: string | null, isAdmin: boolean): v
       .catch((e: unknown) => {
         // não trava o app, mas não cala: sem isso as rotinas automáticas ficam paradas
         toast.error(
-          `Não deu para preparar as rotinas automáticas (${errorMessage(e)}). Recarregue a página; se continuar, veja Ajustes › Integrações.`,
+          `Não deu para preparar as rotinas automáticas (${errorMessage(e)}). Recarregue a página e tente de novo.`,
           { id: "platform-ensure" },
         );
       });

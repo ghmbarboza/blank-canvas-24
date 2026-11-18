@@ -1,3 +1,4 @@
+import { hasProvider } from "@/lib/edition";
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Loader2, Plug } from "lucide-react";
@@ -8,7 +9,7 @@ import { useAccount } from "@/lib/account";
 import { errorMessage } from "@/lib/functions";
 
 import { agentsApi, useAgentTools, useComposioState, useToggleTool, type Agent } from "./api";
-import { composioToolkit, INTERNAL_TOOLS } from "./catalog";
+import { composioToolkit, internalToolsFor } from "./catalog";
 
 interface ToolInfo {
   slug: string;
@@ -68,7 +69,7 @@ export function AgentToolsPanel({ accountId, agent }: { accountId: string; agent
           Da plataforma
         </h3>
         <ul className="divide-y divide-border rounded-xl border border-border">
-          {INTERNAL_TOOLS.map((t) => (
+          {internalToolsFor().map((t) => (
             <li key={t.slug} className="flex items-start justify-between gap-4 px-4 py-3">
               <span>
                 <span className="block text-[13px] font-medium">{t.label}</span>
@@ -93,56 +94,58 @@ export function AgentToolsPanel({ accountId, agent }: { accountId: string; agent
         </ul>
       </section>
 
-      <section aria-labelledby="t-cp">
-        <h3 id="t-cp" className="eyebrow mb-2">
-          Nos seus apps (Composio)
-        </h3>
-        {active.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-border p-4 text-[13px] text-muted-foreground">
-            Nenhum app conectado ainda. Conecte Gmail, Agenda, HubSpot, Planilhas e outros em{" "}
-            <Link
-              to="/equipe-ia/ferramentas"
-              className="inline-flex items-center gap-1 font-medium text-foreground underline"
-            >
-              <Plug className="size-3.5" aria-hidden /> Ferramentas conectadas
-            </Link>
-            .
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {active.map((c) => {
-              const def = composioToolkit(c.toolkit);
-              return (
-                <div key={c.id} className="rounded-xl border border-border">
-                  <p className="border-b border-border px-4 py-2 text-[13px] font-semibold">
-                    {def?.name ?? c.toolkit}
-                  </p>
-                  <ul className="divide-y divide-border">
-                    {(def?.suggested ?? []).map((s) => (
-                      <li
-                        key={s.slug}
-                        className="flex items-center justify-between gap-4 px-4 py-2.5"
-                      >
-                        <span className="text-[13px]">{s.label}</span>
-                        {pending === s.slug ? (
-                          <Loader2 className="size-4 animate-spin" />
-                        ) : (
-                          <Switch
-                            checked={has("composio", s.slug)}
-                            disabled={!isManager || !!pending}
-                            onCheckedChange={(v) => void flip("composio", s.slug, v, c.toolkit)}
-                            aria-label={s.label}
-                          />
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </section>
+      {hasProvider("composio") && (
+        <section aria-labelledby="t-cp">
+          <h3 id="t-cp" className="eyebrow mb-2">
+            Nos seus apps (Composio)
+          </h3>
+          {active.length === 0 ? (
+            <div className="rounded-xl border border-dashed border-border p-4 text-[13px] text-muted-foreground">
+              Nenhum app conectado ainda. Conecte Gmail, Agenda, HubSpot, Planilhas e outros em{" "}
+              <Link
+                to="/equipe-ia/ferramentas"
+                className="inline-flex items-center gap-1 font-medium text-foreground underline"
+              >
+                <Plug className="size-3.5" aria-hidden /> Ferramentas conectadas
+              </Link>
+              .
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {active.map((c) => {
+                const def = composioToolkit(c.toolkit);
+                return (
+                  <div key={c.id} className="rounded-xl border border-border">
+                    <p className="border-b border-border px-4 py-2 text-[13px] font-semibold">
+                      {def?.name ?? c.toolkit}
+                    </p>
+                    <ul className="divide-y divide-border">
+                      {(def?.suggested ?? []).map((s) => (
+                        <li
+                          key={s.slug}
+                          className="flex items-center justify-between gap-4 px-4 py-2.5"
+                        >
+                          <span className="text-[13px]">{s.label}</span>
+                          {pending === s.slug ? (
+                            <Loader2 className="size-4 animate-spin" />
+                          ) : (
+                            <Switch
+                              checked={has("composio", s.slug)}
+                              disabled={!isManager || !!pending}
+                              onCheckedChange={(v) => void flip("composio", s.slug, v, c.toolkit)}
+                              aria-label={s.label}
+                            />
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </section>
+      )}
     </div>
   );
 }

@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import { CopyField } from "@/features/channels/CopyField";
 import { inviteLink, useCreateInvite } from "./api";
 import { emailApi } from "@/features/email/api";
+import { hasChannel } from "@/lib/edition";
 import { useIntegration } from "@/features/integrations/api";
 import { ASSIGNABLE_ROLES, ROLE_INFO, isAssignableRole, type AssignableRole } from "./roles";
 
@@ -64,6 +65,12 @@ export function InviteDialog({ accountId, open, onOpenChange }: Props) {
       {
         onSuccess: (invite) => {
           setLink(inviteLink(invite.token));
+          // Sem e-mail na edição o convite vai só pelo link (nenhuma integração é exigida).
+          if (!hasChannel("email")) {
+            setEmailed("not_configured");
+            toast.success("Convite criado. Copie o link e mande para a pessoa.");
+            return;
+          }
           // Issue #4: com o Resend conectado, o convite já sai por e-mail; o link continua para copiar.
           emailApi<{ ok: boolean; sent: boolean }>(accountId, "invite", { inviteId: invite.id })
             .then((r) => {
@@ -89,15 +96,19 @@ export function InviteDialog({ accountId, open, onOpenChange }: Props) {
             {link
               ? emailed === "sent"
                 ? `Enviamos o convite para ${email.trim()}. Se preferir, mande também este link. Vale por 3 dias e só uma vez.`
-                : `Mande para ${email.trim()} pelo WhatsApp ou e-mail. Vale por 3 dias e só uma vez.`
+                : hasChannel("email")
+                  ? `Mande para ${email.trim()} pelo WhatsApp ou e-mail. Vale por 3 dias e só uma vez.`
+                  : `Copie e mande para ${email.trim()} pelo WhatsApp. Vale por 3 dias e só uma vez.`
               : "A pessoa entra com o e-mail convidado."}
           </DialogDescription>
         </DialogHeader>
         <p className="flex gap-2 rounded-lg border border-note-line bg-note px-3 py-2 text-[12px] text-note-fg">
           <MailWarning className="mt-0.5 size-3.5 shrink-0" aria-hidden />
-          {canEmail
-            ? "O convite sai por e-mail pelo Resend da empresa. O link também fica disponível para copiar."
-            : "Sem o Resend conectado (Ajustes › Integrações), o convite não sai por e-mail: copie o link e mande você mesmo."}
+          {!hasChannel("email")
+            ? "O convite vira um link. Copie e mande para a pessoa pelo WhatsApp; ela entra com o e-mail que você informar aqui."
+            : canEmail
+              ? "O convite sai por e-mail pelo Resend da empresa. O link também fica disponível para copiar."
+              : "Sem o Resend conectado (Ajustes › Integrações), o convite não sai por e-mail: copie o link e mande você mesmo."}
         </p>
         {link ? (
           <>

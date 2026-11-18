@@ -75,7 +75,7 @@ export function OverviewTab({
       <EmptyState
         icon={Gauge}
         title="Nenhuma interação avaliada ainda"
-        description="Com um formulário de qualidade ativo, toda conversa, e-mail e ligação que terminar ganha nota da IA, com o trecho como prova."
+        description="Com um formulário de qualidade ativo, toda conversa que terminar ganha nota da IA, com o trecho como prova."
         action={
           isManager ? (
             <Button onClick={() => onTab("formularios")}>Configurar o formulário</Button>

@@ -1,3 +1,4 @@
+import { hasChannel } from "@/lib/edition";
 import { useState, type FormEvent } from "react";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -109,7 +110,9 @@ export function ZernioKeyForm({ accountId, state, onSaved }: FormProps) {
     save.mutate(apiKey.trim() || null, {
       onSuccess: (r) => {
         toast.success(
-          `Zernio conectada: ${r.accounts} ${r.accounts === 1 ? "conta" : "contas"}, ${r.whatsapp} de WhatsApp`,
+          hasChannel("whatsapp_official")
+            ? `Zernio conectada: ${r.accounts} ${r.accounts === 1 ? "conta" : "contas"}, ${r.whatsapp} de WhatsApp`
+            : "Chave da Zernio salva e testada.",
         );
         setApiKey("");
         onSaved?.();

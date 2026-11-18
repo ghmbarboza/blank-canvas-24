@@ -22,6 +22,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { zernio } from "@/features/channels/zernio-api";
+import { hasChannel, hasPlatform } from "@/lib/edition";
 import { formatNumber } from "@/lib/format";
 import { errorMessage } from "@/lib/functions";
 
@@ -85,7 +86,9 @@ export function SocialAutomations({ accountId }: { accountId: string }) {
     onSettled: () => qc.invalidateQueries({ queryKey: key(accountId) }),
   });
   const [open, setOpen] = useState(false);
-  const channels = list.data?.channels ?? [];
+  // só as redes da edição (Instagram; o Facebook volta se o Messenger entrar)
+  const channels = (list.data?.channels ?? []).filter((c) => hasPlatform(c.platform));
+  const both = hasChannel("messenger");
   const rows = list.data?.automations ?? [];
 
   return (
@@ -93,7 +96,7 @@ export function SocialAutomations({ accountId }: { accountId: string }) {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <h2 id="social-title" className="eyebrow text-subtle">
-            Instagram e Facebook
+            {both ? "Instagram e Facebook" : "Instagram"}
           </h2>
           <p className="mt-1 text-[13px] text-muted-foreground">
             Comentou a palavra-chave, recebe a DM na hora. A conversa entra na Caixa de entrada e o
@@ -116,11 +119,14 @@ export function SocialAutomations({ accountId }: { accountId: string }) {
       ) : channels.length === 0 ? (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-dashed border-border px-4 py-5">
           <p className="text-[13px] text-muted-foreground">
-            Conecte o Instagram ou o Facebook da empresa para criar automações de comentário e
-            story.
+            {both
+              ? "Conecte o Instagram ou o Facebook da empresa para criar automações de comentário e story."
+              : "Conecte o Instagram da empresa para criar automações de comentário e story."}
           </p>
           <Button size="sm" variant="outline" asChild>
-            <Link to="/canais">Conectar redes</Link>
+            <Link to="/canais" hash="instagram">
+              {both ? "Conectar redes" : "Conectar o Instagram"}
+            </Link>
           </Button>
         </div>
       ) : rows.length === 0 ? (

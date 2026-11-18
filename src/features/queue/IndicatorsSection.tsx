@@ -1,3 +1,4 @@
+import { hasChannel } from "@/lib/edition";
 import { useState } from "react";
 
 import { PLATFORM_LABEL } from "@/components/brand/platform-label";
@@ -136,8 +137,8 @@ export function IndicatorsSection({ accountId }: { accountId: string }) {
         <p className="text-[13px] text-danger">{errorMessage(q.error)}</p>
       ) : !q.data?.total || q.data.total.offered === 0 ? (
         <p className="rounded-xl border border-dashed border-border p-5 text-[13px] text-muted-foreground">
-          Ainda não há atendimentos no período. Os números aparecem assim que a primeira ligação,
-          conversa ou chamado passar pela fila.
+          Ainda não há atendimentos no período. Os números aparecem assim que a primeira conversa ou
+          chamado passar pela fila.
         </p>
       ) : (
         <div className="space-y-4">
@@ -176,7 +177,7 @@ export function IndicatorsSection({ accountId }: { accountId: string }) {
               </table>
             </div>
           )}
-          {q.data.by_ai_agent.length > 0 && (
+          {hasChannel("phone") && q.data.by_ai_agent.length > 0 && (
             <div className="overflow-x-auto rounded-xl border border-border bg-surface p-4 text-[13px]">
               <table className="w-full min-w-[520px]">
                 <thead>

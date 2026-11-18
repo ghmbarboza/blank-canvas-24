@@ -17,7 +17,7 @@ import { errorMessage } from "@/lib/functions";
 import { useEvaluations, type EvaluationFilters, type QualityEvaluation } from "./api";
 import { EvaluationSheet } from "./EvaluationSheet";
 import { ScoreBadge } from "./ScoreBadge";
-import { CHANNEL_LABEL, type QualityChannel } from "./scoring";
+import { CHANNEL_LABEL, qualityChannelsFor, type QualityChannel } from "./scoring";
 
 export function EvaluationsTab({
   accountId,
@@ -61,7 +61,7 @@ export function EvaluationsTab({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos os canais</SelectItem>
-            {(["call", "chat", "email"] as QualityChannel[]).map((c) => (
+            {qualityChannelsFor().map((c) => (
               <SelectItem key={c} value={c}>
                 {CHANNEL_LABEL[c]}
               </SelectItem>
@@ -129,7 +129,7 @@ export function EvaluationsTab({
           description={
             isManager
               ? "Amplie o período ou troque o filtro. As interações são avaliadas quando terminam."
-              : "Quando suas conversas e ligações terminarem, a nota aparece aqui com o motivo."
+              : "Quando suas conversas terminarem, a nota aparece aqui com o motivo."
           }
         />
       ) : (

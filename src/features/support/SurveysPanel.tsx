@@ -1,3 +1,4 @@
+import { hasChannel } from "@/lib/edition";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2, Plus, Send, Smile, ThumbsUp } from "lucide-react";
@@ -71,8 +72,8 @@ export function SurveysPanel({ accountId }: { accountId: string }) {
         <ul className="space-y-2">
           {(surveys.data ?? []).length === 0 && (
             <li className="rounded-2xl border border-dashed border-border px-4 py-8 text-center text-[12px] text-muted-foreground">
-              Nenhuma pesquisa ainda. Crie uma para um segmento de clientes e envie por e-mail ou
-              WhatsApp.
+              Nenhuma pesquisa ainda. Crie uma para um segmento de clientes e envie
+              {hasChannel("email") ? " por e-mail ou WhatsApp." : " pelo WhatsApp."}
             </li>
           )}
           {(surveys.data ?? []).map((s) => (
@@ -180,7 +181,8 @@ function NewSurveyDialog({
   const [question, setQuestion] = useState(
     "De 0 a 10, quanto você recomendaria a gente para um amigo?",
   );
-  const [channel, setChannel] = useState("email");
+  // sem o canal e-mail na edição, a pesquisa sai só pelo WhatsApp
+  const [channel, setChannel] = useState(hasChannel("email") ? "email" : "whatsapp");
   const [segment, setSegment] = useState("all");
   const create = useMutation({
     mutationFn: async () => {
@@ -232,18 +234,20 @@ function NewSurveyDialog({
               <Input id="nps-q" value={question} onChange={(e) => setQuestion(e.target.value)} />
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="grid gap-1.5">
-                <Label>Canal</Label>
-                <Select value={channel} onValueChange={setChannel}>
-                  <SelectTrigger aria-label="Canal">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="email">E-mail</SelectItem>
-                    <SelectItem value="whatsapp">WhatsApp</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              {hasChannel("email") && (
+                <div className="grid gap-1.5">
+                  <Label>Canal</Label>
+                  <Select value={channel} onValueChange={setChannel}>
+                    <SelectTrigger aria-label="Canal">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="email">E-mail</SelectItem>
+                      <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               <div className="grid gap-1.5">
                 <Label>Para quem</Label>
                 <Select value={segment} onValueChange={setSegment}>

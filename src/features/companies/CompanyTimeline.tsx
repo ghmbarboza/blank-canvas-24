@@ -69,7 +69,7 @@ export function CompanyTimeline({ companyId }: { companyId: string }) {
         <EmptyState
           icon={History}
           title={filter === "all" ? "Nada por aqui ainda" : "Nada deste tipo"}
-          description="Mensagens, ligações, reuniões, propostas e tarefas de todas as pessoas da empresa aparecem nesta linha."
+          description="Mensagens, propostas e tarefas de todas as pessoas da empresa aparecem nesta linha."
           className="py-10"
         />
       ) : (

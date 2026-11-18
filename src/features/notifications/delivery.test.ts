@@ -64,3 +64,18 @@ describe("pushPayload", () => {
     expect(p.tag).toBe("info:n1");
   });
 });
+
+describe("avisos por edição", () => {
+  it("edição atual: nada de ligação, telefonia ou ata de reunião", async () => {
+    const { EDITION, FULL_EDITION } = await import("@/lib/edition");
+    const { NOTIFICATION_KINDS, notificationGroupLabel, notificationKindsFor } =
+      await import("./delivery");
+    const ids = notificationKindsFor(EDITION).map((k) => k.id);
+    for (const id of ["call_incoming", "telephony_balance", "meeting_minutes", "tracked_term"])
+      expect(ids, id).not.toContain(id);
+    expect(ids).toContain("ai_handoff");
+    expect(notificationGroupLabel("Reuniões e ligações", EDITION)).toBe("Agenda");
+    expect(notificationKindsFor(FULL_EDITION)).toHaveLength(NOTIFICATION_KINDS.length);
+    expect(notificationGroupLabel("Reuniões e ligações", FULL_EDITION)).toBe("Reuniões e ligações");
+  });
+});

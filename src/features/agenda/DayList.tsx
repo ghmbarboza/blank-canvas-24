@@ -22,7 +22,7 @@ export function DayList({ day, events, onEdit, onNew }: Props) {
       <EmptyState
         icon={CalendarPlus}
         title="Nada marcado neste dia"
-        description="Agende uma reunião, ligação ou demonstração com um contato."
+        description="Agende uma reunião, visita ou demonstração com um contato."
         action={
           <Button size="sm" onClick={onNew}>
             Novo evento

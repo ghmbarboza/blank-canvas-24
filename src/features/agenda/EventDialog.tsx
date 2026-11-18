@@ -110,7 +110,7 @@ export function EventDialog({ open, onOpenChange, event, draft }: Props) {
           <DialogTitle className="font-display text-lg font-medium">
             {event ? "Editar evento" : "Novo evento"}
           </DialogTitle>
-          <DialogDescription>Reunião, ligação ou demonstração com um contato.</DialogDescription>
+          <DialogDescription>Reunião, visita ou demonstração com um contato.</DialogDescription>
         </DialogHeader>
 
         <form id="event-form" onSubmit={(e) => void submit(e)} className="grid gap-4" noValidate>

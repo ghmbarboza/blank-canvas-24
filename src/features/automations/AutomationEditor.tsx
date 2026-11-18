@@ -36,7 +36,7 @@ import {
   type Graph,
   type NodeType,
 } from "./engine";
-import { NODE_ICON, PALETTE } from "./nodeMeta";
+import { NODE_ICON, paletteFor } from "./nodeMeta";
 import { ArchiveAutomationButton } from "./ArchiveAutomationButton";
 import { NodePanel } from "./NodePanel";
 import { RunsPanel } from "./RunsPanel";
@@ -298,7 +298,7 @@ export function AutomationEditor({ automationId }: { automationId: string }) {
                     : "Clique para adicionar e ligue arrastando os pontos."}
                 </p>
                 <div className="flex flex-wrap gap-1.5 lg:block lg:space-y-3">
-                  {PALETTE.map((g) => (
+                  {paletteFor().map((g) => (
                     <div key={g.group}>
                       <p className="hidden px-1 pb-1 text-[10px] font-medium tracking-wide text-subtle uppercase lg:block">
                         {g.group}

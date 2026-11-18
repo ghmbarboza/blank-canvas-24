@@ -1,3 +1,4 @@
+import { hasChannel } from "@/lib/edition";
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
@@ -22,7 +23,12 @@ const SUGGESTIONS: { label: string; question: string }[] = [
     label: "Reclamações de entrega",
     question: "Quais clientes reclamaram de entrega nos últimos 7 dias?",
   },
-  { label: "Ligações perdidas ontem", question: "Quantas ligações perdemos ontem?" },
+  hasChannel("phone")
+    ? { label: "Ligações perdidas ontem", question: "Quantas ligações perdemos ontem?" }
+    : {
+        label: "Clientes sem resposta",
+        question: "Quais clientes estão esperando resposta há mais de um dia?",
+      },
   { label: "Funil deste mês", question: "Como está o funil de vendas deste mês?" },
 ];
 

@@ -5,9 +5,14 @@ import { Button } from "@/components/ui/button";
 import { OfficialWhatsApp } from "@/features/channels/AddWhatsApp";
 import { EvolutionConnect } from "@/features/channels/EvolutionConnect";
 
+import { hasChannel } from "@/lib/edition";
+
 import type { StepProps } from "./ui";
 
-/** Passo 2: WhatsApp por QR Code na própria tela; o número oficial fica como segunda opção. */
+/**
+ * Passo 2: WhatsApp por QR Code na própria tela. O número oficial da Meta só aparece como segunda
+ * opção quando a edição tem esse canal (ver src/lib/edition.ts).
+ */
 export function WhatsAppStep({ accountId, onNext, done }: StepProps & { done: boolean }) {
   const qc = useQueryClient();
   return (
@@ -22,9 +27,11 @@ export function WhatsAppStep({ accountId, onNext, done }: StepProps & { done: bo
           <ArrowRight aria-hidden />
         </Button>
       ) : null}
-      <div className="border-t border-border pt-4">
-        <OfficialWhatsApp accountId={accountId} compact />
-      </div>
+      {hasChannel("whatsapp_official") ? (
+        <div className="border-t border-border pt-4">
+          <OfficialWhatsApp accountId={accountId} compact />
+        </div>
+      ) : null}
     </div>
   );
 }

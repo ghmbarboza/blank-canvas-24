@@ -1,3 +1,4 @@
+import { hasChannel } from "@/lib/edition";
 import { useState } from "react";
 import { Bot, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -27,7 +28,7 @@ type Props = {
 
 // A IA de voz liga para o contato com o motivo dito aqui. Transcrição, resumo e tudo o que ela
 // fizer na ligação (agendar, abrir chamado, criar negócio, tarefa) voltam para esta ficha.
-export function AiCallButton({ contactId, phone, name }: Props) {
+function AiCallButtonImpl({ contactId, phone, name }: Props) {
   const accountId = useAccountId();
   const [isOpen, setIsOpen] = useState(false);
   const [motivo, setMotivo] = useState("");
@@ -101,4 +102,9 @@ export function AiCallButton({ contactId, phone, name }: Props) {
       </Dialog>
     </>
   );
+}
+
+/** Só aparece quando a edição tem o canal (ver src/lib/edition.ts). */
+export function AiCallButton(props: Parameters<typeof AiCallButtonImpl>[0]) {
+  return hasChannel("phone") ? <AiCallButtonImpl {...props} /> : null;
 }

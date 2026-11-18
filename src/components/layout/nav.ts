@@ -36,6 +36,7 @@ import {
 } from "lucide-react";
 
 import { BRAND } from "@/lib/brand";
+import { EDITION, isRouteHidden, type Edition } from "@/lib/edition";
 
 import type { ModuleId } from "./modules";
 
@@ -272,8 +273,15 @@ export function meetsNeed(
 }
 
 const visible =
-  (isManager: boolean, modules: ReadonlySet<string>, connected: ReadonlySet<string> | null) =>
+  (
+    isManager: boolean,
+    modules: ReadonlySet<string>,
+    connected: ReadonlySet<string> | null,
+    edition: Edition,
+  ) =>
   (i: NavItem) =>
+    // tela de um canal que a edição não tem (Ligações, Reuniões, campanhas) nem entra no menu
+    !isRouteHidden(String(i.to), edition) &&
     (isManager || !i.manager) &&
     (!i.module || modules.has(i.module)) &&
     meetsNeed(i.needs, connected);
@@ -283,10 +291,11 @@ export function navGroupsFor(
   isManager: boolean,
   modules: ReadonlySet<string> = NONE,
   connected: ReadonlySet<string> | null = null,
+  edition: Edition = EDITION,
 ): NavGroup[] {
   return NAV_GROUPS.map((g) => ({
     ...g,
-    items: g.items.filter(visible(isManager, modules, connected)),
+    items: g.items.filter(visible(isManager, modules, connected, edition)),
   })).filter((g) => g.items.length > 0);
 }
 
@@ -298,8 +307,9 @@ export function navItemsFor(
   isManager: boolean,
   modules: ReadonlySet<string> = NONE,
   connected: ReadonlySet<string> | null = null,
+  edition: Edition = EDITION,
 ): NavItem[] {
-  const main = navGroupsFor(isManager, modules, connected).flatMap((g) => g.items);
+  const main = navGroupsFor(isManager, modules, connected, edition).flatMap((g) => g.items);
   return isManager
     ? [...main, ...CONFIG_GROUP.items, HELP_ITEM]
     : [...main, SETTINGS_ITEM, HELP_ITEM];

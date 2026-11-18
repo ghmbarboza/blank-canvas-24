@@ -46,6 +46,8 @@ import { AiChoiceCard } from "@/features/channels/IntegrationsSection";
 import { useIntegrations, useTestIntegration, type ProviderState } from "./api";
 import { ProviderForm } from "./ProviderForm";
 import { VISIBLE_PROVIDERS, type ProviderDef } from "./providers";
+import { EditionIntegrations } from "./EditionIntegrations";
+import { EDITION } from "@/lib/edition";
 
 // A IA própria (OpenAI/Anthropic) tem o cartão de escolha no topo, com a volta para a IA inclusa.
 const AI_IDS = new Set<ProviderDef["id"]>(["openai", "anthropic"]);
@@ -93,6 +95,11 @@ function helpText(def: ProviderDef, st: ProviderState | undefined): string {
 
 // Integrações externas: cada uma liga um módulo (e-mail, reunião, telefonia, cobrança).
 export function IntegrationsTab() {
+  // Edição enxuta: só as integrações dos canais do produto (ver src/lib/edition.ts).
+  return EDITION.allIntegrations ? <AllIntegrationsTab /> : <EditionIntegrations />;
+}
+
+function AllIntegrationsTab() {
   const { current, isAdmin } = useAccount();
   const accountId = current!.accountId;
   const { data, isPending, isError, error } = useIntegrations(accountId);
@@ -135,7 +142,7 @@ export function IntegrationsTab() {
               ainda pode configurar cada uma.
             </p>
           )}
-          {isAdmin && (
+          {isAdmin && EDITION.ownAiKey && (
             <section aria-label="Inteligência artificial">
               <h3 className="mb-2 text-[12px] font-medium text-subtle">Inteligência artificial</h3>
               <AiChoiceCard accountId={accountId} />

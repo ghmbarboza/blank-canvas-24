@@ -154,7 +154,7 @@ export function ConnectedChannels({ accountId, isAdmin, onShowQr }: Props) {
             description={
               isAdmin
                 ? "Comece pelo WhatsApp logo abaixo. Em poucos minutos as conversas chegam na caixa de entrada."
-                : "Peça a um administrador para conectar o WhatsApp ou as redes da empresa."
+                : "Peça a um administrador para conectar o WhatsApp da empresa."
             }
           />
         </div>

@@ -1,4 +1,5 @@
-import { Link } from "@tanstack/react-router";
+import { hasProvider } from "@/lib/edition";
+import { Link, Navigate } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 
 import { PageHeader } from "@/components/common/PageHeader";
@@ -9,6 +10,8 @@ import { ComposioPanel } from "./ComposioPanel";
 
 export function ComposioPage() {
   const { current } = useAccount();
+  // Apps de terceiros ficam fora da edição enxuta: o endereço antigo volta para a Equipe de IA.
+  if (!hasProvider("composio")) return <Navigate to="/equipe-ia" replace />;
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <PageHeader

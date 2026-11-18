@@ -236,7 +236,7 @@ export function TicketsPage({ ticketId, tab, onOpenTicket, onTab }: Props) {
                 <EmptyState
                   icon={LifeBuoy}
                   title="Nenhum chamado ainda"
-                  description="Abra chamados aqui, numa conversa da caixa de entrada ou pela IA de voz. Cada um ganha prazo de resposta e de solução pela prioridade."
+                  description="Abra chamados aqui ou numa conversa da Caixa de entrada. Cada um ganha prazo de resposta e de solução pela prioridade."
                   action={
                     <Button onClick={() => setCreating(true)}>
                       <Plus /> Abrir o primeiro chamado

@@ -1,3 +1,4 @@
+import { hasChannel } from "@/lib/edition";
 import { useState } from "react";
 import { ListOrdered, Pencil, Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -19,9 +20,15 @@ import { Switch } from "@/components/ui/switch";
 import { errorMessage } from "@/lib/functions";
 
 import { useQueues, useSaveQueue, type Queue } from "./api";
-import { OVERFLOW_LABEL as OVERFLOW, describeQueue, channelLabel, normalizeSkill } from "./lib";
+import {
+  OVERFLOW_LABEL as OVERFLOW,
+  describeQueue,
+  channelLabel,
+  normalizeSkill,
+  queueChannelVisible,
+} from "./lib";
 
-const CHANNELS = [
+const ALL_CHANNELS = [
   "voice",
   "whatsapp_call",
   "whatsapp",
@@ -31,6 +38,9 @@ const CHANNELS = [
   "email",
   "ticket",
 ];
+// só os canais da edição (ver src/lib/edition.ts)
+const CHANNELS = ALL_CHANNELS.filter((c) => queueChannelVisible(c));
+const PHONE = hasChannel("phone");
 interface Draft {
   name: string;
   channels: string[];
@@ -45,7 +55,7 @@ interface Draft {
 function toDraft(q?: Queue): Draft {
   return {
     name: q?.name ?? "",
-    channels: q?.channels ?? ["voice", "whatsapp"],
+    channels: q?.channels ?? (PHONE ? ["voice", "whatsapp"] : ["whatsapp"]),
     skill: q?.skills[0] ?? "",
     level: q?.required_level ?? 1,
     sla: q?.sla_seconds ?? 20,
@@ -152,34 +162,38 @@ export function QueueForm({
             </SelectContent>
           </Select>
         </div>
-        <div className="space-y-1.5">
-          <Label htmlFor="q-sla">Atender ligação em até (s)</Label>
-          <Input
-            id="q-sla"
-            type="number"
-            min={5}
-            max={600}
-            value={d.sla}
-            onChange={(e) => set("sla", Number(e.target.value) || 20)}
-          />
-        </div>
-        <div className="space-y-1.5">
-          <Label>Ninguém livre</Label>
-          <Select value={d.overflow} onValueChange={(v) => set("overflow", v)}>
-            <SelectTrigger aria-label="Ninguém livre">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.entries(OVERFLOW).map(([k, v]) => (
-                <SelectItem key={k} value={k}>
-                  {v.charAt(0).toUpperCase() + v.slice(1)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        {PHONE && (
+          <>
+            <div className="space-y-1.5">
+              <Label htmlFor="q-sla">Atender ligação em até (s)</Label>
+              <Input
+                id="q-sla"
+                type="number"
+                min={5}
+                max={600}
+                value={d.sla}
+                onChange={(e) => set("sla", Number(e.target.value) || 20)}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Ninguém livre</Label>
+              <Select value={d.overflow} onValueChange={(v) => set("overflow", v)}>
+                <SelectTrigger aria-label="Ninguém livre">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(OVERFLOW).map(([k, v]) => (
+                    <SelectItem key={k} value={k}>
+                      {v.charAt(0).toUpperCase() + v.slice(1)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </>
+        )}
       </div>
-      {d.overflow === "ai" && (
+      {PHONE && d.overflow === "ai" && (
         <div className="space-y-1.5">
           <Label htmlFor="q-redirect">Ramal ou cenário da Zadarma que leva à IA de voz</Label>
           <Input

@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils";
 import { ChannelIcon } from "@/components/brand/ChannelIcon";
 
 import { agentKeys, agentsApi } from "./api";
-import { AGENT_CHANNELS, agentChannelLabel, roleDef, TEMPLATES } from "./catalog";
+import { agentChannelsFor, agentChannelLabel, roleDef, TEMPLATES } from "./catalog";
 
 type Props = {
   accountId: string;
@@ -77,7 +77,7 @@ export function NewAgentDialog({ accountId, open, hasAgents, onClose, onCreated 
             entrada do canal escolhido, se o canal ainda não tiver uma.
           </p>
           <div className="mt-2 flex flex-wrap gap-2" role="radiogroup" aria-label="Canal do agente">
-            {[{ id: "", label: "Todos os outros" }, ...AGENT_CHANNELS].map((c) => {
+            {[{ id: "", label: "Todos os outros" }, ...agentChannelsFor()].map((c) => {
               const on = channel === c.id;
               return (
                 <button

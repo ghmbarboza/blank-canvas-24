@@ -1,3 +1,4 @@
+import { hasChannel } from "@/lib/edition";
 import { Mail, Phone } from "lucide-react";
 
 import { ChannelIcon } from "@/components/brand/ChannelIcon";
@@ -37,12 +38,16 @@ export function ContactCard({ accountId, contact }: { accountId: string; contact
             <dt className="sr-only">Telefone</dt>
             <Phone className="size-3.5 shrink-0 text-subtle" aria-hidden />
             <dd>
-              <a
-                href={`tel:+${contact.phone.replace(/\D/g, "")}`}
-                className="tabular-nums hover:text-primary hover:underline"
-              >
-                {formatPhone(contact.phone)}
-              </a>
+              {hasChannel("phone") ? (
+                <a
+                  href={`tel:+${contact.phone.replace(/\D/g, "")}`}
+                  className="tabular-nums hover:text-primary hover:underline"
+                >
+                  {formatPhone(contact.phone)}
+                </a>
+              ) : (
+                <span className="tabular-nums">{formatPhone(contact.phone)}</span>
+              )}
             </dd>
           </div>
         )}

@@ -1,3 +1,4 @@
+import { hasChannel } from "@/lib/edition";
 import { useEffect, useMemo, useState } from "react";
 import {
   Bar,
@@ -101,10 +102,10 @@ const FILTERABLE: Record<
       id: "type",
       label: "Tipo",
       options: [
-        { value: "call", label: "Ligação" },
+        ...(hasChannel("phone") ? [{ value: "call", label: "Ligação" }] : []),
         { value: "task", label: "Tarefa" },
-        { value: "email", label: "E-mail" },
-        { value: "meeting", label: "Reunião" },
+        ...(hasChannel("email") ? [{ value: "email", label: "E-mail" }] : []),
+        ...(hasChannel("video") ? [{ value: "meeting", label: "Reunião" }] : []),
         { value: "note", label: "Nota" },
         { value: "whatsapp", label: "WhatsApp" },
       ],
@@ -547,11 +548,13 @@ export function BuilderTab({
               Visível para a equipe
               <Switch checked={shared} onCheckedChange={setShared} />
             </label>
-            <label className="flex items-center justify-between gap-3 rounded-xl border border-border px-3 py-2 text-[13px]">
-              Enviar por e-mail toda segunda
-              <Switch checked={weekly} onCheckedChange={setWeekly} />
-            </label>
-            {weekly && (
+            {hasChannel("email") && (
+              <label className="flex items-center justify-between gap-3 rounded-xl border border-border px-3 py-2 text-[13px]">
+                Enviar por e-mail toda segunda
+                <Switch checked={weekly} onCheckedChange={setWeekly} />
+              </label>
+            )}
+            {hasChannel("email") && weekly && (
               <Field label="Para quem (separe por vírgula)">
                 <Input
                   value={recipients}

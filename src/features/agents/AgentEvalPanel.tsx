@@ -350,10 +350,7 @@ function ConfirmRun({
               </div>
               <p className="col-span-2 text-[12px] text-subtle">
                 Cerca de {e.calls} chamadas ao modelo {e.model},{" "}
-                {e.usesAccountKey
-                  ? "cobradas na chave de IA da sua empresa"
-                  : "pelo gateway do Lovable (sem chave própria cadastrada)"}
-                .
+                {e.usesAccountKey ? "cobradas na chave de IA da sua empresa" : "pela IA inclusa"}.
               </p>
             </dl>
           )

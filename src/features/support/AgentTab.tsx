@@ -238,7 +238,7 @@ function AgentSettingsCard() {
           <Link to="/atendimento/base" className="underline">
             base de conhecimento
           </Link>{" "}
-          e do catálogo. Sem chave da Anthropic ou OpenAI em Inteligência, o agente não roda.
+          e do catálogo. A IA já vem inclusa.
         </p>
         {isManager && (
           <div>

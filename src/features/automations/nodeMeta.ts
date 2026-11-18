@@ -22,6 +22,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
+import { EDITION, hasChannel, type Edition } from "@/lib/edition";
+
 import { NODE_LABEL, formatMinutes, type AutoNode, type NodeType } from "./engine";
 
 export const NODE_ICON: Record<NodeType, LucideIcon> = {
@@ -56,6 +58,23 @@ export const PALETTE: { group: string; types: NodeType[] }[] = [
   { group: "Tempo e decisão", types: ["wait", "wait_event", "condition", "ab_split"] },
   { group: "Outros", types: ["webhook", "end"] },
 ];
+
+/** O passo existe nesta edição? E-mail, SMS, ligação e apps externos dependem de outro canal. */
+export function nodeTypeInEdition(type: NodeType, edition: Edition = EDITION): boolean {
+  if (type === "email") return hasChannel("email", edition);
+  if (type === "sms") return hasChannel("sms", edition);
+  if (type === "voice_call") return hasChannel("phone", edition);
+  if (type === "composio_action" || type === "webhook") return edition.allIntegrations;
+  return true;
+}
+
+/** Passos oferecidos ao montar a automação (grupo sem passo some). */
+export function paletteFor(edition: Edition = EDITION): { group: string; types: NodeType[] }[] {
+  return PALETTE.map((g) => ({
+    group: g.group === "Equipe de IA e apps" && !edition.allIntegrations ? "Equipe de IA" : g.group,
+    types: g.types.filter((t) => nodeTypeInEdition(t, edition)),
+  })).filter((g) => g.types.length > 0);
+}
 
 export const BRANCH_TYPES: NodeType[] = ["condition", "wait_event", "ab_split"];
 

@@ -1,3 +1,4 @@
+import { hasChannel } from "@/lib/edition";
 import { useEffect, useState } from "react";
 import { Loader2, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -69,6 +70,12 @@ const DEFAULT_AVAIL: Availability = Object.fromEntries(
   ["1", "2", "3", "4", "5"].map((d) => [d, [{ start: "09:00", end: "18:00" }]]),
 );
 
+/** Onde o link novo acontece: sala de vídeo, ligação ou presencial, conforme a edição. */
+function defaultLocation(meetOn: boolean | null): string {
+  if (hasChannel("video") && meetOn !== false) return "nexus_meet";
+  return hasChannel("phone") ? "phone" : "in_person";
+}
+
 export function BookingPageDialog({
   accountId,
   open,
@@ -94,7 +101,7 @@ export function BookingPageDialog({
     if (!open) return;
     setSlugTouched(Boolean(page));
     setF({
-      title: page?.title ?? "Reunião de diagnóstico",
+      title: page?.title ?? (hasChannel("video") ? "Reunião de diagnóstico" : "Visita agendada"),
       slug: page?.slug ?? "",
       description: page?.description ?? "",
       duration_min: page?.duration_min ?? 30,
@@ -109,7 +116,7 @@ export function BookingPageDialog({
       questions: Array.isArray(page?.questions)
         ? (page.questions as unknown as BookingQuestion[])
         : [],
-      location: page?.location ?? (meetOn === false ? "phone" : "nexus_meet"),
+      location: page?.location ?? defaultLocation(meetOn),
       location_detail: page?.location_detail ?? "",
       playbook_id: page?.playbook_id ?? null,
       create_deal: page?.create_deal ?? true,
@@ -121,7 +128,9 @@ export function BookingPageDialog({
 
   useEffect(() => {
     if (meetOn !== false || page) return;
-    setF((s) => (s && s.location === "nexus_meet" ? { ...s, location: "phone" } : s));
+    setF((s) =>
+      s && s.location === "nexus_meet" ? { ...s, location: defaultLocation(false) } : s,
+    );
   }, [meetOn, page]);
 
   if (!f) return null;
@@ -456,12 +465,14 @@ export function BookingPageDialog({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {(meetOn !== false || f.location === "nexus_meet") && (
+                    {((hasChannel("video") && meetOn !== false) || f.location === "nexus_meet") && (
                       <SelectItem value="nexus_meet">
                         Sala Vínculo (vídeo, transcrição e coach)
                       </SelectItem>
                     )}
-                    <SelectItem value="phone">Ligação</SelectItem>
+                    {(hasChannel("phone") || f.location === "phone") && (
+                      <SelectItem value="phone">Ligação</SelectItem>
+                    )}
                     <SelectItem value="in_person">Presencial</SelectItem>
                     <SelectItem value="custom">Outro</SelectItem>
                   </SelectContent>

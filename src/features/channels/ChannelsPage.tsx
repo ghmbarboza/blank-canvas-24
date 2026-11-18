@@ -17,6 +17,8 @@ import { QrDialog } from "./QrDialog";
 import { NumbersSection } from "./zernio/NumbersSection";
 import type { ZernioReturn } from "./zernio/return";
 import { useWhatsAppConnected, zernio } from "./zernio-api";
+import { InstagramCard } from "./InstagramConnect";
+import { EDITION, hasChannel } from "@/lib/edition";
 
 interface Props {
   // Voltou do OAuth da Zernio (?conectado=1)
@@ -110,8 +112,11 @@ export function ChannelsPage({ returnedFromConnect, zernioReturn, onReturnHandle
               Canais de atendimento
             </h1>
             <p className="mt-3 text-[15px] leading-relaxed text-muted-foreground sm:text-[17px]">
-              Conecte o WhatsApp da empresa e os outros lugares onde seus clientes falam com você.
-              Todas as conversas chegam numa caixa só.
+              {EDITION.allIntegrations
+                ? "Conecte o WhatsApp da empresa e os outros lugares onde seus clientes falam com você. Todas as conversas chegam numa caixa só."
+                : hasChannel("instagram")
+                  ? "Conecte o WhatsApp da empresa pelo QR Code e, se quiser, o Instagram. Todas as conversas chegam numa caixa só."
+                  : "Conecte o WhatsApp da empresa pelo QR Code. Todas as conversas chegam numa caixa só."}
             </p>
           </div>
 
@@ -126,31 +131,41 @@ export function ChannelsPage({ returnedFromConnect, zernioReturn, onReturnHandle
               <div id="whatsapp-qr" className="scroll-mt-6">
                 <WhatsAppQrCard accountId={accountId} />
               </div>
-              <div id="whatsapp-oficial" className="scroll-mt-6">
-                <OfficialWhatsApp
-                  accountId={accountId}
-                  defaultOpen={returnedFromConnect || zernioReturn !== null || openOfficial}
-                />
-              </div>
-              <ZernioHub accountId={accountId} />
-              <div id="leads-de-anuncios">
-                <ZernioLeadsCard accountId={accountId} withConnect={false} />
-              </div>
-              <LegacyWhatsApp accountId={accountId} />
+              {hasChannel("instagram") && (
+                <div id="instagram" className="scroll-mt-6">
+                  <InstagramCard accountId={accountId} />
+                </div>
+              )}
+              {hasChannel("whatsapp_official") && (
+                <div id="whatsapp-oficial" className="scroll-mt-6">
+                  <OfficialWhatsApp
+                    accountId={accountId}
+                    defaultOpen={returnedFromConnect || zernioReturn !== null || openOfficial}
+                  />
+                </div>
+              )}
+              {EDITION.allIntegrations && (
+                <>
+                  <ZernioHub accountId={accountId} />
+                  <div id="leads-de-anuncios">
+                    <ZernioLeadsCard accountId={accountId} withConnect={false} />
+                  </div>
+                  <LegacyWhatsApp accountId={accountId} />
+                </>
+              )}
             </>
           ) : (
             <div className="flex items-center gap-3 rounded-xl border border-border bg-surface p-4 text-[13px] text-muted-foreground">
               <Lock className="size-4 shrink-0" aria-hidden />
-              Só donos e administradores conectam canais. Peça a um deles para adicionar o número ou
-              a rede.
+              Só donos e administradores conectam canais. Peça a um deles para conectar.
             </div>
           )}
 
-          <NumbersSection accountId={accountId} isAdmin={isAdmin} />
+          {hasChannel("phone") && <NumbersSection accountId={accountId} isAdmin={isAdmin} />}
 
-          <WhatsAppPricingCard />
+          {hasChannel("whatsapp_official") && <WhatsAppPricingCard />}
 
-          <IntegrationsSection isAdmin={isAdmin} />
+          {EDITION.allIntegrations && <IntegrationsSection isAdmin={isAdmin} />}
         </div>
       </div>
 

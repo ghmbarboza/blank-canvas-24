@@ -1,3 +1,5 @@
+import { hasProvider } from "@/lib/edition";
+import { agentChannelsFor } from "./catalog";
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { AlertTriangle, Bot, MessageSquareText, PlayCircle, Plug, Plus } from "lucide-react";
@@ -62,12 +64,14 @@ export function AgentsPage() {
         description={agents.data ? operating : "Agentes que atendem, vendem e cobram"}
         actions={
           <>
-            <Button asChild variant="ghost" size="sm">
-              <Link to="/equipe-ia/ferramentas" aria-label="Ferramentas conectadas">
-                <Plug aria-hidden />{" "}
-                <span className="hidden md:inline">Ferramentas conectadas</span>
-              </Link>
-            </Button>
+            {hasProvider("composio") && (
+              <Button asChild variant="ghost" size="sm">
+                <Link to="/equipe-ia/ferramentas" aria-label="Ferramentas conectadas">
+                  <Plug aria-hidden />{" "}
+                  <span className="hidden md:inline">Ferramentas conectadas</span>
+                </Link>
+              </Button>
+            )}
             {askOn && (
               <Button asChild variant="ghost" size="sm" className="max-sm:hidden">
                 <Link to="/pergunte" aria-label="Pergunte ao Vínculo">
@@ -143,7 +147,11 @@ export function AgentsPage() {
             <EmptyState
               icon={Bot}
               title="Monte sua equipe de IA"
-              description="Crie um agente para cada canal (WhatsApp, Instagram, Ligação…), com jeito e regras próprios, ou comece pela Recepção, que atende todos e passa para o agente certo. Cada um passa por uma avaliação com perguntas reais da sua empresa antes de atender."
+              description={`Crie um agente para cada canal (${agentChannelsFor()
+                .map((c) => c.label)
+                .join(
+                  ", ",
+                )}), com jeito e regras próprios, ou comece pela Recepção, que atende todos e passa para o agente certo. Cada um passa por uma avaliação com perguntas reais da sua empresa antes de atender.`}
               action={
                 isManager && (
                   <Button onClick={() => setCreating(true)}>

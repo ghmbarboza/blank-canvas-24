@@ -17,6 +17,7 @@ import { ZernioKeyForm } from "./IntegrationForms";
 import { MetaConnectDialog } from "./MetaConnectDialog";
 import { ZadarmaSmsDialog } from "./ZadarmaSmsDialog";
 import { useConnectWhatsApp } from "./zernio-api";
+import { hasChannel } from "@/lib/edition";
 
 const PROS = [
   "Número oficial da Meta, sem risco de bloqueio por QR",
@@ -24,7 +25,7 @@ const PROS = [
   "Modelos aprovados para falar com o cliente depois das 24 h",
 ];
 
-function Step({
+export function Step({
   n,
   title,
   note,
@@ -347,7 +348,7 @@ export function AddWhatsApp({
   return (
     <div className="space-y-4">
       <EvolutionConnect accountId={accountId} {...(onConnected ? { onConnected } : {})} />
-      <OfficialWhatsApp accountId={accountId} compact />
+      {hasChannel("whatsapp_official") && <OfficialWhatsApp accountId={accountId} compact />}
     </div>
   );
 }

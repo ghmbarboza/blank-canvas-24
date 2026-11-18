@@ -5,7 +5,7 @@ import { useChannels } from "@/features/channels/api";
 import { pickActiveAgent, type AgentLite } from "@/backend/agents/orchestrator-logic";
 
 import type { Agent } from "./api";
-import { AGENT_CHANNELS } from "./catalog";
+import { agentChannelsFor } from "./catalog";
 
 type Props = { accountId: string; agents: Agent[]; onOpen: (id: string) => void };
 
@@ -45,7 +45,7 @@ export function ChannelCoverage({ accountId, agents, onOpen }: Props) {
         Quem atende cada canal
       </h2>
       <ul className="mt-3 grid gap-x-8 gap-y-2.5 xl:grid-cols-2">
-        {AGENT_CHANNELS.map((c) => {
+        {agentChannelsFor().map((c) => {
           const now = pickActiveAgent(team, c.id, null);
           const next = now ? null : pickActiveAgent(asIfActive, c.id, null);
           const who = now ?? next;

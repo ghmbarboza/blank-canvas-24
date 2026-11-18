@@ -1,3 +1,4 @@
+import { hasPlatform } from "@/lib/edition";
 import type { AttentionItem } from "./attention";
 import { format, subDays } from "date-fns";
 
@@ -97,17 +98,20 @@ export function demoGerencial(days: Period): Gerencial {
       { platform: "facebook", share: 0.12, frt: 331 },
       { platform: "tiktok", share: 0.09, frt: 402 },
       { platform: "telegram", share: 0.06, frt: 240 },
-    ].map((c) => {
-      const total = Math.round((totalIn + totalOut) * c.share);
-      return {
-        platform: c.platform,
-        in: Math.round(total * 0.45),
-        out: Math.round(total * 0.55),
-        total,
-        conversations: Math.round(428 * scale * c.share),
-        frt: c.frt,
-      };
-    }),
+    ]
+      // o exemplo só mostra os canais que o produto tem
+      .filter((c) => hasPlatform(c.platform))
+      .map((c) => {
+        const total = Math.round((totalIn + totalOut) * c.share);
+        return {
+          platform: c.platform,
+          in: Math.round(total * 0.45),
+          out: Math.round(total * 0.55),
+          total,
+          conversations: Math.round(428 * scale * c.share),
+          frt: c.frt,
+        };
+      }),
     funnel: [
       { name: "Novo", kind: "open", probability: 10, count: 96, value: 214_300 },
       { name: "Qualificado", kind: "open", probability: 30, count: 41, value: 132_800 },
@@ -213,7 +217,7 @@ export const DEMO_HOT_LEADS = [
     company: "Sato Distribuidora",
     source: "whatsapp",
     score: 78,
-    next: "Ligar para negociar volume; comparou com concorrente.",
+    next: "Chamar no WhatsApp para negociar volume; comparou com concorrente.",
   },
 ];
 

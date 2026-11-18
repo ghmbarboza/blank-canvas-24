@@ -330,7 +330,7 @@ function AiSaw({ room }: { room: Room }) {
       </p>
       {!hasAny && (
         <p className="text-[12px] text-muted-foreground">
-          Quando houver conversa, reunião com ata ou ligação resumida, a leitura da IA aparece aqui.
+          Quando houver conversa com o cliente, a leitura da IA aparece aqui.
         </p>
       )}
       {(c?.ai_summary || c?.ai_intent) && (

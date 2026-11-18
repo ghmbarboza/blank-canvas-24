@@ -1,3 +1,4 @@
+import { hasChannel } from "@/lib/edition";
 import { useState } from "react";
 import {
   CalendarCheck2,
@@ -274,8 +275,9 @@ function BookingForm({
             onCheckedChange={(c) => setConsent(c === true)}
             className="mt-0.5"
           />
-          Concordo em receber a confirmação e os lembretes por e-mail e WhatsApp e com a gravação e
-          transcrição da reunião para registrar o que for combinado.
+          {hasChannel("video")
+            ? "Concordo em receber a confirmação e os lembretes por e-mail e WhatsApp e com a gravação e transcrição da reunião para registrar o que for combinado."
+            : "Concordo em receber a confirmação e os lembretes pelo WhatsApp."}
         </label>
         <Button
           type="submit"
@@ -323,8 +325,9 @@ function Confirmed({
           </p>
         )}
         <p className="relative mx-auto mt-5 max-w-md text-[13px] text-white/70">
-          Enviamos o convite com o link da sala para o seu e-mail e WhatsApp, com lembretes um dia e
-          uma hora antes.
+          {hasChannel("video")
+            ? "Enviamos o convite com o link da sala para o seu e-mail e WhatsApp, com lembretes um dia e uma hora antes."
+            : "Você recebe a confirmação e os lembretes pelo WhatsApp."}
         </p>
         {result.joinUrl && (
           <Button asChild className="relative mt-6 bg-white text-[#001F35] hover:bg-white/90">

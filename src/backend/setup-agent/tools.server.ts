@@ -6,7 +6,16 @@ import { PROVIDERS, type ProviderId } from "@/features/integrations/providers";
 import { EXTRA_MODULES } from "@/components/layout/modules";
 
 import { compileSoul, type Soul } from "./soul";
-import { OPENABLE, SEGMENT_IDS, STEP_IDS, type Fact, type SetupSnapshot } from "./spec";
+import {
+  OPENABLE,
+  SEGMENT_IDS,
+  STEP_IDS,
+  toolInEdition,
+  zernioOptionAllowed,
+  type Fact,
+  type SetupSnapshot,
+} from "./spec";
+import { hasChannel } from "@/lib/edition";
 import type { StageAction, StageBlock } from "./stage";
 
 export interface SetupAction {
@@ -705,7 +714,9 @@ const RUNNERS: Record<string, Runner> = {
     };
     await z.syncAccounts(ctx.caller.accountId).catch(() => null);
     return {
-      content: `chave da Zernio guardada: ${r.accounts} contas, ${r.whatsapp} de WhatsApp`,
+      content: hasChannel("whatsapp_official")
+        ? `chave da Zernio guardada: ${r.accounts} contas, ${r.whatsapp} de WhatsApp`
+        : "chave da Zernio guardada e testada",
       action: { kind: "done", label: "Zernio conectada", tool: "conectar_zernio" },
     };
   },
@@ -732,7 +743,8 @@ const RUNNERS: Record<string, Runner> = {
       accounts: { id: string; platform: string; name: string; active: boolean }[];
     };
     if (!r.ready) return { content: "a Zernio ainda não tem chave salva nesta conta" };
-    const st = optionStates(r.accounts);
+    // só o que a edição oferece (ver src/lib/edition.ts): o resto nem entra na resposta
+    const st = optionStates(r.accounts).filter((x) => zernioOptionAllowed(x.option.id));
     const line = (filter: (x: (typeof st)[number]) => boolean) =>
       st
         .filter(filter)
@@ -760,7 +772,8 @@ const RUNNERS: Record<string, Runner> = {
     const z = await import("@/backend/providers/zernio-actions.server");
     const { findOption } = await import("@/features/channels/zernio-catalog");
     const opt = findOption(opcao);
-    if (!opt) throw new Error("opção inválida: use um id da lista do conferir_zernio");
+    if (!opt || !zernioOptionAllowed(opt.id))
+      throw new Error("opção inválida: use um id da lista do conferir_zernio");
     const origin = new URL(ctx.req.url).origin;
     const r = (await z.connectOption(ctx.req, ctx.caller.accountId, {
       option: opt.id,
@@ -952,7 +965,8 @@ export async function runSetupTool(
   name: string,
   args: Record<string, unknown>,
 ): Promise<ToolRun> {
-  const run = RUNNERS[name];
+  // ferramenta fora da edição não roda, mesmo que o modelo a invente
+  const run = toolInEdition(name) ? RUNNERS[name] : undefined;
   if (!run) throw new HttpError(400, `ferramenta ${name} indisponível`, "bad_tool");
   return run(ctx, args);
 }

@@ -77,7 +77,7 @@ export function RevenueTab({ accountId }: { accountId: string }) {
       <EmptyState
         icon={Repeat}
         title="Ainda sem receita recorrente"
-        description="Quando uma proposta com valor mensal ou anual for aceita, ou uma assinatura for criada no Asaas, o MRR aparece aqui."
+        description="Quando uma proposta com valor mensal ou anual for aceita, o MRR aparece aqui."
       />
     );
   const data = r.months.map((m) => ({

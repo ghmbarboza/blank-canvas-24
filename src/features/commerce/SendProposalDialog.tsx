@@ -1,3 +1,4 @@
+import { hasChannel } from "@/lib/edition";
 import { useEffect, useState } from "react";
 import { Copy, Loader2, MessageCircle, Send } from "lucide-react";
 import { toast } from "sonner";
@@ -57,18 +58,21 @@ export function SendProposalDialog({ accountId, dealId, proposal, onClose }: Pro
   );
   const waPhone = phone.replace(/\D/g, "");
 
+  // sem e-mail na edição a proposta vai pelo link (WhatsApp); nada é enviado por e-mail
+  const sendEmail = Boolean(email) && hasChannel("email");
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     try {
       const r = await send.mutateAsync({
         proposalId: proposal!.id,
-        ...(email ? { email } : {}),
+        ...(sendEmail ? { email } : {}),
         ...(message ? { message } : {}),
       });
       toast.success(
         r.emailed
           ? `Proposta enviada para ${email}`
-          : "Proposta marcada como enviada. Mande o link pelo canal que preferir.",
+          : "Proposta marcada como enviada. Mande o link pelo WhatsApp.",
       );
       onClose();
     } catch (err) {
@@ -87,7 +91,7 @@ export function SendProposalDialog({ accountId, dealId, proposal, onClose }: Pro
             </DialogDescription>
           </DialogHeader>
           <div className="mt-4 grid gap-4">
-            <div className="grid gap-1.5">
+            <div className={hasChannel("email") ? "grid gap-1.5" : "hidden"}>
               <Label htmlFor="sp-email">E-mail do cliente</Label>
               <Input
                 id="sp-email"
@@ -104,7 +108,7 @@ export function SendProposalDialog({ accountId, dealId, proposal, onClose }: Pro
                 rows={3}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="Conforme combinamos na reunião, segue a proposta…"
+                placeholder="Conforme combinamos, segue a proposta…"
               />
             </div>
             <div className="flex gap-2">
@@ -139,7 +143,7 @@ export function SendProposalDialog({ accountId, dealId, proposal, onClose }: Pro
             )}
             <Button type="submit" disabled={send.isPending}>
               {send.isPending ? <Loader2 className="animate-spin" /> : <Send />}{" "}
-              {email ? "Enviar por e-mail" : "Marcar como enviada"}
+              {sendEmail ? "Enviar por e-mail" : "Marcar como enviada"}
             </Button>
           </DialogFooter>
         </form>

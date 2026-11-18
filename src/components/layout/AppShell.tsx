@@ -35,6 +35,7 @@ import { SetupPendingPill, SetupRailButton } from "@/features/setup/SetupEntry";
 import { PresenceButton } from "@/features/queue/PresenceButton";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { BRAND } from "@/lib/brand";
+import { hasChannel } from "@/lib/edition";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -562,7 +563,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             {children}
           </main>
           <CommandMenu open={commandOpen} onOpenChange={setCommandOpen} />
-          <Softphone available={meetsNeed("zadarma", connected, false)} />
+          {hasChannel("phone") && <Softphone available={meetsNeed("zadarma", connected, false)} />}
           <SetupPendingPill />
         </div>
       </SetupProvider>

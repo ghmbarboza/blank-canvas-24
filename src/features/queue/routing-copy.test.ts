@@ -1,18 +1,40 @@
 import { describe, expect, it } from "vitest";
 
+import { EDITION, FULL_EDITION } from "@/lib/edition";
+
+import { describeQueue } from "./lib";
 import { capacityTone, queueMembers, queueSentence } from "./routing-copy";
 
 const text = (s: { text: string }[]) => s.map((x) => x.text).join("");
 
 describe("queueSentence", () => {
-  it("lê a fila como frase e destaca canais e habilidade", () => {
-    const s = queueSentence({
-      channels: ["whatsapp", "voice"],
-      skills: ["suporte"],
-      required_level: 3,
+  it("na edição sem telefone, a frase não cita ligação nem telefone", () => {
+    const q = {
+      channels: ["whatsapp", "voice", "instagram", "email"],
+      skills: [],
+      required_level: 1,
       sla_seconds: 20,
       overflow: "callback",
-    });
+    };
+    const sentence = text(queueSentence(q, EDITION));
+    expect(sentence).toBe(
+      "Se o cliente chegar por WhatsApp ou Instagram, vai para qualquer pessoa da equipe. Se ninguém estiver livre, espera na fila até alguém ficar livre.",
+    );
+    expect(describeQueue(q, EDITION)).not.toMatch(/liga|telefone|e-mail|zadarma/i);
+    expect(describeQueue(q, FULL_EDITION)).toMatch(/retorno de ligação/);
+  });
+
+  it("lê a fila como frase e destaca canais e habilidade", () => {
+    const s = queueSentence(
+      {
+        channels: ["whatsapp", "voice"],
+        skills: ["suporte"],
+        required_level: 3,
+        sla_seconds: 20,
+        overflow: "callback",
+      },
+      FULL_EDITION,
+    );
     expect(text(s)).toBe(
       "Se o cliente chegar por WhatsApp ou Telefone, vai para quem sabe suporte (nível 3 ou mais). Atender em até 20 s. Se ninguém estiver livre, registra um retorno de ligação.",
     );

@@ -1,3 +1,4 @@
+import { hasChannel } from "@/lib/edition";
 import { BellRing, Loader2, MonitorSmartphone, Send } from "lucide-react";
 import { toast } from "sonner";
 
@@ -9,7 +10,8 @@ import { useAccount } from "@/lib/account";
 import { errorMessage } from "@/lib/functions";
 
 import {
-  NOTIFICATION_KINDS,
+  notificationGroupLabel,
+  notificationKindsFor,
   resolveChannels,
   type Channels,
   type NotificationKind,
@@ -25,11 +27,12 @@ import {
   useSendTestNotification,
 } from "./prefs-api";
 
+// aviso por e-mail só com o canal e-mail na edição (ele depende de um serviço de envio)
 const CHANNELS: { id: keyof Channels; label: string }[] = [
-  { id: "app", label: "No app" },
-  { id: "email", label: "E-mail" },
-  { id: "push", label: "Navegador" },
-];
+  { id: "app" as const, label: "No app" },
+  { id: "email" as const, label: "E-mail" },
+  { id: "push" as const, label: "Navegador" },
+].filter((c) => c.id !== "email" || hasChannel("email"));
 
 const PUSH_TEXT = {
   unsupported:
@@ -98,7 +101,11 @@ export function NotificationSettingsTab() {
             onClick={() =>
               test.mutate(undefined, {
                 onSuccess: () =>
-                  toast.success("Teste enviado. Confira o sino, o e-mail e o navegador."),
+                  toast.success(
+                    hasChannel("email")
+                      ? "Teste enviado. Confira o sino, o e-mail e o navegador."
+                      : "Teste enviado. Confira o sino e o navegador.",
+                  ),
                 onError: (e) => toast.error(errorMessage(e)),
               })
             }
@@ -125,7 +132,8 @@ export function NotificationSettingsTab() {
 function PrefsTable({ accountId, rows }: { accountId: string; rows: PrefRow[] }) {
   const save = useSaveNotificationPref(accountId);
   const reset = useResetNotificationPref(accountId);
-  const groups = [...new Set(NOTIFICATION_KINDS.map((k) => k.group))];
+  const kinds = notificationKindsFor();
+  const groups = [...new Set(kinds.map((k) => k.group))];
 
   function toggle(kind: string, channels: Channels, id: keyof Channels, value: boolean) {
     save.mutate(
@@ -167,8 +175,8 @@ function PrefsTable({ accountId, rows }: { accountId: string; rows: PrefRow[] })
           {groups.map((g) => (
             <GroupRows
               key={g}
-              group={g}
-              kinds={NOTIFICATION_KINDS.filter((k) => k.group === g)}
+              group={notificationGroupLabel(g)}
+              kinds={kinds.filter((k) => k.group === g)}
               rows={rows}
               onToggle={toggle}
               onReset={(kind) =>

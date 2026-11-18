@@ -31,6 +31,8 @@ function fixFor(c: HealthInput): Pick<ChannelHealth, "fix" | "action"> {
     return { fix: "Leia o QR de novo com o celular do número.", action: "qr" };
   if (c.provider === "zernio" && c.platform === "whatsapp")
     return { fix: "Conecte de novo pelo cartão do WhatsApp Oficial, logo abaixo.", action: null };
+  if (c.provider === "zernio" && c.platform === "instagram")
+    return { fix: "Conecte de novo pelo cartão do Instagram, logo abaixo.", action: null };
   if (c.provider === "zernio")
     return { fix: "Conecte a rede de novo em Mais canais, logo abaixo.", action: null };
   if (c.provider === "whatsapp_cloud")

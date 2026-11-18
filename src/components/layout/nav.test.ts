@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 
 import { EXTRA_MODULES } from "./modules";
 import { POS_VENDA_DEFAULT_MODULES } from "@/features/posvenda/journey";
+import { EDITION, FULL_EDITION, type Edition } from "@/lib/edition";
 
 import {
   CONFIG_GROUP,
@@ -16,8 +17,8 @@ import {
   navItemsFor,
 } from "./nav";
 
-const routes = (manager: boolean, modules?: Set<string>) =>
-  navGroupsFor(manager, modules).flatMap((g) => g.items.map((i) => i.to));
+const routes = (manager: boolean, modules?: Set<string>, edition: Edition = EDITION) =>
+  navGroupsFor(manager, modules, null, edition).flatMap((g) => g.items.map((i) => i.to));
 
 describe("menu da central", () => {
   it("cada rota e cada atalho aparecem uma vez só", () => {
@@ -32,17 +33,15 @@ describe("menu da central", () => {
   });
 
   it("núcleo de quem atende: atender, clientes e qualidade, nada de gestor", () => {
-    expect(routes(false)).toEqual([
-      "/painel",
-      "/inbox",
-      "/fila",
-      "/atendimento",
+    const core = ["/painel", "/inbox", "/fila", "/atendimento"];
+    const rest = ["/contatos", "/crm", "/agenda", "/qualidade"];
+    // edição do produto (WhatsApp e Instagram): sem Ligações nem Reuniões
+    expect(routes(false)).toEqual([...core, ...rest]);
+    expect(routes(false, undefined, FULL_EDITION)).toEqual([
+      ...core,
       "/ligacoes",
       "/reunioes",
-      "/contatos",
-      "/crm",
-      "/agenda",
-      "/qualidade",
+      ...rest,
     ]);
   });
 
@@ -72,7 +71,14 @@ describe("menu da central", () => {
     ]);
     const byLabel = Object.fromEntries(groups.map((g) => [g.label, g.items.map((i) => i.to)]));
     expect(byLabel["Clientes"]).toEqual(["/contatos", "/crm", "/gestao", "/agenda"]);
-    expect(byLabel["Pós-venda"]).toEqual(["/pos-venda", "/automacoes", "/campanhas/whatsapp"]);
+    // Campanhas de WhatsApp só disparam por modelo aprovado do número oficial: fora desta edição
+    expect(byLabel["Pós-venda"]).toEqual(["/pos-venda", "/automacoes"]);
+    const full = navGroupsFor(true, new Set(POS_VENDA_DEFAULT_MODULES), null, FULL_EDITION);
+    expect(full.find((g) => g.label === "Pós-venda")?.items.map((i) => i.to)).toEqual([
+      "/pos-venda",
+      "/automacoes",
+      "/campanhas/whatsapp",
+    ]);
     for (const g of groups) expect(g.items.length, g.label).toBeLessThanOrEqual(5);
   });
 
@@ -91,7 +97,11 @@ describe("menu da central", () => {
     expect(extras).toEqual(expect.arrayContaining(["/campanhas", "/automacoes", "/meu-dia"]));
     for (const to of extras) expect(routes(true), to).not.toContain(to);
     const all = new Set(EXTRA_MODULES.map((m) => m.id));
-    for (const to of extras) expect(routes(true, all), to).toContain(to);
+    for (const to of extras) expect(routes(true, all, FULL_EDITION), to).toContain(to);
+    // na edição do produto, o extra que depende de canal ausente não volta nem ligado
+    expect(routes(true, all)).not.toContain("/campanhas");
+    expect(routes(true, all)).not.toContain("/biblioteca");
+    expect(routes(true, all)).toContain("/automacoes");
   });
 
   it("todo extra do menu tem explicação em Recursos extras", () => {
@@ -120,8 +130,8 @@ describe("menu da central", () => {
 });
 
 describe("menu limpo no primeiro dia", () => {
-  const paths = (c: ReadonlySet<string> | null) =>
-    navGroupsFor(true, new Set(), c).flatMap((g) => g.items.map((i) => i.to));
+  const paths = (c: ReadonlySet<string> | null, edition: Edition = FULL_EDITION) =>
+    navGroupsFor(true, new Set(), c, edition).flatMap((g) => g.items.map((i) => i.to));
   it("sem Zadarma e sem LiveKit, Ligações e Reuniões somem", () => {
     expect(paths(new Set())).not.toContain("/ligacoes");
     expect(paths(new Set())).not.toContain("/reunioes");
@@ -130,5 +140,11 @@ describe("menu limpo no primeiro dia", () => {
     expect(paths(new Set(["zadarma"]))).toContain("/ligacoes");
     expect(paths(new Set(["livekit"]))).toContain("/reunioes");
     expect(paths(null)).toContain("/ligacoes");
+  });
+  it("na edição sem telefone e sem vídeo, nem com a integração ligada aparecem", () => {
+    const on = new Set(["zadarma", "livekit"]);
+    expect(paths(on, EDITION)).not.toContain("/ligacoes");
+    expect(paths(on, EDITION)).not.toContain("/reunioes");
+    expect(navItemsFor(true, new Set(), on).map((i) => i.to)).not.toContain("/ligacoes");
   });
 });

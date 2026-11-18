@@ -1,6 +1,8 @@
 // Canais extras das notificações (e-mail e push no navegador): catálogo de tipos para a tela de
 // preferências e o conteúdo de cada canal. Puro: usado pelo job notify.deliver e pela tela.
 
+import { EDITION, hasChannel, type Edition, type EditionChannel } from "@/lib/edition";
+
 export interface NotificationKind {
   id: string;
   label: string;
@@ -33,6 +35,32 @@ export const NOTIFICATION_KINDS: NotificationKind[] = [
   { id: "automation", label: "Avisos de automações", group: "Sistema" },
   { id: "telephony_balance", label: "Saldo da telefonia", group: "Sistema" },
 ];
+
+/** Tipos de aviso que dependem de um canal: fora da edição, somem das preferências. */
+const KIND_CHANNEL: Record<string, EditionChannel[]> = {
+  meeting_minutes: ["video"],
+  call_incoming: ["phone"],
+  telephony_balance: ["phone"],
+  // termos monitorados só existem em ligações e reuniões gravadas
+  tracked_term: ["phone", "video"],
+};
+
+/** Tipos de aviso que a tela de preferências oferece nesta edição. */
+export function notificationKindsFor(edition: Edition = EDITION): NotificationKind[] {
+  return NOTIFICATION_KINDS.filter((k) => {
+    const needs = KIND_CHANNEL[k.id];
+    return !needs || needs.some((c) => hasChannel(c, edition));
+  });
+}
+
+/** Nome do grupo na tela: sem telefone na edição, "Reuniões e ligações" vira "Agenda". */
+export function notificationGroupLabel(
+  group: NotificationKind["group"],
+  edition: Edition = EDITION,
+): string {
+  if (group !== "Reuniões e ligações") return group;
+  return hasChannel("phone", edition) ? group : "Agenda";
+}
 
 export interface Channels {
   app: boolean;

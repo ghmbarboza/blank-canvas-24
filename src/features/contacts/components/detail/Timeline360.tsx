@@ -101,7 +101,7 @@ export function Timeline360({ contactId }: { contactId: string }) {
         <EmptyState
           icon={History}
           title="Nada por aqui ainda"
-          description="Mensagens, ligações, reuniões, tarefas e leituras da IA aparecem nesta linha."
+          description="Mensagens, tarefas, chamados e leituras da IA aparecem nesta linha."
           className="py-10"
         />
       ) : (

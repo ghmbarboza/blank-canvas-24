@@ -1,3 +1,4 @@
+import { EDITION, type Edition } from "@/lib/edition";
 import {
   BarChart3,
   CalendarClock,
@@ -38,6 +39,11 @@ const META: Record<GestaoTab, { label: string; icon: LucideIcon; managerOnly: bo
   modelos: { label: "Modelo do segmento", icon: LayoutTemplate, managerOnly: true },
 };
 
+/** Abas da edição: a sincronização com outro CRM (RD Station, HubSpot) é uma integração extra. */
+export function gestaoTabsFor(edition: Edition = EDITION): GestaoTab[] {
+  return GESTAO_TABS.filter((t) => t !== "crm" || edition.allIntegrations);
+}
+
 // Gestão da operação: quantas pessoas escalar, indicadores com tendência, saúde da carteira e a
 // convivência com o que o cliente já usa (planilha, RD Station, HubSpot, Kommo, Pipedrive).
 export function GestaoPage({
@@ -49,7 +55,7 @@ export function GestaoPage({
 }) {
   const { current, isManager, isAdmin } = useAccount();
   const accountId = current!.accountId;
-  const tabs = GESTAO_TABS.filter((t) => isManager || !META[t].managerOnly);
+  const tabs = gestaoTabsFor().filter((t) => isManager || !META[t].managerOnly);
   const active = tabs.includes(tab) ? tab : (tabs[0] ?? "clientes");
 
   return (

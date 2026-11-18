@@ -41,6 +41,7 @@ import { CompanyTab } from "./CompanyTab";
 import { IntelligenceTab } from "./IntelligenceTab";
 import { TeamTab } from "./TeamTab";
 import type { SettingsTab } from "./tabs";
+import { EDITION, hasChannel, type Edition } from "@/lib/edition";
 
 type GroupId = "empresa" | "equipe" | "canais" | "inteligencia" | "atendimento" | "privacidade";
 
@@ -56,6 +57,8 @@ interface Section {
   icon: LucideIcon;
   group: GroupId;
   component: ComponentType;
+  /** Fora da edição quando devolve false (ver src/lib/edition.ts). Sem isto, sempre aparece. */
+  inEdition?: (edition: Edition) => boolean;
 }
 
 // Seis grupos pelo que a pessoa quer resolver. Toda aba antiga (?aba=) continua com o mesmo id.
@@ -68,19 +71,18 @@ const GROUPS: Group[] = [
   {
     id: "equipe",
     label: "Equipe",
-    description:
-      "Quem entra no Vínculo, o que cada pessoa pode fazer e o roteiro que os vendedores seguem.",
+    description: "Quem entra no Vínculo e o que cada pessoa pode fazer.",
   },
   {
     id: "canais",
     label: "Canais e integrações",
     description:
-      "Conecte as ferramentas que sua empresa já usa. As chaves ficam guardadas no cofre, nunca à vista.",
+      "O que liga os seus canais de atendimento. As chaves ficam guardadas no cofre, nunca à vista.",
   },
   {
     id: "inteligencia",
     label: "Inteligência",
-    description: "Como a IA lê cada lead e como o agente responde os seus clientes.",
+    description: "Como a IA lê cada cliente e como o agente responde.",
   },
   {
     id: "atendimento",
@@ -94,7 +96,7 @@ const GROUPS: Group[] = [
   },
 ];
 
-const SECTIONS: Section[] = [
+const ALL_SECTIONS: Section[] = [
   {
     id: "empresa",
     label: "Dados da empresa",
@@ -144,6 +146,8 @@ const SECTIONS: Section[] = [
     icon: BookOpenCheck,
     group: "equipe",
     component: PlaybooksTab,
+    // roteiro e nota do coach ao vivo: só existem em reunião por vídeo ou ligação
+    inEdition: (e) => hasChannel("video", e) || hasChannel("phone", e),
   },
   {
     id: "integracoes",
@@ -152,13 +156,21 @@ const SECTIONS: Section[] = [
     group: "canais",
     component: IntegrationsTab,
   },
-  { id: "email", label: "E-mail", icon: Mail, group: "canais", component: EmailSettingsTab },
+  {
+    id: "email",
+    label: "E-mail",
+    icon: Mail,
+    group: "canais",
+    component: EmailSettingsTab,
+    inEdition: (e) => hasChannel("email", e),
+  },
   {
     id: "agenda",
     label: "Agenda e reuniões",
     icon: CalendarDays,
     group: "canais",
     component: CalendarSettingsTab,
+    inEdition: (e) => hasChannel("video", e),
   },
   {
     id: "telefonia",
@@ -166,6 +178,7 @@ const SECTIONS: Section[] = [
     icon: PhoneCall,
     group: "canais",
     component: TelephonyTab,
+    inEdition: (e) => hasChannel("phone", e),
   },
   {
     id: "desenvolvedores",
@@ -173,6 +186,7 @@ const SECTIONS: Section[] = [
     icon: Code2,
     group: "canais",
     component: DevelopersTab,
+    inEdition: (e) => e.allIntegrations,
   },
   {
     id: "inteligencia",
@@ -204,6 +218,13 @@ const SECTIONS: Section[] = [
     component: AuditTab,
   },
 ];
+
+/** Seções que a edição mostra (a aba escondida cai na primeira: o endereço antigo não quebra). */
+export function settingsSectionsFor(edition: Edition = EDITION): Section[] {
+  return ALL_SECTIONS.filter((s) => !s.inEdition || s.inEdition(edition));
+}
+
+const SECTIONS = settingsSectionsFor();
 
 interface Props {
   tab: SettingsTab;

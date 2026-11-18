@@ -19,8 +19,7 @@ export const Route = createFileRoute("/_app/relatorios")({
       ...(typeof rel === "string" && /^[0-9a-f-]{36}$/i.test(rel) ? { relatorio: rel } : {}),
     };
   },
-  head: () =>
-    pageHead("Relatórios", "Vendas, forecast, atribuição, atendimento, ligações, reuniões e IA."),
+  head: () => pageHead("Relatórios", "Carteira, atendimento, satisfação e IA."),
   component: ReportsRoute,
 });
 

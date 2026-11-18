@@ -29,7 +29,7 @@ import {
 } from "./api";
 import { bucketsSentence, evidenceByCriterion, type ScoreBucket } from "./overview";
 import { ScoreBadge } from "./ScoreBadge";
-import { CHANNEL_LABEL, type QualityChannel } from "./scoring";
+import { CHANNEL_LABEL, qualityChannelsFor, type QualityChannel } from "./scoring";
 
 const CHANNEL_ICON: Record<QualityChannel, typeof Phone> = {
   call: Phone,
@@ -122,7 +122,7 @@ export function ScoreRingCard({
           </p>
         </div>
         <ul className="mt-3 grid w-full grid-cols-3 gap-2 text-center">
-          {(["call", "chat", "email"] as QualityChannel[]).map((c) => {
+          {qualityChannelsFor().map((c) => {
             const x = d.by_channel[c];
             return (
               <li key={c} className="rounded-lg bg-surface-2 px-2 py-1.5">

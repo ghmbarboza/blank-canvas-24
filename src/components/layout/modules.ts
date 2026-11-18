@@ -4,6 +4,7 @@
 // Desligar um extra tira do menu e da busca, e a rota dele mostra "Recurso desligado" (os dados
 // continuam guardados; o servidor também recusa as ações do extra desligado).
 import { BRAND } from "@/lib/brand";
+import { EDITION, hasChannel, type Edition } from "@/lib/edition";
 
 export type ModuleId =
   | "meu_dia"
@@ -95,6 +96,16 @@ export const EXTRA_MODULES: ModuleDef[] = [
     when: "Para treinar gente nova antes de atender de verdade.",
   },
 ];
+
+/** Extras que a edição oferece (o que depende de um canal ausente não é oferecido). */
+export function extraModulesFor(edition: Edition = EDITION): ModuleDef[] {
+  return EXTRA_MODULES.filter((m) => {
+    if (m.id === "campanhas") return hasChannel("email", edition);
+    // a Biblioteca guarda trechos de ligações e reuniões gravadas: sem os dois, fica vazia
+    if (m.id === "biblioteca") return hasChannel("phone", edition) || hasChannel("video", edition);
+    return true;
+  });
+}
 
 export function enabledModules(settings: { modules?: string[] } | null | undefined): Set<string> {
   return new Set(settings?.modules ?? []);

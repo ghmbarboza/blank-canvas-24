@@ -1,3 +1,4 @@
+import { hasChannel } from "@/lib/edition";
 import { useMemo, useState } from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { BarChart3 } from "lucide-react";
@@ -26,6 +27,9 @@ import { Kpi, LoadingGrid, Panel } from "@/features/reports/ui";
 
 import { useTrends } from "../api";
 import { byGroup, byWeek, delta, formatDuration, totals, type KpiSet } from "../kpis";
+
+// sem telefone na edição, os indicadores de ligação (TMA, TME, abandono) somem
+const PHONE = hasChannel("phone");
 
 const PERIODS = [
   { weeks: 8, label: "8 semanas" },
@@ -123,7 +127,11 @@ export function IndicatorsTab({ accountId }: { accountId: string }) {
         <EmptyState
           icon={BarChart3}
           title="Ainda sem atendimento no período"
-          description="TMA, TME, resolução no primeiro contato, abandono, CSAT e NPS aparecem aqui assim que houver ligações recebidas, chamados ou pesquisas respondidas."
+          description={
+            PHONE
+              ? "TMA, TME, resolução no primeiro contato, abandono, CSAT e NPS aparecem aqui assim que houver ligações recebidas, chamados ou pesquisas respondidas."
+              : "Resolução no primeiro contato, CSAT e NPS aparecem aqui assim que houver chamados ou pesquisas respondidas."
+          }
         />
       </div>
     );
@@ -134,27 +142,33 @@ export function IndicatorsTab({ accountId }: { accountId: string }) {
     <div className="space-y-4">
       {controls}
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
-        <Kpi
-          dark
-          label="TMA (ligação)"
-          value={formatDuration(t.tmaSeconds)}
-          {...opt(trendSub(delta(series((k) => k.tmaSeconds)), " s", true))}
-        />
-        <Kpi
-          label="TME (espera na fila)"
-          value={formatDuration(t.tmeSeconds)}
-          {...opt(trendSub(delta(series((k) => k.tmeSeconds)), " s", true))}
-        />
+        {PHONE && (
+          <Kpi
+            dark
+            label="TMA (ligação)"
+            value={formatDuration(t.tmaSeconds)}
+            {...opt(trendSub(delta(series((k) => k.tmaSeconds)), " s", true))}
+          />
+        )}
+        {PHONE && (
+          <Kpi
+            label="TME (espera na fila)"
+            value={formatDuration(t.tmeSeconds)}
+            {...opt(trendSub(delta(series((k) => k.tmeSeconds)), " s", true))}
+          />
+        )}
         <Kpi
           label="Resolvido no 1º contato"
           value={pct(t.fcrPct)}
           {...opt(trendSub(delta(series((k) => k.fcrPct)), " p.p.", false))}
         />
-        <Kpi
-          label="Abandono"
-          value={pct(t.abandonPct)}
-          sub={`${formatNumber(t.calls)} ligações recebidas`}
-        />
+        {PHONE && (
+          <Kpi
+            label="Abandono"
+            value={pct(t.abandonPct)}
+            sub={`${formatNumber(t.calls)} ligações recebidas`}
+          />
+        )}
         <Kpi
           label="CSAT"
           value={t.csat === null ? "—" : `${t.csat.toLocaleString("pt-BR")} de 5`}
@@ -178,17 +192,25 @@ export function IndicatorsTab({ accountId }: { accountId: string }) {
 
       <Panel
         title={group === "team" ? "Por equipe ou fila" : "Por atendente"}
-        hint="Ligações agrupam pela fila; chamados, pela equipe do chamado. NPS não tem equipe e fica só no total."
+        hint={
+          PHONE
+            ? "Ligações agrupam pela fila; chamados, pela equipe do chamado. NPS não tem equipe e fica só no total."
+            : "Chamados agrupam pela equipe do chamado. NPS não tem equipe e fica só no total."
+        }
       >
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>{group === "team" ? "Equipe" : "Atendente"}</TableHead>
-                <TableHead className="text-right">Ligações</TableHead>
-                <TableHead className="text-right">TMA</TableHead>
-                <TableHead className="text-right">TME</TableHead>
-                <TableHead className="text-right">Abandono</TableHead>
+                {PHONE && (
+                  <>
+                    <TableHead className="text-right">Ligações</TableHead>
+                    <TableHead className="text-right">TMA</TableHead>
+                    <TableHead className="text-right">TME</TableHead>
+                    <TableHead className="text-right">Abandono</TableHead>
+                  </>
+                )}
                 <TableHead className="text-right">Chamados</TableHead>
                 <TableHead className="text-right">1º contato</TableHead>
                 <TableHead className="text-right">CSAT</TableHead>
@@ -198,18 +220,22 @@ export function IndicatorsTab({ accountId }: { accountId: string }) {
               {view.groups.map((g) => (
                 <TableRow key={g.key} className="row-wash">
                   <TableCell className="font-medium">{g.label}</TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {formatNumber(g.kpis.calls)}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {formatDuration(g.kpis.tmaSeconds)}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {formatDuration(g.kpis.tmeSeconds)}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {pct(g.kpis.abandonPct)}
-                  </TableCell>
+                  {PHONE && (
+                    <>
+                      <TableCell className="text-right tabular-nums">
+                        {formatNumber(g.kpis.calls)}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {formatDuration(g.kpis.tmaSeconds)}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {formatDuration(g.kpis.tmeSeconds)}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {pct(g.kpis.abandonPct)}
+                      </TableCell>
+                    </>
+                  )}
                   <TableCell className="text-right tabular-nums">
                     {formatNumber(g.kpis.tickets)}
                   </TableCell>
@@ -223,8 +249,9 @@ export function IndicatorsTab({ accountId }: { accountId: string }) {
           </Table>
         </div>
         <p className="mt-3 text-[11px] text-subtle">
-          Resolvido no 1º contato: ligação atendida sem nova ligação do mesmo cliente em 7 dias, e
-          chamado resolvido sem ser reaberto.
+          {PHONE
+            ? "Resolvido no 1º contato: ligação atendida sem nova ligação do mesmo cliente em 7 dias, e chamado resolvido sem ser reaberto."
+            : "Resolvido no 1º contato: chamado resolvido sem ser reaberto."}
         </p>
       </Panel>
     </div>

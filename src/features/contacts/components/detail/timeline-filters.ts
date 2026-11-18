@@ -1,4 +1,6 @@
-export const TIMELINE_FILTERS: { id: string; label: string; kinds: string[] }[] = [
+import { EDITION, hasChannel, type Edition } from "@/lib/edition";
+
+const ALL_TIMELINE_FILTERS: { id: string; label: string; kinds: string[] }[] = [
   { id: "all", label: "Tudo", kinds: [] },
   { id: "messages", label: "Mensagens", kinds: ["message"] },
   { id: "email", label: "E-mails", kinds: ["email"] },
@@ -12,3 +14,14 @@ export const TIMELINE_FILTERS: { id: string; label: string; kinds: string[] }[] 
   { id: "automation", label: "Automações", kinds: ["automation"] },
   { id: "privacy", label: "Privacidade", kinds: ["consent"] },
 ];
+
+/** Filtros da linha do tempo que a edição mostra (sem e-mail e ligação quando o canal não existe). */
+export function timelineFiltersFor(edition: Edition = EDITION) {
+  return ALL_TIMELINE_FILTERS.filter((f) => {
+    if (f.id === "email") return hasChannel("email", edition);
+    if (f.id === "calls") return hasChannel("phone", edition);
+    return true;
+  });
+}
+
+export const TIMELINE_FILTERS = timelineFiltersFor();

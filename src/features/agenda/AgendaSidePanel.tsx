@@ -1,3 +1,4 @@
+import { hasChannel } from "@/lib/edition";
 import { Link } from "@tanstack/react-router";
 import { addDays, format, isSameDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -192,7 +193,7 @@ function NextMeetingCard({
               </p>
             )}
           </div>
-          {meeting.data && (
+          {meeting.data && hasChannel("video") && (
             <Link
               to="/reunioes/$meetingId"
               params={{ meetingId: meeting.data.id }}

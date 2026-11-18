@@ -119,7 +119,7 @@ function Welcome() {
           </Button>
         </form>
         <p className="mt-6 text-[12px] text-subtle">
-          Recebeu um convite? Abra o link do e-mail com esta mesma conta ({user.email}).
+          Recebeu um convite? Abra o link que te mandaram com esta mesma conta ({user.email}).
         </p>
       </div>
     </main>

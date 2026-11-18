@@ -1,3 +1,4 @@
+import { EDITION } from "@/lib/edition";
 import { useEffect, useState } from "react";
 import { FlaskConical, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -79,7 +80,7 @@ export function QualitySettingsCard({ accountId }: { accountId: string }) {
           <span>
             <span className="font-medium">Avaliar todas as interações</span>
             <span className="block text-[12px] text-muted-foreground">
-              Ligações, conversas e e-mails, quando terminam.
+              As conversas, quando terminam.
             </span>
           </span>
           <Switch
@@ -154,12 +155,12 @@ export function QualitySettingsCard({ accountId }: { accountId: string }) {
         <p className="text-[13px]">
           <span className="font-medium">Modelo do avaliador</span>
           <span className="block text-[12px] text-muted-foreground">
-            Sem chave própria, o avaliador usa a IA inclusa e não há nada a escolher aqui. Com chave
-            da Anthropic ou da OpenAI (Ajustes › Integrações), ele usa o modelo abaixo: prefira um
-            econômico, porque a conta paga pela própria chave.
+            {EDITION.ownAiKey
+              ? "Sem chave própria, o avaliador usa a IA inclusa e não há nada a escolher aqui. Com chave da Anthropic ou da OpenAI (Ajustes › Integrações), ele usa o modelo abaixo: prefira um econômico, porque a conta paga pela própria chave."
+              : "O avaliador usa a IA inclusa. Não há nada a escolher aqui."}
           </span>
         </p>
-        <div className="grid gap-1">
+        <div className={EDITION.ownAiKey ? "grid gap-1" : "hidden"}>
           <Label htmlFor="qs-anthropic" className="flex items-center gap-1.5 text-[12px]">
             <BrandIcon id="anthropic" size={14} /> Modelo com a chave da Anthropic (opcional)
           </Label>
@@ -169,7 +170,7 @@ export function QualitySettingsCard({ accountId }: { accountId: string }) {
             onChange={(e) => set({ model_anthropic: e.target.value })}
           />
         </div>
-        <div className="grid gap-1">
+        <div className={EDITION.ownAiKey ? "grid gap-1" : "hidden"}>
           <Label htmlFor="qs-openai" className="flex items-center gap-1.5 text-[12px]">
             <BrandIcon id="openai" size={14} /> Modelo com a chave da OpenAI (opcional)
           </Label>

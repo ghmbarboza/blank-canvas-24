@@ -1,3 +1,4 @@
+import { EDITION, hasChannel, type Edition, type EditionChannel } from "@/lib/edition";
 import { useMemo, useState } from "react";
 import { Download } from "lucide-react";
 
@@ -52,13 +53,36 @@ const TAB_META: Record<ReportTab, { label: string; ranged: boolean }> = {
   construtor: { label: "Meus relatórios", ranged: false },
 };
 
-const GROUPS: { label: string; tabs: readonly ReportTab[] }[] = [
+const ALL_GROUPS: { label: string; tabs: readonly ReportTab[] }[] = [
   { label: "Atendimento", tabs: ["atendimento", "ligacoes", "reunioes", "operacao"] },
   { label: "Vendas", tabs: ["vendas", "forecast", "receita"] },
   { label: "IA", tabs: ["ia"] },
   { label: "Campanhas", tabs: ["atribuicao"] },
   { label: "Meus relatórios", tabs: ["construtor"] },
 ];
+
+/** Abas que dependem de um canal: fora da edição, somem (ver src/lib/edition.ts). */
+const TAB_CHANNEL: Partial<Record<ReportTab, EditionChannel>> = {
+  ligacoes: "phone",
+  // nível de serviço e ocupação da central telefônica
+  operacao: "phone",
+  reunioes: "video",
+};
+
+export function reportTabVisible(tab: ReportTab, edition: Edition = EDITION): boolean {
+  const channel = TAB_CHANNEL[tab];
+  return !channel || hasChannel(channel, edition);
+}
+
+/** Grupos e abas de relatório que a edição mostra (grupo sem aba some). */
+export function reportGroupsFor(edition: Edition = EDITION) {
+  return ALL_GROUPS.map((g) => ({
+    ...g,
+    tabs: g.tabs.filter((t) => reportTabVisible(t, edition)),
+  })).filter((g) => g.tabs.length > 0);
+}
+
+const GROUPS = reportGroupsFor();
 
 const PRESETS: { id: string; label: string; range: () => Range }[] = [
   {
@@ -104,7 +128,9 @@ interface Props {
 }
 
 // Relatórios em formato editorial: grupos por assunto, manchete com número e exportação do que está na tela.
-export function ReportsPage({ tab, onTabChange, reportId, standalone = false }: Props) {
+export function ReportsPage({ tab: requested, onTabChange, reportId, standalone = false }: Props) {
+  // endereço antigo de uma aba fora da edição (?aba=ligacoes) abre a primeira aba visível
+  const tab = reportTabVisible(requested) ? requested : GROUPS[0]!.tabs[0]!;
   const { current } = useAccount();
   const accountId = current!.accountId;
   const [preset, setPreset] = useState("month");

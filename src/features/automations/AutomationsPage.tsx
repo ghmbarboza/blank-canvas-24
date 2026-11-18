@@ -15,9 +15,10 @@ import { useAutomationAction, useAutomations, useAutomationsToday, useSaveAutoma
 import { DEFAULT_EXIT, DEFAULT_GUARDS } from "./engine";
 import { FlowCard } from "./FlowCard";
 import { SocialAutomations } from "./SocialAutomations";
+import { hasChannel } from "@/lib/edition";
 import { TemplateGallery } from "./TemplateGallery";
 import { TemplatePreviewDialog } from "./TemplatePreviewDialog";
-import { blankGraph, type AutomationTemplate } from "./templates";
+import { blankGraph, templatesFor, type AutomationTemplate } from "./templates";
 
 // Automações: cada fluxo lido como frase, o que rodou hoje, liga/desliga e os modelos para começar.
 export function AutomationsPage() {
@@ -116,7 +117,9 @@ export function AutomationsPage() {
                 title="Nenhuma automação ainda"
                 description={
                   isManager
-                    ? "Escolha um modelo abaixo: boas-vindas do lead, recuperação de quem não respondeu, lembrete de reunião, pós-venda com NPS. Você ajusta e liga quando quiser."
+                    ? templatesFor().length > 0
+                      ? "Escolha um modelo abaixo: boas-vindas do lead, recuperação de quem não respondeu, lembrete de reunião, pós-venda com NPS. Você ajusta e liga quando quiser."
+                      : "As regras prontas ficam em Regras de pós-venda. Aqui você monta um fluxo do zero: quando acontecer algo, o que enviar no WhatsApp e o que a equipe faz."
                     : "Quando um gestor ligar uma automação, ela aparece aqui com o que rodou hoje."
                 }
               />
@@ -137,7 +140,9 @@ export function AutomationsPage() {
             )}
           </section>
 
-          {isManager && <SocialAutomations accountId={accountId} />}
+          {isManager && (hasChannel("instagram") || hasChannel("messenger")) && (
+            <SocialAutomations accountId={accountId} />
+          )}
 
           {isManager && <TemplateGallery busy={save.isPending} onPick={(t) => setPreview(t)} />}
         </div>

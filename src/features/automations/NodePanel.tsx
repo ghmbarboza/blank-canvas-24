@@ -21,6 +21,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { AiAgentNodePanel, ComposioNodePanel } from "./AiNodePanels";
 import { NODE_LABEL, type AutoNode } from "./engine";
 import { NODE_ICON } from "./nodeMeta";
+import { hasChannel } from "@/lib/edition";
+import { cn } from "@/lib/utils";
 
 interface Props {
   accountId: string;
@@ -188,8 +190,19 @@ export function NodePanel({
     case "whatsapp":
       body = (
         <>
-          {text("text", "Mensagem (dentro da janela de 24 h)", "Oi {{primeiro_nome}}…", 5)}
-          <div className="rounded-xl border border-border bg-surface-2/50 p-3">
+          {text(
+            "text",
+            hasChannel("whatsapp_official") ? "Mensagem (dentro da janela de 24 h)" : "Mensagem",
+            "Oi {{primeiro_nome}}…",
+            5,
+          )}
+          <div
+            className={cn(
+              "rounded-xl border border-border bg-surface-2/50 p-3",
+              // modelo aprovado só existe no número oficial da Meta
+              !hasChannel("whatsapp_official") && "hidden",
+            )}
+          >
             <p className="mb-2 text-[12px] text-muted-foreground">
               Fora da janela de 24 h o WhatsApp oficial só aceita template aprovado pela Meta.
             </p>
@@ -242,12 +255,12 @@ export function NodePanel({
     case "task":
       body = (
         <>
-          {text("title", "Título da tarefa", "Ex.: Ligar para {{nome}}")}
+          {text("title", "Título da tarefa", "Ex.: Conferir o pedido de {{nome}}")}
           {select("type", "Tipo", [
-            { value: "call", label: "Ligar" },
+            ...(hasChannel("phone") ? [{ value: "call", label: "Ligar" }] : []),
             { value: "task", label: "Tarefa" },
             { value: "whatsapp", label: "WhatsApp" },
-            { value: "email", label: "E-mail" },
+            ...(hasChannel("email") ? [{ value: "email", label: "E-mail" }] : []),
             { value: "meeting", label: "Reunião" },
           ])}
           {minutes("due_in_minutes", "Prazo a partir de agora", 60)}
@@ -380,9 +393,13 @@ export function NodePanel({
       body = (
         <>
           {select("event", "Esperar até o contato", [
-            { value: "replied", label: "Responder em qualquer canal" },
-            { value: "opened", label: "Abrir o e-mail" },
-            { value: "clicked", label: "Clicar no e-mail" },
+            { value: "replied", label: "Responder" },
+            ...(hasChannel("email")
+              ? [
+                  { value: "opened", label: "Abrir o e-mail" },
+                  { value: "clicked", label: "Clicar no e-mail" },
+                ]
+              : []),
             { value: "meeting", label: "Marcar uma reunião" },
           ])}
           {minutes("timeout_minutes", "Prazo máximo", 1440)}
@@ -394,8 +411,12 @@ export function NodePanel({
         <>
           {select("kind", "Se o contato", [
             { value: "replied", label: "Respondeu" },
-            { value: "opened", label: "Abriu um e-mail" },
-            { value: "clicked", label: "Clicou num e-mail" },
+            ...(hasChannel("email")
+              ? [
+                  { value: "opened", label: "Abriu um e-mail" },
+                  { value: "clicked", label: "Clicou num e-mail" },
+                ]
+              : []),
             { value: "meeting", label: "Marcou reunião" },
             { value: "score_gte", label: "Tem score maior ou igual a" },
             { value: "lifecycle_eq", label: "Está na fase" },

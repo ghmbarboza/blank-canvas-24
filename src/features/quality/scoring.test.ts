@@ -119,3 +119,12 @@ describe("agreement", () => {
     expect(agreement(ai, [])).toBe(0);
   });
 });
+
+describe("canais de qualidade por edição", () => {
+  it("edição atual só avalia conversa; a completa volta com ligação e e-mail", async () => {
+    const { EDITION, FULL_EDITION } = await import("@/lib/edition");
+    const { qualityChannelsFor } = await import("./scoring");
+    expect(qualityChannelsFor(EDITION)).toEqual(["chat"]);
+    expect(qualityChannelsFor(FULL_EDITION)).toEqual(["call", "chat", "email"]);
+  });
+});

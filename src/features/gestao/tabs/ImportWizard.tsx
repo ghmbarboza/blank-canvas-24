@@ -1,3 +1,4 @@
+import { EDITION } from "@/lib/edition";
 import { useMemo, useRef, useState } from "react";
 import {
   AlertTriangle,
@@ -152,15 +153,18 @@ export function ImportWizard({
     return (
       <div className="rounded-[24px] border border-dashed border-border bg-surface p-8 text-center">
         <FileSpreadsheet className="mx-auto size-8 text-primary" aria-hidden />
-        <div className="mt-3 flex justify-center gap-2" aria-hidden>
-          {["rdstation", "kommo", "pipedrive", "hubspot"].map((b) => (
-            <BrandTile key={b} id={b} size={28} />
-          ))}
-        </div>
+        {EDITION.allIntegrations && (
+          <div className="mt-3 flex justify-center gap-2" aria-hidden>
+            {["rdstation", "kommo", "pipedrive", "hubspot"].map((b) => (
+              <BrandTile key={b} id={b} size={28} />
+            ))}
+          </div>
+        )}
         <p className="mt-3 text-[15px] font-medium">Traga seus contatos, empresas e negócios</p>
         <p className="mx-auto mt-1 max-w-md text-[13px] text-muted-foreground">
-          Planilha CSV ou Excel (.xlsx), ou a exportação do RD Station CRM, Kommo, Pipedrive ou
-          HubSpot. A gente reconhece as colunas e mostra tudo antes de gravar.
+          {EDITION.allIntegrations
+            ? "Planilha CSV ou Excel (.xlsx), ou a exportação do RD Station CRM, Kommo, Pipedrive ou HubSpot. A gente reconhece as colunas e mostra tudo antes de gravar."
+            : "Planilha CSV ou Excel (.xlsx). A gente reconhece as colunas e mostra tudo antes de gravar."}
         </p>
         <input
           ref={fileRef}
@@ -191,7 +195,7 @@ export function ImportWizard({
               {formatNumber(sheet.rows.length)} linhas · confira para onde vai cada coluna
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className={EDITION.allIntegrations ? "flex items-center gap-2" : "hidden"}>
             <span className="text-[12px] text-muted-foreground">Origem</span>
             <Select
               value={source}

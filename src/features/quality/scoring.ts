@@ -1,6 +1,8 @@
 // Núcleo puro da qualidade: critérios do formulário, nota ponderada com item eliminatório,
 // concordância da calibração e modelos prontos. Usado no servidor (avaliador) e na tela.
 
+import { EDITION, hasChannel, type Edition, type EditionChannel } from "@/lib/edition";
+
 export type QualityChannel = "call" | "chat" | "email";
 
 export interface QualityCriterion {
@@ -28,6 +30,19 @@ export const CHANNEL_LABEL: Record<QualityChannel, string> = {
   chat: "Chat e redes",
   email: "E-mail",
 };
+
+const QUALITY_CHANNEL_EDITION: Partial<Record<QualityChannel, EditionChannel>> = {
+  call: "phone",
+  email: "email",
+};
+
+/** Canais de qualidade que a edição oferece nos filtros e no formulário. */
+export function qualityChannelsFor(edition: Edition = EDITION): QualityChannel[] {
+  return (["call", "chat", "email"] as QualityChannel[]).filter((c) => {
+    const needs = QUALITY_CHANNEL_EDITION[c];
+    return !needs || hasChannel(needs, edition);
+  });
+}
 
 /** Nota mínima para um critério contar como "cumprido". */
 export const PASS_MARK = 70;

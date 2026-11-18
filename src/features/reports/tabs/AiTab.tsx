@@ -1,3 +1,4 @@
+import { hasChannel } from "@/lib/edition";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { Bot, Coins, Cpu, ShieldAlert } from "lucide-react";
 
@@ -130,7 +131,9 @@ export function AiTab({ accountId }: { accountId: string }) {
           icon={Coins}
           label="Consumo registrado"
           value={usd(cost)}
-          sub="Voz, telefonia, e-mail, IA e mais"
+          sub={
+            hasChannel("phone") ? "Voz, telefonia, e-mail, IA e mais" : "IA do atendimento e mais"
+          }
         />
       </div>
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
@@ -169,7 +172,11 @@ export function AiTab({ accountId }: { accountId: string }) {
       </div>
       <Panel
         title="Consumo por tipo (US$)"
-        hint="Somado da carteira de consumo: cada minuto de voz, telefonia, transcrição, e-mail e template fica registrado"
+        hint={
+          hasChannel("phone")
+            ? "Somado da carteira de consumo: cada minuto de voz, telefonia, transcrição, e-mail e template fica registrado"
+            : "Somado da carteira de consumo: cada uso da IA fica registrado"
+        }
       >
         <BarList
           rows={[...byKind.entries()]
