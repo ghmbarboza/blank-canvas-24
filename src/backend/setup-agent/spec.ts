@@ -1,6 +1,7 @@
 // A Cris: guia de implantação da Central de CS (pós-venda no WhatsApp). Conduz os passos do roteiro, faz
 // o trabalho pelas ferramentas e nunca perde o que já foi dito (estado e fatos entram no sistema
 // a cada rodada). Puro: especificação das ferramentas e montagem do prompt, testados sem rede.
+import { ZERNIO_OPTION_CHANNEL, zernioOptionAllowed } from "@/features/channels/zernio-edition";
 import type { ToolSpec } from "@/backend/agents/tool-loop";
 import { BRAND } from "@/lib/brand";
 import { EDITION, hasChannel, hasProvider, type Edition, type EditionChannel } from "@/lib/edition";
@@ -361,25 +362,7 @@ export const ALL_SETUP_TOOLS: ToolSpec[] = [
   REPLY,
 ];
 
-/** Opção da Zernio (id usado em link_zernio) e o canal da edição a que ela pertence. */
-const ZERNIO_OPTION_CHANNEL: Record<string, EditionChannel> = {
-  whatsapp: "whatsapp_official",
-  instagram: "instagram",
-  facebook: "messenger",
-  telegram: "telegram",
-  tiktok: "tiktok",
-  linkedin: "linkedin",
-  twitter: "x",
-  youtube: "youtube",
-  threads: "threads",
-};
-
-/** A edição oferece esta opção da Zernio? Fora da tabela (anúncios, Pinterest...) só na completa. */
-export function zernioOptionAllowed(id: string, edition: Edition = EDITION): boolean {
-  if (edition.allIntegrations) return true;
-  const channel = ZERNIO_OPTION_CHANNEL[id];
-  return Boolean(channel && hasChannel(channel, edition));
-}
+export { zernioOptionAllowed };
 
 const ZERNIO_LABEL: Record<string, string> = {
   whatsapp: "WhatsApp oficial",

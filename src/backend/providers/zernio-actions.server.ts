@@ -4,6 +4,7 @@ import { randomBytes } from "node:crypto";
 
 import { HttpError, admin, appBaseUrl } from "@/backend/http.server";
 import { findOption, isServiceChannelPlatform } from "@/features/channels/zernio-catalog";
+import { zernioOptionAllowed } from "@/features/channels/zernio-edition";
 import { offersFromCountry, portReasonText } from "@/features/channels/zernio-rules";
 import { toE164 } from "@/features/telephony/lib";
 
@@ -215,6 +216,8 @@ export async function syncAccounts(
       // conta de anúncio (metaads, googleads…) e caixa de agenda/e-mail (google, microsoft) não
       // são canal de atendimento: ficam só na Central da Zernio
       if (!isServiceChannelPlatform(a.platform)) continue;
+      // só entra o que a edição oferece: a chave enxerga tudo o que a pessoa já tem na Zernio
+      if (!zernioOptionAllowed(String(a.platform))) continue;
       const platform = toPlatform(a.platform);
       const row: Record<string, unknown> = {
         account_id: accountId,
