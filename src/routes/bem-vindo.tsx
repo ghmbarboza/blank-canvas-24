@@ -40,8 +40,13 @@ function Welcome() {
       .rpc("claim_first_account", fullName ? { _full_name: fullName } : {})
       .then(async ({ data }) => {
         if (!alive) return;
+        // Relê a conta nos dois casos. Quando o banco diz "já tem dono", o dono pode ser a própria
+        // pessoa: no primeiro acesso com Google o gatilho do cadastro cria a central antes desta
+        // tela, e a leitura feita na volta do Google ficava guardada como "sem central". Sem reler,
+        // a pessoa caía no formulário abaixo, que o banco recusa (visto num remix em 18/11).
+        await queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
+        if (!alive) return;
         if (data) {
-          await queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
           setClaim("done");
           navigate({ to: "/painel", replace: true });
         } else setClaim("taken");
@@ -89,7 +94,7 @@ function Welcome() {
         <Logo className="size-10" />
         <h1 className="mt-6 font-display text-2xl font-medium">Vamos montar sua central</h1>
         <p className="mt-1.5 text-[13px] text-muted-foreground">
-          Criamos sua empresa com um funil de vendas pronto. Você ajusta tudo depois.
+          Criamos sua empresa com a jornada de pós-venda pronta. Você ajusta tudo depois.
         </p>
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">
           <div className="space-y-1.5">
