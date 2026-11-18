@@ -241,6 +241,9 @@ export function chatToolsBody(
       },
     })),
     tool_choice: "required",
+    // Atendimento é resposta curta com a base na mão: sem isto o Gemini gastava até 11 s
+    // "pensando" antes de responder (medido em 18/11). Só no gateway com modelo do Google.
+    ...(provider === "lovable" && model.startsWith("google/") ? { reasoning_effort: "low" } : {}),
     ...(provider === "openai" ? { max_completion_tokens: maxTokens } : { max_tokens: maxTokens }),
   };
 }
