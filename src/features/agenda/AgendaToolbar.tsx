@@ -40,7 +40,7 @@ export function AgendaToolbar({
       <div className="flex min-w-0 basis-full flex-wrap items-end gap-3 sm:flex-1 sm:basis-auto">
         <div>
           <p className="mb-1.5 text-[11px] font-medium tracking-[0.08em] text-subtle uppercase">
-            Vender
+            Clientes
           </p>
           <h1 className="font-display text-[26px] leading-tight font-medium sm:text-[30px]">
             Agenda
