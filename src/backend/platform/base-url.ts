@@ -68,10 +68,10 @@ export async function originServesProject(
   try {
     const res = await fetch(`${origin}/api/health`, {
       signal: AbortSignal.timeout(timeoutMs),
-      redirect: "error",
+      redirect: "manual", // workerd não aceita "error"; 3xx é recusado logo abaixo
       headers: { accept: "application/json" },
     });
-    if (!res.ok) return false;
+    if (!res.ok) return false; // 3xx não é ok: redirecionamento não prova nada
     const body = (await res.json().catch(() => null)) as { project?: unknown } | null;
     return body?.project === ownProject;
   } catch {

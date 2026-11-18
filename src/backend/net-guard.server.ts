@@ -31,6 +31,18 @@ export async function assertPublicUrl(
  * de TTL zero pode responder público aqui e interno no fetch. No Workers a rede interna do
  * provedor não é alcançável pelo fetch, o que reduz o risco; o resto depende desta checagem.
  */
+/**
+ * 3xx vira erro. O runtime do Lovable (workerd) NÃO aceita `redirect: "error"` no fetch: a chamada
+ * inteira falhava com "Invalid redirect value" e a resposta da IA nunca saía para o WhatsApp
+ * (visto em 18/11 numa cópia real). `manual` + esta conferência dá a mesma garantia: a chave não
+ * segue um redirecionamento para outro lugar.
+ */
+export function rejectRedirect(res: Response): Response {
+  if (res.type === "opaqueredirect" || (res.status >= 300 && res.status < 400))
+    throw new Error("o servidor respondeu com redirecionamento, que não é seguido");
+  return res;
+}
+
 export async function publicFetch(
   raw: string | URL,
   init: Omit<RequestInit, "redirect"> = {},
@@ -38,7 +50,7 @@ export async function publicFetch(
 ): Promise<Response> {
   let url = await assertPublicUrl(raw, opts);
   const hops = Math.max(0, Math.min(opts.maxRedirects ?? 0, 5));
-  if (hops === 0) return fetch(url, { ...init, redirect: "error" });
+  if (hops === 0) return rejectRedirect(await fetch(url, { ...init, redirect: "manual" }));
   for (let hop = 0; hop <= hops; hop++) {
     const res = await fetch(url, { ...init, redirect: "manual" });
     const loc = res.headers.get("location");

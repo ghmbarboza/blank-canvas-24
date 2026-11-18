@@ -53,8 +53,19 @@ describe("SSRF: só endereço público (S11, S12)", () => {
     } finally {
       globalThis.fetch = orig;
     }
-    expect(calls[0]?.redirect).toBe("error");
+    // "manual" e não "error": o runtime do Lovable (workerd) recusa "error" e a chamada inteira falha
+    expect(calls[0]?.redirect).toBe("manual");
     expect(calls[0]?.method).toBe("POST");
+  });
+  it("publicFetch sem maxRedirects transforma 3xx em erro", async () => {
+    const orig = globalThis.fetch;
+    globalThis.fetch = (async () =>
+      new Response(null, { status: 302, headers: { location: "https://outro.example/x" } })) as typeof fetch;
+    try {
+      await expect(publicFetch("https://8.8.8.8/x")).rejects.toThrow(/redirecionamento/);
+    } finally {
+      globalThis.fetch = orig;
+    }
   });
   it("publicFetch com maxRedirects confere cada salto e recusa o que vai para rede interna", async () => {
     const orig = globalThis.fetch;

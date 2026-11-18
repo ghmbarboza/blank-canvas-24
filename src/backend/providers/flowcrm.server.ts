@@ -22,8 +22,10 @@ export async function flowcrmPost(
     },
     body: JSON.stringify(body),
     signal: AbortSignal.timeout(TIMEOUT_MS),
-    redirect: "error",
+    redirect: "manual", // workerd não aceita "error"; 3xx é recusado logo abaixo
   });
+  if (res.type === "opaqueredirect" || (res.status >= 300 && res.status < 400))
+    throw new Error("O Flow CRM respondeu com redirecionamento, que não é seguido.");
   const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
   if (res.status === 401 || res.status === 403)
     throw new Error("O Flow CRM recusou a chave. Confira se ela começa com fcrm_ e está ativa.");
