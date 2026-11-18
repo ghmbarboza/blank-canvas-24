@@ -173,7 +173,7 @@ export const NAV_GROUPS: NavGroup[] = [
     label: "Equipe",
     items: [
       { to: "/equipe-ia", label: "Equipe de IA", icon: Bot, shortcut: "G H", manager: true },
-      { to: "/metas", label: "Metas e comissão", icon: Target, shortcut: "G Q", module: "metas" },
+      { to: "/metas", label: "Metas da equipe", icon: Target, shortcut: "G Q", module: "metas" },
       { to: "/treino", label: "Treino", icon: GraduationCap, shortcut: "G X", module: "treino" },
       {
         to: "/biblioteca",
@@ -190,7 +190,7 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       {
         to: "/origem",
-        label: "Origem dos leads",
+        label: "Origem dos contatos",
         icon: Megaphone,
         shortcut: "G 3",
         manager: true,
@@ -206,7 +206,7 @@ export const NAV_GROUPS: NavGroup[] = [
       },
       {
         to: "/sdr",
-        label: "Pontuação e rodízio",
+        label: "Distribuição de contatos",
         icon: Crosshair,
         shortcut: "G Z",
         manager: true,

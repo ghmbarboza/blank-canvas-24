@@ -66,7 +66,8 @@ const GROUPS: Group[] = [
   {
     id: "empresa",
     label: "Empresa",
-    description: "Quem é a sua empresa, como a Central de CS aparece para a equipe e o que vocês vendem.",
+    description:
+      "Quem é a sua empresa, como a Central de CS aparece para a equipe e o que vocês vendem.",
   },
   {
     id: "equipe",
@@ -142,7 +143,7 @@ const ALL_SECTIONS: Section[] = [
   { id: "equipe", label: "Pessoas e acessos", icon: Users, group: "equipe", component: TeamTab },
   {
     id: "playbooks",
-    label: "Roteiros de venda",
+    label: "Roteiros de atendimento",
     icon: BookOpenCheck,
     group: "equipe",
     component: PlaybooksTab,
@@ -190,7 +191,7 @@ const ALL_SECTIONS: Section[] = [
   },
   {
     id: "inteligencia",
-    label: "Nota e próximo passo",
+    label: "Resumo e próximo passo",
     icon: Bot,
     group: "inteligencia",
     component: IntelligenceTab,

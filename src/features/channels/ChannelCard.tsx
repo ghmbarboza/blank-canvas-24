@@ -114,7 +114,7 @@ export function ChannelCard({ channel, ownerName, canManage, busy, onIntent, onT
                 <Pencil aria-hidden /> Renomear
               </DropdownMenuItem>
               <DropdownMenuItem onSelect={act("assign")}>
-                <UserRound aria-hidden /> Vendedor e compartilhamento
+                <UserRound aria-hidden /> Atendente dono e compartilhamento
               </DropdownMenuItem>
               {isZernioWhatsApp && hasChannel("phone") && (
                 <DropdownMenuItem onSelect={act("calling")}>

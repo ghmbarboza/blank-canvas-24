@@ -96,24 +96,27 @@ export function ContactConversationsList({ accountId, contactId }: Props) {
 }
 
 const DEAL_STATUS: Record<string, { label: string; className: string }> = {
-  open: { label: "Em aberto", className: "text-muted-foreground" },
-  won: { label: "Ganho", className: "text-foreground" },
+  open: { label: "Na carteira", className: "text-muted-foreground" },
+  won: { label: "Fidelizado", className: "text-foreground" },
   lost: { label: "Perdido", className: "text-danger" },
 };
 
 export function ContactDealsList({ accountId, contactId }: Props) {
   const { data, isPending, isError } = useContactDeals(accountId, contactId);
   if (isPending) return <ListSkeleton />;
-  if (isError) return <p className="text-[13px] text-danger">Não deu para carregar os negócios.</p>;
+  if (isError)
+    return (
+      <p className="text-[13px] text-danger">Não deu para carregar a carteira deste cliente.</p>
+    );
   if (!data.length) {
     return (
       <EmptyState
         icon={Briefcase}
-        title="Nenhum negócio com essa pessoa"
-        description="Crie um negócio no Funil e vincule este contato para acompanhar valor e etapa."
+        title="Este contato ainda não está na carteira"
+        description="Quando ele comprar, coloque na Carteira para acompanhar em que etapa da jornada ele está."
         action={
           <Button asChild variant="outline">
-            <Link to="/crm">Ir para o Funil</Link>
+            <Link to="/crm">Abrir a Carteira</Link>
           </Button>
         }
         className="py-10"

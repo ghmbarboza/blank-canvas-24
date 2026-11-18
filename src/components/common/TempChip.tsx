@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { isTemperature, Temperature, TEMPERATURE_LABEL } from "./temperature";
+import { isTemperature, SHOW_TEMPERATURE, Temperature, TEMPERATURE_LABEL } from "./temperature";
 
 // Pill canônica do DS (11px, peso 500, sem caixa alta, sem bolinha). A temperatura é lida pela
 // intensidade do navy: quente é cheio, morno é azul-aço, frio é contorno cinza.
@@ -17,7 +17,7 @@ type Props = {
 
 // A cor nunca vem sozinha: sempre com o rótulo (acessibilidade).
 export function TempChip({ level, score, className }: Props) {
-  if (!isTemperature(level)) return null;
+  if (!SHOW_TEMPERATURE || !isTemperature(level)) return null;
   const s = STYLE[level];
   return (
     <span

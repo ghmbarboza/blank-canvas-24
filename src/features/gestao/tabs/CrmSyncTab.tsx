@@ -29,7 +29,7 @@ const HELP: Record<SyncProvider, { steps: string; placeholder: string }> = {
   },
   hubspot: {
     steps:
-      "No HubSpot: Configurações → Integrações → Apps privados → Criar app. Marque leitura e escrita de contatos, empresas e negócios e copie o token.",
+      "No HubSpot: Configurações → Integrações → Apps privados → Criar app. Marque leitura e escrita de contatos, empresas e negócios (deals) e copie o token.",
     placeholder: "pat-na1-…",
   },
 };
@@ -159,16 +159,16 @@ export function CrmSyncPanel({
                   </SelectContent>
                 </Select>
               </Field>
-              <Field label="Funil dos negócios trazidos">
+              <Field label="Quadro dos cartões trazidos">
                 <Select
                   value={pipe || "default"}
                   onValueChange={(v) => setPipelineId(v === "default" ? "" : v)}
                 >
-                  <SelectTrigger aria-label="Funil">
+                  <SelectTrigger aria-label="Quadro">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="default">Funil padrão</SelectItem>
+                    <SelectItem value="default">Quadro padrão</SelectItem>
                     {(pipelines.data ?? []).map((p) => (
                       <SelectItem key={p.id} value={p.id}>
                         {p.name}
@@ -283,8 +283,8 @@ export function CrmSyncPanel({
                       {l.direction === "pull" ? "Trouxe" : "Levou"} ({ENTITY_LABEL[l.entity]}):{" "}
                       {ACTION_LABEL[l.action]}
                       {typeof l.detail["winner"] === "string" &&
-                        ` — venceu o lado ${l.detail["winner"] === "local" ? "daqui" : "de lá"}`}
-                      {typeof l.detail["message"] === "string" && ` — ${l.detail["message"]}`}
+                        `: venceu o lado ${l.detail["winner"] === "local" ? "daqui" : "de lá"}`}
+                      {typeof l.detail["message"] === "string" && `: ${l.detail["message"]}`}
                     </span>
                   </li>
                 ))}
@@ -301,8 +301,8 @@ export function CrmSyncTab({ accountId, canEdit }: { accountId: string; canEdit:
   return (
     <div className="space-y-4">
       <p className="max-w-2xl text-[13px] text-muted-foreground">
-        Já usa outro CRM? Conecte com o token da sua conta e o Nexus mantém contatos, empresas e
-        negócios iguais nos dois lados, a cada 30 minutos.
+        Já usa outro CRM? Conecte com o token da sua conta e a central mantém contatos, empresas e
+        carteira iguais nos dois lados, a cada 30 minutos.
       </p>
       <div className="grid gap-4 xl:grid-cols-2">
         <CrmSyncPanel accountId={accountId} provider="rdstation_crm" canEdit={canEdit} />

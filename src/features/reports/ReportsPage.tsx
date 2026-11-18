@@ -24,6 +24,7 @@ import { CallsTab, MeetingsTab, ServiceTab } from "./tabs/OpsTab";
 import { OperationTab } from "./tabs/OperationTab";
 import { RevenueTab } from "./tabs/RevenueTab";
 import { SalesTab } from "./tabs/SalesTab";
+import { CustomersTab } from "@/features/gestao/tabs/CustomersTab";
 
 export const REPORT_TABS = [
   "vendas",
@@ -31,6 +32,7 @@ export const REPORT_TABS = [
   "receita",
   "atribuicao",
   "atendimento",
+  "carteira",
   "ligacoes",
   "reunioes",
   "operacao",
@@ -44,8 +46,9 @@ const TAB_META: Record<ReportTab, { label: string; ranged: boolean }> = {
   vendas: { label: "Resultado", ranged: true },
   forecast: { label: "Previsão", ranged: false },
   receita: { label: "Receita recorrente", ranged: false },
-  atribuicao: { label: "Origem dos leads", ranged: true },
-  atendimento: { label: "Chamados", ranged: true },
+  atribuicao: { label: "Origem dos contatos", ranged: true },
+  atendimento: { label: "Chamados e satisfação", ranged: true },
+  carteira: { label: "Saúde da carteira", ranged: false },
   ligacoes: { label: "Ligações", ranged: true },
   reunioes: { label: "Reuniões", ranged: true },
   operacao: { label: "Central e custos", ranged: true },
@@ -55,8 +58,9 @@ const TAB_META: Record<ReportTab, { label: string; ranged: boolean }> = {
 
 const ALL_GROUPS: { label: string; tabs: readonly ReportTab[] }[] = [
   { label: "Atendimento", tabs: ["atendimento", "ligacoes", "reunioes", "operacao"] },
-  { label: "Vendas", tabs: ["vendas", "forecast", "receita"] },
+  { label: "Carteira", tabs: ["carteira"] },
   { label: "IA", tabs: ["ia"] },
+  { label: "Vendas", tabs: ["vendas", "forecast", "receita"] },
   { label: "Campanhas", tabs: ["atribuicao"] },
   { label: "Meus relatórios", tabs: ["construtor"] },
 ];
@@ -69,7 +73,14 @@ const TAB_CHANNEL: Partial<Record<ReportTab, EditionChannel>> = {
   reunioes: "video",
 };
 
+/**
+ * Relatórios de venda e de captação (resultado, previsão, receita, origem): a central é de
+ * pós-venda, então só aparecem na edição completa. O código das abas continua no repositório.
+ */
+const SALES_TABS: readonly ReportTab[] = ["vendas", "forecast", "receita", "atribuicao"];
+
 export function reportTabVisible(tab: ReportTab, edition: Edition = EDITION): boolean {
+  if (SALES_TABS.includes(tab) && !edition.allIntegrations) return false;
   const channel = TAB_CHANNEL[tab];
   return !channel || hasChannel(channel, edition);
 }
@@ -130,7 +141,8 @@ interface Props {
 // Relatórios em formato editorial: grupos por assunto, manchete com número e exportação do que está na tela.
 export function ReportsPage({ tab: requested, onTabChange, reportId, standalone = false }: Props) {
   // endereço antigo de uma aba fora da edição (?aba=ligacoes) abre a primeira aba visível
-  const tab = reportTabVisible(requested) ? requested : GROUPS[0]!.tabs[0]!;
+  // a tela própria de Origem (recurso de captação) abre a aba dela mesmo fora do menu de relatórios
+  const tab = standalone || reportTabVisible(requested) ? requested : GROUPS[0]!.tabs[0]!;
   const { current } = useAccount();
   const accountId = current!.accountId;
   const [preset, setPreset] = useState("month");
@@ -148,12 +160,12 @@ export function ReportsPage({ tab: requested, onTabChange, reportId, standalone 
               Resultados
             </p>
             <h1 className="font-display text-[26px] leading-tight font-medium text-foreground sm:text-[30px]">
-              {tab === "atribuicao" ? "Origem dos leads" : "Relatórios"}
+              {tab === "atribuicao" ? "Origem dos contatos" : "Relatórios"}
             </h1>
             <p className="mt-1 text-[14px] text-muted-foreground">
               {standalone
-                ? "De onde vêm os leads e qual campanha deu retorno"
-                : "O que aconteceu na operação, em frases e números"}
+                ? "De onde vêm os contatos novos e qual campanha deu retorno"
+                : "Atendimento, satisfação e carteira, em frases e números"}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -246,6 +258,7 @@ export function ReportsPage({ tab: requested, onTabChange, reportId, standalone 
             {tab === "forecast" && <ForecastTab accountId={accountId} />}
             {tab === "atribuicao" && <AttributionTab accountId={accountId} range={range} />}
             {tab === "atendimento" && <ServiceTab accountId={accountId} range={range} />}
+            {tab === "carteira" && <CustomersTab accountId={accountId} />}
             {tab === "ligacoes" && <CallsTab accountId={accountId} range={range} />}
             {tab === "reunioes" && <MeetingsTab accountId={accountId} range={range} />}
             {tab === "receita" && <RevenueTab accountId={accountId} />}

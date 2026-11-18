@@ -1,4 +1,4 @@
-// Central de ajuda de quem opera a Central de CS (dono, gestor, atendente, vendedor).
+// Central de ajuda de quem opera a Central de CS (dono, gestor, atendente).
 // Não confundir com /ajuda/$slug, que é a central pública que o cliente final da empresa vê.
 // Texto conferido contra as telas desta versão: ao mudar um caminho de tela, ajuste aqui.
 import type { LinkProps } from "@tanstack/react-router";
@@ -86,7 +86,7 @@ export const faq: FaqItem[] = [
   {
     pergunta: "Qual a diferença entre os papéis?",
     resposta:
-      "Dono: acesso total. Administrador: tudo do gestor, mais canais, integrações e equipe. Gestor: vê tudo e mexe nas regras e na carteira. Atendente: vê os canais compartilhados. Vendedor: vê só os próprios canais, clientes e negócios.",
+      "Dono: acesso total. Administrador: tudo do gestor, mais canais, integrações e equipe. Gestor: vê tudo e mexe nas regras e na carteira. Atendente: vê os canais compartilhados. Atendente da própria carteira: vê só os próprios canais, clientes e cartões da carteira.",
   },
   {
     pergunta: "A tradução automática do navegador atrapalha?",
@@ -211,7 +211,7 @@ export const guias: HelpGuide[] = [
     resumo: "Cada pessoa vê só o que o papel dela precisa.",
     passos: [
       "Abra Ajustes › Pessoas e acessos (dono ou administrador).",
-      "Clique em Convidar pessoa, informe o e-mail dela e o papel: administrador, gestor, atendente ou vendedor.",
+      "Clique em Convidar pessoa, informe o e-mail dela e o papel: administrador, gestor, atendente ou atendente da própria carteira.",
       "O convite gera um link. Copie e mande para a pessoa pelo WhatsApp. Vale por 3 dias e funciona uma vez só.",
       "A pessoa abre o link e entra com o mesmo e-mail convidado.",
       "Perdeu o link? Ele fica nos convites pendentes, no botão Copiar link. Para mudar o papel ou desativar alguém, use a lista de pessoas.",

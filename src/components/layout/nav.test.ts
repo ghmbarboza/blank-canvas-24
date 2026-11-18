@@ -54,9 +54,11 @@ describe("menu da central", () => {
     const sales = ["/origem", "/formularios", "/sdr", "/metas", "/treino"];
     for (const to of sales) expect(routes(true), to).not.toContain(to);
     expect(navItemsFor(true).map((i) => i.to)).not.toContain("/sdr");
-    expect(routes(true, new Set(["captacao"]))).toEqual(
-      expect.arrayContaining(["/origem", "/formularios", "/sdr"]),
-    );
+    // com a Captação ligada só volta o formulário: prospecção e origem ficam para a edição completa
+    const withCapture = routes(true, new Set(["captacao"]));
+    expect(withCapture).toContain("/formularios");
+    expect(withCapture).not.toContain("/sdr");
+    expect(withCapture).not.toContain("/origem");
   });
 
   it("conta nova (meu_dia, automacoes, gestao): menu de pós-venda completo", () => {

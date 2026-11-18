@@ -3,14 +3,14 @@ import type { Trigger } from "./engine";
 
 export const EVENT_LABEL: Record<string, string> = {
   "contact.created": "Contato criado",
-  "contact.became_hot": "Contato esquentou",
+  "contact.became_hot": "Cliente pediu atenção",
   "contact.lifecycle_changed": "Contato mudou de fase",
   "customer.new": "Virou cliente",
   "nps.answered": "Respondeu a pesquisa de satisfação",
-  "deal.created": "Negócio criado",
-  "deal.stage_changed": "Negócio mudou de etapa",
-  "deal.won": "Negócio ganho",
-  "deal.lost": "Negócio perdido",
+  "deal.created": "Cliente entrou na carteira",
+  "deal.stage_changed": "Cliente mudou de etapa na carteira",
+  "deal.won": "Cliente fidelizado",
+  "deal.lost": "Cliente perdido",
   "message.received": "Mensagem recebida",
   "form.submitted": "Formulário enviado",
   "meeting.scheduled": "Reunião marcada",
@@ -50,5 +50,7 @@ export function triggerSummary(t: Trigger): string {
 export function eventInEdition(event: string, edition: Edition = EDITION): boolean {
   if (event.startsWith("email.")) return hasChannel("email", edition);
   if (event.startsWith("call.")) return hasChannel("phone", edition);
+  // proposta é recurso de venda: só na edição completa
+  if (event.startsWith("proposal.")) return edition.allIntegrations;
   return true;
 }

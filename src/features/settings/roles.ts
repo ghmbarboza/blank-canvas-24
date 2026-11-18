@@ -6,9 +6,13 @@ export const ROLE_INFO: Record<Role, { label: string; description: string }> = {
     label: "Administrador",
     description: "Tudo do gestor, mais canais, integrações e equipe.",
   },
-  manager: { label: "Gestor", description: "Vê tudo e edita o funil." },
+  manager: { label: "Gestor", description: "Vê tudo e edita a carteira e as regras." },
   agent: { label: "Atendente", description: "Vê os canais compartilhados." },
-  seller: { label: "Vendedor", description: "Vê só os próprios canais, contatos e negócios." },
+  // valor guardado continua "seller"; na central de pós-venda é quem cuida da própria carteira
+  seller: {
+    label: "Atendente da própria carteira",
+    description: "Vê só os próprios canais, clientes e cartões da carteira.",
+  },
 };
 
 export type AssignableRole = Exclude<Role, "owner">;

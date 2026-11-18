@@ -15,10 +15,10 @@ import { cn } from "@/lib/utils";
 
 const QUICK_REASONS = [
   "Preço",
-  "Escolheu concorrente",
-  "Sem orçamento",
+  "Foi para o concorrente",
+  "Não usa mais",
   "Sem resposta",
-  "Não era o momento",
+  "Insatisfeito com o atendimento",
 ];
 
 type Props = {
@@ -45,7 +45,7 @@ export function LostReasonDialog({ open, dealTitle, onConfirm, onCancel }: Props
     >
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Por que perdemos?</DialogTitle>
+          <DialogTitle>Por que o cliente saiu?</DialogTitle>
           <DialogDescription className="truncate">{dealTitle}</DialogDescription>
         </DialogHeader>
         <form
@@ -76,7 +76,7 @@ export function LostReasonDialog({ open, dealTitle, onConfirm, onCancel }: Props
             ))}
           </div>
           <div className="grid gap-1.5">
-            <Label htmlFor="lost-reason">Motivo</Label>
+            <Label htmlFor="lost-reason">Motivo da saída</Label>
             <Textarea
               id="lost-reason"
               value={reason}

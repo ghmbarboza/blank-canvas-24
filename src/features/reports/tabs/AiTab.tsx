@@ -18,14 +18,14 @@ import { BarList, Kpi, Lede, LoadingGrid, Panel } from "../ui";
 import { monthLabel } from "../month-label";
 
 const PURPOSE: Record<string, string> = {
-  classify: "Classificação de leads",
+  classify: "Leitura do contato pela IA",
   suggest: "Sugestão de resposta",
   reply: "Resposta automática",
   minutes: "Ata de reunião",
   coach: "Coach ao vivo",
   postcall: "Pós-chamada",
   interest: "Interesse em produto",
-  lead_classification: "Classificação de leads",
+  lead_classification: "Leitura do contato pela IA",
   ask_nexus: "Assistente da Central de CS",
   agent_team: "Equipe de IA atendendo",
   agent_eval: "Teste dos agentes",
@@ -47,7 +47,7 @@ const PURPOSE: Record<string, string> = {
   "agent.simulate": "Simulador do agente",
   "agent.draft_from_text": "Agente criado por texto",
   "sac.macros": "Respostas prontas do SAC",
-  sdr: "Pré-venda (SDR)",
+  sdr: "Primeiro contato",
   sac: "Atendimento (SAC)",
 };
 

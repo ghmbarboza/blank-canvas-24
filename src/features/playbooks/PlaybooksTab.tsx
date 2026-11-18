@@ -48,8 +48,8 @@ export function PlaybooksTab() {
   return (
     <div className="space-y-6">
       <SettingsCard
-        title="Playbooks de vendas"
-        description="O roteiro da reunião: o que perguntar, como responder objeções, o que dizer sobre concorrentes e quando propor o fechamento. O livecoach usa isto para dar dicas só ao vendedor."
+        title="Roteiros de atendimento"
+        description="O roteiro da reunião: o que perguntar, como responder objeções, o que dizer sobre concorrentes e quando propor o fechamento. O coach ao vivo usa isto para dar dicas só ao atendente."
         readOnlyNote={isManager ? undefined : "Só gestores editam playbooks."}
         actions={
           isManager && (

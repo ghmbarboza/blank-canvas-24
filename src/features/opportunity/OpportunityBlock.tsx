@@ -1,9 +1,8 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowUpRight, Loader2, Plus, Bot, Wand2, X } from "lucide-react";
+import { ArrowUpRight, Loader2, Plus, Bot, X } from "lucide-react";
 import { toast } from "sonner";
 
-import { TempChip } from "@/components/common/TempChip";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
@@ -21,17 +20,11 @@ import { formatMoney } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 import {
-  useBuildOpportunity,
   useContactInterests,
   useContactOpportunity,
-  useContactReplied,
   useRemoveInterest,
   useSetInterest,
-  useUpdateDealItem,
 } from "./api";
-import { ItemRow } from "./ItemRow";
-import { JourneySteps } from "./JourneySteps";
-import { journey, totals, type ItemStatus } from "./lib";
 
 type ContactLite = Pick<Tables<"contacts">, "id" | "score" | "temperature" | "ai_intent">;
 
@@ -41,7 +34,9 @@ const LEVELS = [
   { value: "35", label: "Baixo: mencionou" },
 ];
 
-// Bloco do fluxo comercial no contato: etapa atual, interesse no catálogo e a oportunidade estimada.
+// Bloco de pós-venda no contato: em que etapa da jornada o cliente está e o que ele pode comprar
+// de novo. A trilha de venda (qualificar, estimar oportunidade, upsell) ficou fora da composição;
+// JourneySteps, ItemRow e DealItemsEditor continuam no repositório para quem religar.
 export function OpportunityBlock({
   accountId,
   contact,
@@ -49,69 +44,60 @@ export function OpportunityBlock({
   accountId: string;
   contact: ContactLite;
 }) {
-  const replied = useContactReplied(accountId, contact.id);
   const interests = useContactInterests(accountId, contact.id);
   const opp = useContactOpportunity(accountId, contact.id);
   const products = useProducts(accountId);
-  const build = useBuildOpportunity(accountId);
-  const updateItem = useUpdateDealItem(accountId);
   const removeInterest = useRemoveInterest(accountId);
-
-  const items = useMemo(() => opp.data?.items ?? [], [opp.data?.items]);
-  const t = useMemo(() => totals(items), [items]);
-  const steps = journey({
-    replied: Boolean(replied.data),
-    classified: contact.score !== null,
-    interests: interests.data?.length ?? 0,
-    items: items.filter((i) => i.status !== "declined").length,
-  });
   const catalogEmpty = !products.isLoading && (products.data ?? []).length === 0;
-  const core = items.filter((i) => i.kind === "core");
-  const extras = items.filter((i) => i.kind !== "core");
-
-  async function estimate() {
-    try {
-      await build.mutateAsync(contact.id);
-      toast.success("Oportunidade estimada pelo interesse");
-    } catch (err) {
-      toast.error(errorMessage(err));
-    }
-  }
-
-  async function setStatus(id: string, status: ItemStatus) {
-    try {
-      await updateItem.mutateAsync({ id, patch: { status } });
-    } catch (err) {
-      toast.error(errorMessage(err));
-    }
-  }
+  const deal = opp.data?.deal;
 
   return (
     <div className="space-y-5">
-      <JourneySteps steps={steps} />
-
-      {/* Qualificação */}
-      <div className="flex items-center gap-2 rounded-xl bg-surface-2/60 px-3 py-2.5 text-[12px]">
-        <span className="font-medium text-foreground">Qualificação</span>
-        {contact.score !== null ? (
-          <>
-            <TempChip level={contact.temperature} score={contact.score} />
-            {contact.ai_intent && (
-              <span className="min-w-0 flex-1 truncate text-muted-foreground">
-                {contact.ai_intent}
+      {/* Etapa da jornada */}
+      <section aria-labelledby={`opp-${contact.id}`}>
+        <h4 id={`opp-${contact.id}`} className="mb-2 text-[12px] font-semibold">
+          Etapa da jornada
+        </h4>
+        {opp.isLoading ? (
+          <Skeleton className="h-12 w-full rounded-xl" />
+        ) : opp.isError ? (
+          <p className="text-[12px] text-danger">Não deu para carregar a etapa deste cliente.</p>
+        ) : deal ? (
+          <Link
+            to="/crm"
+            search={{ negocio: deal.id }}
+            className="flex items-center justify-between gap-3 rounded-xl border border-border bg-surface px-3 py-2.5 text-[13px] transition-colors hover:border-border-strong focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+          >
+            <span className="min-w-0">
+              <span className="block truncate font-medium text-foreground">
+                {deal.stage?.name ?? "Na carteira"}
               </span>
-            )}
-          </>
+              {Number(deal.value) > 0 && (
+                <span className="block text-[12px] text-muted-foreground tabular-nums">
+                  Valor do contrato: {formatMoney(deal.value)}
+                </span>
+              )}
+            </span>
+            <span className="inline-flex shrink-0 items-center gap-0.5 text-[11px] font-medium text-muted-foreground">
+              Abrir na carteira <ArrowUpRight className="size-3" aria-hidden />
+            </span>
+          </Link>
         ) : (
-          <span className="text-muted-foreground">a IA classifica com a conversa</span>
+          <p className="rounded-xl border border-dashed border-border px-3 py-3 text-[12px] text-muted-foreground">
+            Este contato ainda não está na carteira. Quando ele comprar, coloque na{" "}
+            <Link to="/crm" className="font-medium text-foreground underline underline-offset-2">
+              Carteira
+            </Link>{" "}
+            para acompanhar a jornada.
+          </p>
         )}
-      </div>
+      </section>
 
-      {/* Interesse */}
+      {/* Recompra */}
       <section aria-labelledby={`int-${contact.id}`}>
         <div className="mb-2 flex items-center justify-between">
           <h4 id={`int-${contact.id}`} className="text-[12px] font-semibold">
-            Interesse
+            Pode comprar de novo
           </h4>
           {!catalogEmpty && (
             <AddInterest
@@ -125,7 +111,7 @@ export function OpportunityBlock({
           <Skeleton className="h-10 w-full rounded-xl" />
         ) : catalogEmpty ? (
           <p className="rounded-xl border border-dashed border-border px-3 py-3 text-[12px] text-muted-foreground">
-            Cadastre o que você vende em{" "}
+            Cadastre seus produtos e serviços em{" "}
             <Link
               to="/ajustes"
               search={{ aba: "catalogo" }}
@@ -133,11 +119,11 @@ export function OpportunityBlock({
             >
               Ajustes › Catálogo
             </Link>{" "}
-            para a IA reconhecer o interesse e estimar a oportunidade.
+            para a IA notar quando o cliente falar de um deles.
           </p>
         ) : (interests.data ?? []).length === 0 ? (
           <p className="text-[12px] text-muted-foreground">
-            Nenhum item do catálogo identificado ainda. A IA marca ao classificar, ou adicione à
+            Nenhum item citado ainda. A IA marca quando o cliente falar de um produto, ou adicione à
             mão.
           </p>
         ) : (
@@ -160,7 +146,7 @@ export function OpportunityBlock({
                 </span>
                 <button
                   type="button"
-                  aria-label={`Remover interesse em ${i.products?.name ?? "item"}`}
+                  aria-label={`Remover ${i.products?.name ?? "item"}`}
                   onClick={() => removeInterest.mutate(i.id)}
                   className="rounded-full p-0.5 text-subtle hover:bg-surface-2 hover:text-foreground"
                 >
@@ -169,115 +155,6 @@ export function OpportunityBlock({
               </li>
             ))}
           </ul>
-        )}
-      </section>
-
-      {/* Oportunidade */}
-      <section aria-labelledby={`opp-${contact.id}`}>
-        <div className="mb-2 flex items-center justify-between">
-          <h4 id={`opp-${contact.id}`} className="text-[12px] font-semibold">
-            Oportunidade
-          </h4>
-          {opp.data && (
-            <Link
-              to="/crm"
-              className="inline-flex items-center gap-0.5 text-[11px] font-medium text-muted-foreground hover:text-foreground"
-            >
-              {opp.data.deal.stage?.name ?? "No funil"}{" "}
-              <ArrowUpRight className="size-3" aria-hidden />
-            </Link>
-          )}
-        </div>
-        {opp.isLoading ? (
-          <Skeleton className="h-24 w-full rounded-xl" />
-        ) : items.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-border-strong p-4 text-center">
-            {opp.data && (
-              <p className="mb-2 text-[12px] text-muted-foreground">
-                Negócio aberto com valor manual de{" "}
-                <span className="font-semibold text-foreground">
-                  {formatMoney(opp.data.deal.value)}
-                </span>
-                .
-              </p>
-            )}
-            <Button
-              size="sm"
-              onClick={() => void estimate()}
-              disabled={build.isPending || !(interests.data ?? []).length}
-            >
-              {build.isPending ? <Loader2 className="animate-spin" /> : <Wand2 />}
-              Estimar pelo interesse
-            </Button>
-            {!(interests.data ?? []).length && !catalogEmpty && (
-              <p className="mt-2 text-[11px] text-subtle">
-                Registre ao menos um interesse para estimar.
-              </p>
-            )}
-          </div>
-        ) : (
-          <div className="overflow-hidden rounded-2xl border border-border bg-surface">
-            <div className="atmosphere grid grid-cols-2 gap-3 border-b border-border p-4">
-              <div>
-                <p className="text-[11px] text-muted-foreground">Estimada</p>
-                <p className="font-display text-[24px] leading-tight font-semibold tabular-nums">
-                  {formatMoney(t.accepted)}
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="text-[11px] text-muted-foreground">Potencial</p>
-                <p className="font-display text-[24px] leading-tight font-semibold text-muted-foreground tabular-nums">
-                  {formatMoney(t.potential)}
-                </p>
-              </div>
-              {t.upsell + t.crossSell > 0 && (
-                <p className="col-span-2 text-[11px] text-muted-foreground">
-                  {t.upsell > 0 && <>+{formatMoney(t.upsell)} em upsell</>}
-                  {t.upsell > 0 && t.crossSell > 0 && " · "}
-                  {t.crossSell > 0 && <>+{formatMoney(t.crossSell)} em cross-sell</>}
-                </p>
-              )}
-            </div>
-            <ul className="space-y-1.5 p-2">
-              {core.map((i) => (
-                <ItemRow
-                  key={i.id}
-                  item={i}
-                  onStatus={(s) => void setStatus(i.id, s)}
-                  busy={updateItem.isPending}
-                />
-              ))}
-            </ul>
-            {extras.length > 0 && (
-              <>
-                <p className="px-4 pt-1 text-[11px] font-semibold text-muted-foreground">
-                  Para oferecer junto
-                </p>
-                <ul className="space-y-1.5 p-2">
-                  {extras.map((i) => (
-                    <ItemRow
-                      key={i.id}
-                      item={i}
-                      onStatus={(s) => void setStatus(i.id, s)}
-                      busy={updateItem.isPending}
-                    />
-                  ))}
-                </ul>
-              </>
-            )}
-            <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-2.5">
-              <p className="text-[11px] text-subtle">Mensal conta 12 meses.</p>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => void estimate()}
-                disabled={build.isPending || !(interests.data ?? []).length}
-              >
-                {build.isPending ? <Loader2 className="animate-spin" /> : <Wand2 />}
-                Atualizar pelo interesse
-              </Button>
-            </div>
-          </div>
         )}
       </section>
     </div>
@@ -325,7 +202,7 @@ function AddInterest({
         </button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-72 space-y-3">
-        <p className="text-[13px] font-semibold">O que o cliente quer?</p>
+        <p className="text-[13px] font-semibold">O que o cliente pode comprar de novo?</p>
         <Select value={productId} onValueChange={setProductId}>
           <SelectTrigger className="h-9" aria-label="Item do catálogo">
             <SelectValue placeholder="Item do catálogo" />
@@ -357,7 +234,7 @@ function AddInterest({
           disabled={!productId || setInterest.isPending}
         >
           {setInterest.isPending && <Loader2 className="animate-spin" />}
-          Registrar interesse
+          Registrar
         </Button>
       </PopoverContent>
     </Popover>

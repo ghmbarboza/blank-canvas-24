@@ -3,6 +3,8 @@
 // validado, com limites, que o front desenha e a conversa guarda. Puro: servidor e front usam.
 import type { ToolSpec } from "@/backend/agents/tool-loop";
 
+import type { SitePreview } from "./site-import/types";
+
 export const STAGE_ICONS = [
   "saude",
   "imovel",
@@ -53,7 +55,11 @@ export type StageBlock =
   | { kind: "choices"; title: string; hint?: string; multiple: boolean; options: StageOption[] }
   | { kind: "form"; title: string; hint?: string; submit: string; fields: StageField[] }
   | { kind: "cards"; title: string; hint?: string; cards: StageCard[] }
-  | { kind: "steps"; title: string; hint?: string; steps: { label: string; state: StepState }[] };
+  | { kind: "steps"; title: string; hint?: string; steps: { label: string; state: StepState }[] }
+  /** WhatsApp por QR Code dentro da conversa: com channelId mostra o código; sem, o formulário seguro. */
+  | { kind: "whatsapp"; title: string; hint?: string; channelId?: string }
+  /** Prévia do que foi lido no site: a pessoa desmarca itens e confirma antes de gravar. */
+  | { kind: "site_import"; title: string; hint?: string; preview: SitePreview };
 
 /** Ação que uma ferramenta deixou para a pessoa (botão de link, tela, feito, erro). */
 export interface StageAction {
@@ -326,6 +332,10 @@ export function blockNote(b: StageBlock): string {
     return `[Na tela: formulário ${b.title} → ${b.fields.map((f) => f.label).join(", ")}]`;
   if (b.kind === "cards")
     return `[Na tela: ${b.title} → ${b.cards.map((c) => c.title).join(" | ")}]`;
+  if (b.kind === "whatsapp")
+    return `[Na tela: ${b.channelId ? "QR Code do WhatsApp para ler com o celular" : "formulário seguro do WhatsApp (endereço e chave do servidor)"}]`;
+  if (b.kind === "site_import")
+    return `[Na tela: prévia de ${b.preview.items.length} itens lidos de ${b.preview.url}, para conferir e confirmar]`;
   return `[Na tela: ${b.title} → ${b.steps.map((s) => `${s.label} (${s.state})`).join(", ")}]`;
 }
 

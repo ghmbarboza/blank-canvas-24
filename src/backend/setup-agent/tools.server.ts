@@ -18,34 +18,11 @@ import {
 import { hasChannel } from "@/lib/edition";
 import type { StageAction, StageBlock } from "./stage";
 
-export interface SetupAction {
-  kind: "link" | "open" | "done" | "error";
-  label: string;
-  url?: string;
-  to?: string;
-  tool: string;
-}
+import { EXTRA_RUNNERS } from "./runners/index.server";
+import { fromPerson, s, type Runner, type SetupCtx, type ToolRun } from "./runner-types";
 
-export interface ToolRun {
-  content: string;
-  action?: SetupAction;
-}
-
-export interface SetupCtx {
-  req: Request;
-  caller: Caller;
-  /** O que a pessoa escreveu (esta mensagem e as anteriores): prova de que um e-mail ou uma chave veio dela. */
-  userText: string;
-}
-
-// Site, documento e pesquisa podem trazer instrução escondida (prompt injection). Ação que dá acesso
-// (convite) ou que grava credencial só roda com valor que a própria pessoa escreveu na conversa.
-export function fromPerson(userText: string, value: string, what: string) {
-  if (!value || !userText.includes(value))
-    throw new Error(
-      `${what} precisa ser escrito por você na conversa; não uso valor vindo de site ou documento`,
-    );
-}
+export { fromPerson } from "./runner-types";
+export type { SetupAction, SetupCtx, ToolRun } from "./runner-types";
 
 const SEGMENT_TEMPLATE: Record<string, string | undefined> = {
   clinica: "clinica",
@@ -55,8 +32,6 @@ const SEGMENT_TEMPLATE: Record<string, string | undefined> = {
   automoveis: "stand_automovel",
   escola: "escola",
 };
-
-const s = (v: unknown, max = 4000) => (typeof v === "string" ? v.trim().slice(0, max) : "");
 
 export async function patchSettings(
   accountId: string,
@@ -74,50 +49,64 @@ export async function patchSettings(
 
 export async function loadSnapshot(accountId: string): Promise<SetupSnapshot> {
   const db = admin();
-  const [acc, integ, ch, ag, team, docs, wishes, inbound, replied, deals] = await Promise.all([
-    db.from("accounts").select("name, settings").eq("id", accountId).single(),
-    db.from("account_integrations").select("provider, status").eq("account_id", accountId),
-    db
-      .from("channels")
-      .select("platform, name, handle")
-      .eq("account_id", accountId)
-      .eq("status", "connected"),
-    db.from("ai_agents").select("name, status, role").eq("account_id", accountId),
-    db
-      .from("memberships")
-      .select("user_id", { head: true, count: "exact" })
-      .eq("account_id", accountId)
-      .eq("is_active", true),
-    db
-      .from("kb_documents")
-      .select("id", { head: true, count: "exact" })
-      .eq("account_id", accountId)
-      .eq("status", "ready"),
-    db
-      .from("product_wishes")
-      .select("id", { head: true, count: "exact" })
-      .eq("account_id", accountId),
-    db
-      .from("messages")
-      .select("id", { head: true, count: "exact" })
-      .eq("account_id", accountId)
-      .eq("direction", "in")
-      .limit(1),
-    db
-      .from("messages")
-      .select("id", { head: true, count: "exact" })
-      .eq("account_id", accountId)
-      .eq("direction", "out")
-      .eq("is_private", false)
-      .in("sender_type", ["user", "ai"])
-      .neq("status", "failed")
-      .limit(1),
-    db
-      .from("deals")
-      .select("id", { head: true, count: "exact" })
-      .eq("account_id", accountId)
-      .limit(1),
-  ]);
+  const [acc, integ, ch, ag, team, docs, wishes, inbound, replied, deals, pendingWa, products] =
+    await Promise.all([
+      db.from("accounts").select("name, settings").eq("id", accountId).single(),
+      db.from("account_integrations").select("provider, status").eq("account_id", accountId),
+      db
+        .from("channels")
+        .select("platform, name, handle")
+        .eq("account_id", accountId)
+        .eq("status", "connected"),
+      db.from("ai_agents").select("name, status, role").eq("account_id", accountId),
+      db
+        .from("memberships")
+        .select("user_id", { head: true, count: "exact" })
+        .eq("account_id", accountId)
+        .eq("is_active", true),
+      db
+        .from("kb_documents")
+        .select("id", { head: true, count: "exact" })
+        .eq("account_id", accountId)
+        .eq("status", "ready")
+        // o documento "Sobre a empresa" é gerado pela central: o passo pede conhecimento do dono
+        .or("source_ref.is.null,source_ref.neq.perfil-da-empresa"),
+      db
+        .from("product_wishes")
+        .select("id", { head: true, count: "exact" })
+        .eq("account_id", accountId),
+      db
+        .from("messages")
+        .select("id", { head: true, count: "exact" })
+        .eq("account_id", accountId)
+        .eq("direction", "in")
+        .limit(1),
+      db
+        .from("messages")
+        .select("id", { head: true, count: "exact" })
+        .eq("account_id", accountId)
+        .eq("direction", "out")
+        .eq("is_private", false)
+        .in("sender_type", ["user", "ai"])
+        .neq("status", "failed")
+        .limit(1),
+      db
+        .from("deals")
+        .select("id", { head: true, count: "exact" })
+        .eq("account_id", accountId)
+        .limit(1),
+      db
+        .from("channels")
+        .select("id", { head: true, count: "exact" })
+        .eq("account_id", accountId)
+        .eq("platform", "whatsapp")
+        .neq("status", "connected"),
+      db
+        .from("products")
+        .select("id", { head: true, count: "exact" })
+        .eq("account_id", accountId)
+        .eq("active", true),
+    ]);
   const settings = (acc.data?.settings ?? {}) as {
     setup?: { segment?: string; ai_mode?: string };
     modules?: string[];
@@ -126,6 +115,12 @@ export async function loadSnapshot(accountId: string): Promise<SetupSnapshot> {
   const rules = settings.posvenda?.rules;
   const rulesOn =
     rules && typeof rules === "object" ? Object.values(rules).filter((v) => v === true).length : 0;
+  const rulesOnKeys =
+    rules && typeof rules === "object"
+      ? Object.entries(rules)
+          .filter(([, v]) => v === true)
+          .map(([k]) => k)
+      : [];
   const aiKeys = (integ.data ?? []).filter(
     (i) => ["openai", "anthropic"].includes(i.provider) && i.status === "connected",
   );
@@ -148,6 +143,12 @@ export async function loadSnapshot(accountId: string): Promise<SetupSnapshot> {
     wishes: wishes.count ?? 0,
     modules: settings.modules ?? [],
     rulesOn,
+    rulesOnKeys,
+    products: products.count ?? 0,
+    whatsappPending: (pendingWa.count ?? 0) > 0,
+    whatsappServer: (integ.data ?? []).some(
+      (i) => i.provider === "evolution" && i.status === "connected",
+    ),
     firstWin: {
       received: (inbound.count ?? 0) > 0,
       replied: (replied.count ?? 0) > 0,
@@ -369,7 +370,14 @@ async function upsertFact(
 /** Passo "Sua empresa": o mesmo caminho para a ferramenta da Cris e para o formulário da tela. */
 export async function saveCompany(
   caller: Caller,
-  p: { name?: string; segment?: string; sells?: string; tone?: string; source?: string },
+  p: {
+    name?: string;
+    segment?: string;
+    sells?: string;
+    tone?: string;
+    hours?: string;
+    source?: string;
+  },
 ): Promise<string[]> {
   const db = admin();
   const name = (p.name ?? "").trim();
@@ -426,13 +434,28 @@ export async function saveCompany(
     });
     done.push("tom de voz");
   }
-  if (!done.length) throw new Error("informe o nome ou o ramo");
+  const hours = (p.hours ?? "").trim();
+  if (hours) {
+    await upsertFact(caller, {
+      key: "horario_atendimento",
+      label: "Horário de atendimento",
+      value: hours,
+      category: "atendimento",
+      source,
+    });
+    done.push("horário de atendimento");
+  }
+  if (!done.length)
+    throw new Error(
+      "diga o que mudar: nome, ramo, o que vende, tom de voz ou horário de atendimento",
+    );
+  // o que o dono contou chega ao atendente (documento "Sobre a empresa" e tom de voz)
+  const { syncCompanyProfile } = await import("./company.server");
+  await syncCompanyProfile(caller);
   return done;
 }
 
-type Runner = (ctx: SetupCtx, args: Record<string, unknown>) => Promise<ToolRun>;
-
-const RUNNERS: Record<string, Runner> = {
+const BASE_RUNNERS: Record<string, Runner> = {
   async ver_progresso(ctx) {
     const [snap, facts] = await Promise.all([
       loadSnapshot(ctx.caller.accountId),
@@ -464,31 +487,10 @@ const RUNNERS: Record<string, Runner> = {
       { onConflict: "account_id,key" },
     );
     if (error) throw new Error(error.message);
+    // o que o atendente precisa saber (horário, contato, políticas, tom) vai junto para ele
+    const { PROFILE_KEYS, syncCompanyProfile } = await import("./company.server");
+    if (PROFILE_KEYS.includes(key)) await syncCompanyProfile(ctx.caller);
     return { content: `guardado: ${label}` };
-  },
-
-  async cadastrar_produto(ctx, a) {
-    const { parseProduto } = await import("./produto");
-    const p = parseProduto(a);
-    const db = admin();
-    const { data: atual, error: e1 } = await db
-      .from("products")
-      .select("id")
-      .eq("account_id", ctx.caller.accountId)
-      .ilike(
-        "name",
-        p.name.replace(/[%_\\]/g, (c) => `\\${c}`),
-      )
-      .limit(1)
-      .maybeSingle();
-    if (e1) throw new Error(e1.message);
-    const row = { ...p, active: true, updated_at: new Date().toISOString() };
-    const { error } = atual
-      ? await db.from("products").update(row).eq("id", atual.id)
-      : await db.from("products").insert({ ...row, account_id: ctx.caller.accountId });
-    if (error) throw new Error(error.message);
-    const preco = p.price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-    return { content: `${atual ? "atualizado" : "cadastrado"} no catálogo: ${p.name} (${preco})` };
   },
 
   async apagar_informacao(ctx, a) {
@@ -507,6 +509,7 @@ const RUNNERS: Record<string, Runner> = {
       segment: s(a["ramo"], 20),
       sells: s(a["o_que_vende"], 600),
       tone: s(a["tom"], 300),
+      hours: s(a["horario"], 300),
     });
     return {
       content: `salvo: ${done.join(", ")}`,
@@ -662,29 +665,6 @@ const RUNNERS: Record<string, Runner> = {
     return { content: JSON.stringify(r) };
   },
 
-  async guardar_conhecimento(ctx, a) {
-    const docs = await import("./docs.server");
-    const title = s(a["titulo"], 200) || "Conhecimento";
-    const id = await docs.createDocument({
-      accountId: ctx.caller.accountId,
-      userId: ctx.caller.userId,
-      name: title,
-      source: "texto",
-      mime: "text/markdown",
-    });
-    const r = await docs.indexDocument(
-      ctx.caller.accountId,
-      id,
-      title,
-      s(a["conteudo"], 60_000),
-      s(a["categoria"], 60) || "Conhecimento",
-    );
-    return {
-      content: `guardado na biblioteca (${r.chunks} trecho(s))`,
-      action: { kind: "done", label: `"${title}" na biblioteca`, tool: "guardar_conhecimento" },
-    };
-  },
-
   async conectar_integracao(ctx, a) {
     const provider = s(a["provedor"], 30) as ProviderId;
     if (!PROVIDERS.some((p) => p.id === provider))
@@ -716,8 +696,9 @@ const RUNNERS: Record<string, Runner> = {
     return {
       content: hasChannel("whatsapp_official")
         ? `chave da Zernio guardada: ${r.accounts} contas, ${r.whatsapp} de WhatsApp`
-        : "chave da Zernio guardada e testada",
+        : "chave da Zernio guardada no cofre e testada. Agora chame link_zernio com a opção instagram para mostrar o botão de autorizar.",
       action: { kind: "done", label: "Zernio conectada", tool: "conectar_zernio" },
+      secrets: [s(a["chave"], 200)],
     };
   },
 
@@ -955,6 +936,8 @@ const RUNNERS: Record<string, Runner> = {
     };
   },
 };
+
+const RUNNERS: Record<string, Runner> = { ...BASE_RUNNERS, ...EXTRA_RUNNERS };
 
 export function setupToolNames(): string[] {
   return Object.keys(RUNNERS);

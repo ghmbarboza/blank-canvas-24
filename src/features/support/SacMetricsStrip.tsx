@@ -47,7 +47,7 @@ export function SacMetricsStrip({
   const items: { label: string; value: string; hint: string; icon: LucideIcon; alert?: boolean }[] =
     [
       {
-        label: "Na fila",
+        label: "Chamados abertos",
         value: String(d.open),
         hint: `${d.created} abertos em ${days} dias`,
         icon: Inbox,
@@ -60,7 +60,7 @@ export function SacMetricsStrip({
         alert: d.breached_open > 0,
       },
       {
-        label: "1ª resposta",
+        label: "1ª resposta do chamado",
         value: fmtMinutes(d.first_response_minutes_avg),
         hint: "tempo médio",
         icon: Timer,
@@ -72,7 +72,7 @@ export function SacMetricsStrip({
         icon: Gauge,
       },
       {
-        label: "CSAT",
+        label: "Nota média",
         value: d.csat_avg === null ? "—" : `${d.csat_avg.toFixed(1).replace(".", ",")}/5`,
         hint: `${d.csat_responses} de ${d.csat_sent} responderam`,
         icon: Smile,

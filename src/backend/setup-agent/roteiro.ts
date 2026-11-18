@@ -66,7 +66,7 @@ export interface RoteiroStep {
 }
 
 const CANAL_GOAL =
-  "conectar o WhatsApp da empresa pelo QR Code: mostre o botão com abrir_passo canal; na tela a pessoa cola o endereço do servidor e a chave, clica em Conectar e lê o QR Code no celular (WhatsApp › Dispositivos conectados › Conectar dispositivo). Quem não tem servidor contrata um provedor de Evolution API (a Cloudfy é um exemplo), que passa o endereço e a chave; não diga preço. Não peça a chave da Evolution na conversa: ela é colada na tela e vai direto para o cofre. Se a tela mostrar erro, explique: endereço precisa começar com https://; chave recusada é a chave global errada; servidor fora do ar é com o provedor; QR Code vencido é só gerar outro.";
+  "conectar o WhatsApp da empresa pelo QR Code, aqui na conversa: chame conectar_whatsapp. Se ainda falta o servidor, a ferramenta mostra o formulário seguro para o endereço e a chave; com o servidor salvo, mostra o QR Code, que vira Conectado sozinho (WhatsApp › Dispositivos conectados › Conectar dispositivo, no celular da empresa). Quem não tem servidor contrata um provedor de Evolution API (a Cloudfy é um exemplo), que passa o endereço e a chave; não diga preço. Erros comuns: endereço precisa começar com https://; chave recusada é a chave errada; servidor fora do ar é com o provedor; QR Code vencido é só gerar outro (novo_qr).";
 /** Só na edição com número oficial da Meta. */
 const CANAL_GOAL_OFFICIAL =
   " Caminho secundário, só se a pessoa pedir o número oficial da Meta: conectar_zernio e depois link_whatsapp (precisa de conta na Zernio).";
@@ -80,8 +80,8 @@ const ALL_STEPS: RoteiroStep[] = [
     summary: "Nome, ramo, o que vende e o jeito de falar com o cliente.",
     required: true,
     later: false,
-    goal: "saber o nome da empresa, o ramo, o que ela vende e o tom de voz, e salvar com salvar_empresa (nome, ramo, o_que_vende, tom). A pessoa também pode preencher pela tela: ofereça abrir_passo empresa.",
-    ask: "como se chama a empresa e qual é o ramo de vocês?",
+    goal: "saber o nome da empresa, o ramo, o que ela vende e o tom de voz, e salvar com salvar_empresa (nome, ramo, o_que_vende, tom, horario). Se a pessoa passar o site ou a loja online, use importar_do_site: ele traz o que a empresa vende e você preenche a empresa sozinha. Deduza o ramo pelo que ela vende.",
+    ask: "qual é o nome da empresa e o que vocês vendem? Se tiver site ou loja online, cole o endereço que eu leio e preencho sozinha.",
   },
   {
     id: "canal",
@@ -91,7 +91,7 @@ const ALL_STEPS: RoteiroStep[] = [
     required: true,
     later: false,
     goal: CANAL_GOAL,
-    ask: "vamos conectar o WhatsApp da empresa? Você já tem o endereço e a chave do servidor da Evolution?",
+    ask: "vamos conectar o WhatsApp da empresa? Eu mostro o QR Code aqui mesmo.",
   },
   {
     id: "conhecimento",
@@ -99,8 +99,8 @@ const ALL_STEPS: RoteiroStep[] = [
     summary: "Suba arquivos ou cole textos com o que o atendente precisa saber.",
     required: false,
     later: false,
-    goal: "ensinar o atendente: prazos, garantia, troca, entrega, como usar o produto, dúvidas comuns de quem já comprou. A pessoa sobe PDF, Word ou texto pela tela (abrir_passo conhecimento) ou conta aqui: guarde com guardar_conhecimento (título e conteúdo) e, se ela passar o site, use ler_site com guardar_na_biblioteca=true. O passo fica pronto quando houver pelo menos um documento lido.",
-    ask: "o que o cliente mais pergunta depois que compra? Pode subir um arquivo ou me contar aqui.",
+    goal: "ensinar o atendente: prazos, garantia, troca, entrega, como usar o produto, dúvidas comuns de quem já comprou. A pessoa anexa PDF, Word ou planilha pelo clipe da conversa, cola o texto ou conta aqui: guarde com guardar_conhecimento (título e conteúdo). Página de ajuda do site: ler_site com guardar_na_biblioteca=true. O passo fica pronto quando houver pelo menos um item lido.",
+    ask: "o que o cliente mais pergunta depois que compra? Pode anexar um arquivo, colar o texto ou me contar aqui.",
   },
   {
     id: "agente",
@@ -108,8 +108,8 @@ const ALL_STEPS: RoteiroStep[] = [
     summary: "Crie o atendente de pós-venda e teste as respostas dele aqui na tela.",
     required: false,
     later: false,
-    goal: "criar e ligar o atendente de pós-venda. Pela tela é um clique (abrir_passo agente): cria a partir do modelo de pós-venda, já no WhatsApp, e tem uma caixa de teste que responde com a base da empresa. Pela conversa: criar_agente (descreva um atendente de pós-venda) e, com o sim da pessoa, avaliar_agente, que roda as perguntas de teste e liga sozinho se passar com 90% ou mais. Nunca diga que está ligado antes de estar.",
-    ask: "posso criar o atendente de pós-venda de vocês?",
+    goal: "criar e ligar o atendente de pós-venda com configurar_atendente (ligado=true; nome e saudação se a pessoa disser). Ele nasce pelo modelo de pós-venda, já no WhatsApp e ligado. Em seguida ofereça testar_atendente com uma pergunta de cliente. Ajustes de tom, orientações e quando passar para uma pessoa também são por configurar_atendente.",
+    ask: "posso criar e ligar o atendente de pós-venda de vocês? Se quiser, já me diga o nome dele.",
   },
   {
     id: "regras",
@@ -117,8 +117,8 @@ const ALL_STEPS: RoteiroStep[] = [
     summary: "Escolha o que a central faz sozinha: boas-vindas, pesquisa, recompra.",
     required: false,
     later: false,
-    goal: 'ligar pelo menos uma regra de pós-venda (boas-vindas depois da compra, conferir em 7 dias, pesquisa de satisfação, nota baixa vira chamado, nota alta pede indicação, lembrete de recompra, cliente parado). As regras são ligadas na tela Pós-venda: mostre o botão com abrir_tela /pos-venda e o rótulo "Escolher as regras".',
-    ask: "quais mensagens de pós-venda vocês querem que saiam sozinhas?",
+    goal: "ligar pelo menos uma regra de pós-venda com configurar_regras (boas-vindas depois da compra, conferir em 7 dias, pesquisa de satisfação, nota baixa vira chamado, nota alta pede indicação, lembrete de recompra, cliente parado). Ofereça ligar todas (todas: ligar) ou escolher; mensagem e prazo de cada uma você muda na hora.",
+    ask: "quer que eu ligue todas as regras de pós-venda (boas-vindas, pesquisa, recompra e as outras) ou prefere escolher?",
   },
   {
     id: "teste",
@@ -145,7 +145,7 @@ const ALL_STEPS: RoteiroStep[] = [
     required: false,
     later: true,
     channel: "instagram",
-    goal: 'trazer as mensagens diretas do Instagram da empresa para a Caixa de entrada. A conexão passa pela Zernio (serviço à parte, com conta da própria empresa). O jeito mais simples é pela tela: abrir_tela /canais com o rótulo "Conectar o Instagram"; no cartão Instagram a pessoa cola a chave da Zernio e autoriza a conta. Pela conversa: conectar_zernio com a chave que ela colar e depois link_zernio com a opção instagram. A conta do Instagram precisa ser profissional.',
+    goal: 'trazer as mensagens diretas do Instagram da empresa para a Caixa de entrada. A conexão passa pela Zernio (serviço à parte, com conta da própria empresa). Peça a chave da Zernio com mostrar_formulario (campo "Chave da Zernio", tipo segredo), guarde com conectar_zernio e em seguida chame link_zernio com a opção instagram: o botão de autorizar aparece na conversa. A conta do Instagram precisa ser profissional.',
     ask: "quer receber as mensagens do Instagram da empresa aqui também?",
   },
   {
@@ -253,7 +253,7 @@ export function roteiroText(r: RoteiroState): string {
     : "Roteiro completo: o pós-venda está de pé. Agora você ajuda a ajustar o atendente, o conhecimento e as regras.";
   return `${lines.join("\n")}
 ${now}
-Cada passo tem uma tela direta: abrir_passo com o id do passo mostra o botão que abre o formulário dele. Use sempre que a pessoa preferir preencher em vez de conversar.
+Você faz cada passo pelas ferramentas. Só se a pessoa pedir para preencher pela tela, abrir_passo com o id do passo mostra o botão do formulário dele.
 Obrigatório é o mínimo para a central funcionar: a pessoa pode pular, mas ele continua pendente (diga isso com gentileza e volte a ele depois). Opcional pulado não volta a ser oferecido. Os passos "depois" só entram se a pessoa pedir.
 Rótulos de ramo que a pessoa pode escolher (rótulo = valor de salvar_empresa): ${SEGMENT_LABELS.map((x) => `${x.label} = ${x.id}`).join("; ")}.`;
 }
@@ -286,7 +286,7 @@ function stepBlock(id: StepId): StageBlock | null {
       title: "WhatsApp por QR Code",
       hint: "Sem servidor ainda? Um provedor de Evolution API, como a Cloudfy, passa o endereço e a chave.",
       steps: [
-        { label: "Colar o endereço e a chave do servidor", state: "agora" },
+        { label: "Informar o endereço e a chave do servidor", state: "agora" },
         { label: "Ler o QR Code com o celular da empresa", state: "depois" },
         { label: "Ver o número conectado", state: "depois" },
       ],
@@ -357,7 +357,7 @@ export function opener(p: {
     };
   const first = p.state.steps.every((st) => !st.done);
   const intro = first
-    ? `Vamos deixar o pós-venda no WhatsApp funcionando em ${p.state.mainTotal} passos. Você pode fazer cada um pela tela, com um botão, ou conversando comigo: eu tiro qualquer dúvida no caminho.`
+    ? "Eu configuro a central com você por aqui: conecto o WhatsApp, ensino o atendente e ligo as regras de pós-venda. É só me dizer o que quer, do seu jeito."
     : `Vamos continuar a configuração${named ? ` da **${p.company}**` : ""}: ${
         p.state.requiredPending
           ? `${p.state.requiredPending === 1 ? "falta 1 passo obrigatório" : `faltam ${p.state.requiredPending} passos obrigatórios`}`
@@ -367,7 +367,8 @@ export function opener(p: {
     step.id === "empresa" && named
       ? `Vi que a empresa é ${p.company}. Qual é o ramo de vocês?`
       : step.ask.charAt(0).toUpperCase() + step.ask.slice(1);
-  const block = stepBlock(step.id);
+  // no primeiro passo a pergunta é aberta (nome, o que vende ou o site): o ramo ela deduz
+  const block = step.id === "empresa" && !named ? null : stepBlock(step.id);
   return {
     messages: [
       { text: `${hi} ${intro}`, blocks: [] },

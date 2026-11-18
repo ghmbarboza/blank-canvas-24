@@ -59,9 +59,7 @@ export function CommandMenu({ open, onOpenChange }: Props) {
         onValueChange={setSearch}
       />
       <CommandList>
-        <CommandEmpty>
-          Nada com esse nome. Tente o nome do contato, do negócio ou da tela.
-        </CommandEmpty>
+        <CommandEmpty>Nada com esse nome. Tente o nome do cliente ou da tela.</CommandEmpty>
         {!!contacts?.length && (
           <CommandGroup heading="Contatos">
             {contacts.map((c) => (

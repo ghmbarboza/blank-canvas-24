@@ -292,28 +292,29 @@ export const QUALITY_TEMPLATES: QualityTemplate[] = [
   },
   {
     key: "vendas",
-    name: "Vendas e pré-venda",
-    description: "Para SDR e vendedores: qualificação, valor e próximo passo.",
+    name: "Renovação e recompra",
+    description:
+      "Para quem acompanha a carteira: uso, satisfação e a conversa de renovar ou comprar de novo.",
     channels: ["call", "chat", "email"],
     criteria: [
-      c("rapport", "Criou conexão", "Usou o nome do cliente e mostrou interesse real.", 1),
+      c("rapport", "Criou conexão", "Usou o nome do cliente e lembrou do histórico dele.", 1),
       c(
         "descoberta",
-        "Descobriu a necessidade",
-        "Perguntou sobre dor, prazo, orçamento e quem decide.",
+        "Entendeu como o cliente está",
+        "Perguntou sobre o uso, o resultado e o que incomoda antes de oferecer algo.",
         4,
       ),
       c(
         "valor",
-        "Mostrou valor ligado à dor",
-        "Explicou o benefício pensando no caso do cliente.",
+        "Mostrou o que o cliente já ganhou",
+        "Ligou a oferta ao resultado que o cliente teve até aqui.",
         3,
       ),
-      c("objecoes", "Tratou as objeções", "Respondeu dúvidas e objeções sem pressionar.", 2),
+      c("objecoes", "Tratou as dúvidas", "Respondeu dúvidas e resistências sem pressionar.", 2),
       c(
         "proximo_passo",
         "Combinou o próximo passo",
-        "Saiu com reunião, proposta ou data marcada.",
+        "Saiu com renovação, novo pedido ou data de retorno marcada.",
         3,
       ),
       c(

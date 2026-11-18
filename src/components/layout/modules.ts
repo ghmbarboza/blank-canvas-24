@@ -1,6 +1,6 @@
 // O que é a central (sempre no menu) e o que é extra (desligado até o gestor ligar em Ajustes).
 // Conta nova já nasce com os extras de pós-venda ligados (meu_dia, automacoes, gestao): quem liga
-// é create_account_for, no banco. Os de venda (captacao, metas, treino...) nascem desligados.
+// é create_account_for, no banco. Os de aquisição (captacao, metas, treino...) nascem desligados.
 // Desligar um extra tira do menu e da busca, e a rota dele mostra "Recurso desligado" (os dados
 // continuam guardados; o servidor também recusa as ações do extra desligado).
 import { BRAND } from "@/lib/brand";
@@ -79,15 +79,15 @@ export const EXTRA_MODULES: ModuleDef[] = [
   },
   {
     id: "captacao",
-    label: "Captação de leads",
-    what: "Formulários, origem dos leads e pontuação com rodízio entre vendedores.",
+    label: "Captação de novos clientes",
+    what: "Formulários, de onde vêm os contatos novos e distribuição entre os atendentes.",
     when: `Quando você também capta cliente novo pelo ${BRAND.name}, além de cuidar de quem já comprou.`,
   },
   {
     id: "metas",
-    label: "Metas e comissão",
-    what: "Meta de venda e comissão de cada vendedor.",
-    when: "Quando a equipe recebe comissão pelo que vende.",
+    label: "Metas da equipe",
+    what: "Meta do mês e bonificação de cada pessoa da equipe.",
+    when: "Quando a equipe é bonificada por renovação ou recompra.",
   },
   {
     id: "treino",

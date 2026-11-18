@@ -31,12 +31,12 @@ export interface SegmentFilter {
 export const EMPTY_SEGMENT: SegmentFilter = { match: "all", rules: [] };
 
 export const FIELD_LABEL: Record<string, string> = {
-  temperature: "Temperatura",
+  temperature: "Interesse",
   lifecycle: "Fase",
   source: "Origem",
   owner: "Responsável",
   tag: "Etiqueta",
-  score: "Score da IA",
+  score: "Nota da IA",
   company: "Empresa",
   email: "E-mail",
   phone: "Telefone",

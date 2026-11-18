@@ -212,15 +212,15 @@ function OpenDeals({ accountId, contactId }: { accountId: string; contactId: str
   return (
     <section aria-labelledby="drawer-deals">
       <h3 id="drawer-deals" className="eyebrow mb-2">
-        Negócios em andamento
+        Na carteira
       </h3>
       {deals.isPending ? (
         <Skeleton className="h-16 w-full rounded-xl" />
       ) : deals.isError ? (
-        <p className="text-[13px] text-danger">Não deu para carregar os negócios.</p>
+        <p className="text-[13px] text-danger">Não deu para carregar a carteira deste cliente.</p>
       ) : open.length === 0 ? (
         <p className="text-[13px] text-muted-foreground">
-          Nenhum negócio aberto. Abra um pelo funil de vendas quando houver interesse.
+          Ainda não está na carteira. Coloque pela tela Carteira quando ele comprar.
         </p>
       ) : (
         <ul className="space-y-2">

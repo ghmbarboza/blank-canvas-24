@@ -23,8 +23,8 @@ type Stage = "customer" | "negotiating" | "prospect";
 
 const STAGE_LABEL: Record<Stage, string> = {
   customer: "Cliente",
-  negotiating: "Em negociação",
-  prospect: "Sem negócio aberto",
+  negotiating: "Em acompanhamento",
+  prospect: "Fora da carteira",
 };
 
 const STAGE_CLASS: Record<Stage, string> = {
@@ -55,8 +55,8 @@ export function CompaniesPage() {
   const customers = list.filter((c) => c.won_deals > 0).length;
 
   const description = companies.data
-    ? `${list.length} empresa${list.length === 1 ? "" : "s"} na carteira · ${customers} cliente${customers === 1 ? "" : "s"} · ${formatMoney(totalOpen, true)} em negócios abertos`
-    : "Contas, pessoas e negócios por empresa";
+    ? `${list.length} empresa${list.length === 1 ? "" : "s"} na carteira · ${customers} cliente${customers === 1 ? "" : "s"} · ${formatMoney(totalOpen, true)} em contratos na carteira`
+    : "Empresas, pessoas e a carteira de cada uma";
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -96,7 +96,7 @@ export function CompaniesPage() {
             description={
               term
                 ? "Tente outro nome ou o CNPJ só com números."
-                : "Agrupe contatos e negócios por conta. Digite o CNPJ e os dados da Receita vêm sozinhos."
+                : "Agrupe os clientes pela empresa onde trabalham. Digite o CNPJ e os dados da Receita vêm sozinhos."
             }
             action={
               !term && (
@@ -267,7 +267,7 @@ function CompaniesTable({
                 {formatMoney(c.open_value)}
                 {c.open_deals > 0 && (
                   <span className="block font-sans text-[11px] font-normal text-subtle">
-                    {c.open_deals} negócio{c.open_deals === 1 ? "" : "s"}
+                    {c.open_deals} {c.open_deals === 1 ? "cartão" : "cartões"}
                   </span>
                 )}
               </td>

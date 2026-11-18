@@ -36,7 +36,7 @@ const EXITS: { key: keyof ExitRules; label: string }[] = [
   { key: "on_meeting", label: "Marcou uma reunião" },
   { key: "on_customer", label: "Virou cliente" },
   { key: "on_unsubscribe", label: "Descadastrou ou marcou como spam" },
-  { key: "on_deal_lost", label: "Negócio perdido" },
+  { key: "on_deal_lost", label: "Cliente perdido" },
 ];
 
 // Gatilho, saída automática e guardas (teto semanal, horário comercial, consentimento).
@@ -102,7 +102,7 @@ export function SettingsPanel({ accountId, automation, readOnly, onChange }: Pro
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="journey">Jornada (marketing e relacionamento)</SelectItem>
-                <SelectItem value="sequence">Cadência de vendas (toques do vendedor)</SelectItem>
+                <SelectItem value="sequence">Cadência de contato (toques do atendente)</SelectItem>
                 <SelectItem value="rule">Regra (operação interna)</SelectItem>
               </SelectContent>
             </Select>
@@ -152,7 +152,7 @@ export function SettingsPanel({ accountId, automation, readOnly, onChange }: Pro
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="manual">
-                  Alguém inscreve (lista de contatos ou negócio)
+                  Alguém inscreve (lista de clientes ou cartão da carteira)
                 </SelectItem>
                 <SelectItem value="event">Algo acontece</SelectItem>
                 <SelectItem value="segment">Entra num segmento</SelectItem>

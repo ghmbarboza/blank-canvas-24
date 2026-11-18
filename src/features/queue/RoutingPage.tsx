@@ -68,8 +68,8 @@ function RulesPanel({ accountId }: { accountId: string }) {
             {num("sla_risk_seconds", 0, 86400)} segundos ou menos).
           </li>
           <li>
-            Depois o cliente de maior valor: negócios em aberto e a receita mensal anotada na ficha
-            do contato.
+            Depois o cliente de maior valor: valor na carteira e a mensalidade anotada na ficha do
+            contato.
           </li>
           <li>Depois a ordem de chegada.</li>
         </ol>

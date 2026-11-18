@@ -6,41 +6,17 @@ import { useAccountTimezone, useEvents } from "@/features/agenda/api";
 import { rangeFor } from "@/features/agenda/calendar";
 import { nowWall } from "@/features/agenda/tz";
 import { supabase } from "@/integrations/supabase/client";
-import type { Tables } from "@/integrations/supabase/types";
 import { useAccountId } from "@/lib/account";
 import { useAuth } from "@/lib/auth";
 import { errorMessage } from "@/lib/functions";
 import { OPEN_STATUSES } from "@/features/support/constants";
 
-import { STALLED_DAYS, type AttentionSources } from "./attention";
+import type { AttentionSources } from "./attention";
 
 export function useTodayEvents() {
   const timeZone = useAccountTimezone();
   const range = useMemo(() => rangeFor("day", nowWall(timeZone)), [timeZone]);
   return useEvents(range);
-}
-
-export type HotLead = Pick<
-  Tables<"contacts">,
-  "id" | "name" | "company" | "avatar_url" | "source" | "score" | "temperature" | "ai_next_step"
->;
-
-export function useHotLeads(limit = 6) {
-  const accountId = useAccountId();
-  return useQuery({
-    queryKey: ["dashboard", accountId, "hot-leads", limit],
-    queryFn: async (): Promise<HotLead[]> => {
-      const { data, error } = await supabase
-        .from("contacts")
-        .select("id, name, company, avatar_url, source, score, temperature, ai_next_step")
-        .eq("account_id", accountId)
-        .eq("temperature", "hot")
-        .order("score", { ascending: false, nullsFirst: false })
-        .limit(limit);
-      if (error) throw error;
-      return data ?? [];
-    },
-  });
 }
 
 const SCAN = 5;
@@ -50,26 +26,23 @@ function contactName(c: unknown, fallback: string | null): string {
   return name || fallback || "Contato sem nome";
 }
 
-// Fontes do "O que precisa de você". Cada consulta é pequena e filtra pela conta.
+// Fontes do "O que precisa de você hoje". Cada consulta é pequena e filtra pela conta. Os clientes
+// em risco vêm da saúde da carteira e entram no cartão (AttentionCard), não aqui.
 export function useAttentionSources(enabled: boolean) {
   const accountId = useAccountId();
   return useQuery({
     queryKey: ["dashboard", accountId, "attention"],
     enabled,
     refetchInterval: 60_000,
-    queryFn: async (): Promise<AttentionSources> => {
-      const stalledBefore = new Date(Date.now() - STALLED_DAYS * 86_400_000).toISOString();
-      const [hot, handoffs, deals, tickets] = await Promise.all([
+    queryFn: async (): Promise<Omit<AttentionSources, "risk">> => {
+      const [waiting, handoffs, tickets] = await Promise.all([
         supabase
           .from("conversations")
-          .select(
-            "id, title, unread_count, last_inbound_at, contact:contacts!inner(name, temperature)",
-          )
+          .select("id, title, unread_count, last_inbound_at, contact:contacts(name)")
           .eq("account_id", accountId)
           .eq("status", "open")
           .eq("is_group", false)
           .gt("unread_count", 0)
-          .eq("contact.temperature", "hot")
           .order("last_inbound_at", { ascending: true, nullsFirst: false })
           .limit(SCAN),
         supabase
@@ -82,14 +55,6 @@ export function useAttentionSources(enabled: boolean) {
           .order("ai_handoff_at", { ascending: true })
           .limit(SCAN),
         supabase
-          .from("deals")
-          .select("id, title, value, updated_at, contact:contacts(name)")
-          .eq("account_id", accountId)
-          .eq("status", "open")
-          .lt("updated_at", stalledBefore)
-          .order("value", { ascending: false })
-          .limit(SCAN),
-        supabase
           .from("tickets")
           .select(
             "id, number, subject, status, created_at, first_response_at, first_response_due_at, resolution_due_at",
@@ -100,10 +65,10 @@ export function useAttentionSources(enabled: boolean) {
           .order("resolution_due_at", { ascending: true })
           .limit(20),
       ]);
-      const failed = [hot, handoffs, deals, tickets].find((r) => r.error);
+      const failed = [waiting, handoffs, tickets].find((r) => r.error);
       if (failed?.error) throw failed.error;
       return {
-        hot: (hot.data ?? []).map((c) => ({
+        waiting: (waiting.data ?? []).map((c) => ({
           id: c.id,
           name: contactName(c.contact, c.title),
           unread: c.unread_count,
@@ -114,13 +79,6 @@ export function useAttentionSources(enabled: boolean) {
           name: contactName(c.contact, c.title),
           reason: c.ai_handoff_reason,
           at: c.ai_handoff_at ?? new Date().toISOString(),
-        })),
-        deals: (deals.data ?? []).map((d) => ({
-          id: d.id,
-          title: d.title,
-          value: Number(d.value),
-          contact: (d.contact as { name?: string | null } | null)?.name ?? null,
-          updated_at: d.updated_at,
         })),
         tickets: tickets.data ?? [],
       };

@@ -1,10 +1,9 @@
 import { forwardRef, type HTMLAttributes } from "react";
 import { differenceInCalendarDays } from "date-fns";
-import { AlertCircle, Bot } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 
 import { ChannelIcon } from "@/components/brand/ChannelIcon";
 import { PLATFORM_LABEL } from "@/components/brand/platform-label";
-import { TempChip } from "@/components/common/TempChip";
 import { formatMoney } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { OwnerAvatar } from "@/features/contacts/components/OwnerAvatar";
@@ -30,7 +29,7 @@ type Props = HTMLAttributes<HTMLDivElement> & {
   overlay?: boolean;
 };
 
-// Cartão do negócio. Apresentação pura: arrastar e abrir ficam com quem o envolve.
+// Cartão do cliente na carteira. Apresentação pura: arrastar e abrir ficam com quem o envolve.
 export const DealCard = forwardRef<HTMLDivElement, Props>(function DealCard(
   { deal, owner, dragging = false, overlay = false, className, ...rest },
   ref,
@@ -79,17 +78,11 @@ export const DealCard = forwardRef<HTMLDivElement, Props>(function DealCard(
       <p className="line-clamp-2 text-[15px] leading-snug font-semibold text-foreground">
         {deal.title}
       </p>
-      <p className="mt-0.5 flex items-baseline gap-2 text-[14px] tabular-nums">
-        {formatMoney(deal.value)}
-        {Number(deal.potential_value) > Number(deal.value) && (
-          <span
-            className="text-[11px] font-medium text-muted-foreground"
-            title="Potencial com upsell e cross-sell sugeridos"
-          >
-            +{formatMoney(Number(deal.potential_value) - Number(deal.value), true)} potencial
-          </span>
-        )}
-      </p>
+      {Number(deal.value) > 0 && (
+        <p className="mt-0.5 text-[14px] tabular-nums" title="Valor do contrato">
+          {formatMoney(deal.value)}
+        </p>
+      )}
 
       {deal.nextStep && deal.status === "open" && (
         <p
@@ -110,19 +103,9 @@ export const DealCard = forwardRef<HTMLDivElement, Props>(function DealCard(
       )}
 
       <div className="mt-3 flex items-center justify-between gap-2 border-t border-border pt-3">
-        {deal.winChance !== null ? (
-          <span
-            className="flex items-center gap-1 text-[12px] font-medium text-foreground tabular-nums"
-            title="Chance de fechar estimada pela IA com os ganhos e perdas da conta"
-          >
-            <Bot className="size-3.5" aria-hidden />
-            {deal.winChance}%<span className="sr-only"> de chance de fechar</span>
-          </span>
-        ) : deal.contact ? (
-          <TempChip level={deal.contact.temperature} score={deal.contact.score} />
-        ) : (
-          <span />
-        )}
+        <span className="truncate text-[12px] text-muted-foreground">
+          {owner?.name ?? "Sem responsável"}
+        </span>
         <OwnerAvatar member={owner} size={24} />
       </div>
     </div>

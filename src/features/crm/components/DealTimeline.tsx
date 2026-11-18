@@ -63,7 +63,7 @@ export function DealTimeline({ accountId, dealId, contactId, members }: Props) {
           onKeyDown={(e) => {
             if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) void submit();
           }}
-          placeholder="Adicionar nota sobre o negócio"
+          placeholder="Adicionar nota sobre este cliente"
           className="min-h-16 border-0 bg-transparent p-0 text-[13px] shadow-none focus-visible:ring-0"
         />
         <div className="mt-1.5 flex justify-end">

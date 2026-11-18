@@ -123,10 +123,10 @@ export function ContactsPage() {
   return (
     <div className="relative flex min-h-0 flex-1 flex-col">
       <PageHeader
-        title="Contatos e leads"
+        title="Clientes"
         description={
           list.isSuccess
-            ? `${formatNumber(total)} ${hasFilters ? "no filtro" : "na base"} · a IA lê cada conversa e dá a nota de 0 a 100`
+            ? `${formatNumber(total)} ${hasFilters ? "no filtro" : "na base"} · a saúde de cada cliente aparece com o motivo`
             : "Carregando…"
         }
         actions={

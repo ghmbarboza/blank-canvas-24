@@ -67,19 +67,19 @@ const FILTERABLE: Record<
       id: "lifecycle",
       label: "Fase",
       options: [
-        { value: "lead", label: "Lead" },
-        { value: "opportunity", label: "Oportunidade" },
+        { value: "lead", label: "Contato (ainda não comprou)" },
+        { value: "opportunity", label: "Em negociação" },
         { value: "customer", label: "Cliente" },
         { value: "inactive", label: "Inativo" },
       ],
     },
     {
       id: "temperature",
-      label: "Temperatura",
+      label: "Interesse",
       options: [
-        { value: "hot", label: "Quente" },
-        { value: "warm", label: "Morno" },
-        { value: "cold", label: "Frio" },
+        { value: "hot", label: "Interesse alto" },
+        { value: "warm", label: "Interesse médio" },
+        { value: "cold", label: "Interesse baixo" },
       ],
     },
     { id: "source", label: "Origem" },
@@ -90,8 +90,8 @@ const FILTERABLE: Record<
       id: "status",
       label: "Situação",
       options: [
-        { value: "open", label: "Aberto" },
-        { value: "won", label: "Ganho" },
+        { value: "open", label: "Na carteira" },
+        { value: "won", label: "Fidelizado" },
         { value: "lost", label: "Perdido" },
       ],
     },
@@ -541,7 +541,7 @@ export function BuilderTab({
               <Input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Ex.: Receita por vendedor"
+                placeholder="Ex.: Clientes por etapa da jornada"
               />
             </Field>
             <label className="flex items-center justify-between gap-3 rounded-xl border border-border px-3 text-[13px]">

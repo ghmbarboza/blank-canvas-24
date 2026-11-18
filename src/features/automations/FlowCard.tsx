@@ -11,7 +11,7 @@ import { FlowSentence } from "./FlowSentence";
 
 const KIND_LABEL: Record<string, string> = {
   journey: "Jornada",
-  sequence: "Cadência de vendas",
+  sequence: "Cadência de contato",
   rule: "Regra",
 };
 

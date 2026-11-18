@@ -132,7 +132,7 @@ export function useAddParticipant(accountId: string, dealId: string) {
         role,
         created_by: u.user?.id ?? null,
       });
-      if (error?.code === "23505") throw new Error("Essa pessoa já participa do negócio");
+      if (error?.code === "23505") throw new Error("Essa pessoa já está neste cartão");
       if (error) throw error;
     },
     onSuccess: done,

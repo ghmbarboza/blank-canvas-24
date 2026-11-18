@@ -1,18 +1,9 @@
-// Nexa no modal: a fala chega em streaming (AI SDK) e cada ferramenta de palco vira uma
-// parte da mensagem que o front desenha. As ferramentas que mexem na central são as mesmas
-// de tools.server.ts; o histórico vem do banco (nunca do navegador) e é gravado sem segredo.
+// A conversa da assistente no modal: a fala chega em streaming (AI SDK) e cada ferramenta vira uma
+// parte da mensagem que o front desenha. As ferramentas que mexem na central são as de
+// tools.server.ts; o histórico vem do banco (nunca do navegador) e é gravado sem segredo.
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
-import {
-  jsonSchema,
-  stepCountIs,
-  streamText,
-  tool,
-  type JSONSchema7,
-  type LanguageModel,
-  type ModelMessage,
-  type ToolSet,
-} from "ai";
+import { stepCountIs, streamText, type LanguageModel, type ModelMessage } from "ai";
 
 import { admin, type Caller } from "@/backend/http.server";
 import { estimateCost } from "@/backend/llm-core";
@@ -20,23 +11,23 @@ import { GATEWAY_URL, gatewayHeaders, isGatewayClaude } from "@/backend/ai/model
 import { chooseProvider } from "@/backend/llm.server";
 import { maskText } from "@/lib/mask-sensitive";
 
+import { buildStageTools, buildWorkTools, friendlyStreamError, hideSecrets } from "./nexa-tools";
 import { redact } from "./redact";
 import { roteiroState, roteiroText } from "./roteiro";
 import { REPLY, SETUP_TOOLS, setupSystem } from "./spec";
-import { STAGE_TOOLS, blockNote, toBlock, type StoredPart } from "./stage";
-import {
-  loadFacts,
-  loadSnapshot,
-  runSetupTool,
-  type SetupAction,
-  type SetupCtx,
-} from "./tools.server";
+import { STAGE_TOOLS, blockNote, type StoredPart } from "./stage";
+import { loadFacts, loadSnapshot, runSetupTool, type SetupCtx } from "./tools.server";
 
-const MAX_STEPS = 6;
+// A pessoa pode pedir várias coisas numa mensagem: o laço permite encadear ferramentas e ainda
+// sobra uma volta para a fala final.
+export const MAX_STEPS = 10;
 const HISTORY = 24;
 const MAX_OUTPUT = 6000;
-const TURN_TIMEOUT_MS = 75_000;
-const SECRET_TOOLS = new Set(["conectar_integracao", "conectar_zernio"]);
+// ler um site leva até 40 s; a rodada inteira nunca fica pendurada além disto
+const TURN_TIMEOUT_MS = 110_000;
+// erro passageiro do gateway (429, 5xx): o SDK tenta de novo com recuo curto antes de desistir
+const MAX_RETRIES = 3;
+const SECRET_TOOLS = new Set(["conectar_integracao", "conectar_zernio", "conectar_whatsapp"]);
 
 type Choice = Awaited<ReturnType<typeof chooseProvider>>;
 
@@ -98,16 +89,23 @@ export async function streamNexa(
   const isRepeat = retry && last?.role === "user" && last.content === maskText(redact(said).text);
   if (isRepeat) past = past.slice(0, -1);
   // a fala grava junto com a chamada à IA; a resposta só grava depois dela (onEnd espera)
-  const savedUser = isRepeat
-    ? Promise.resolve()
+  const savedUser: Promise<string | null> = isRepeat
+    ? Promise.resolve(null)
     : Promise.resolve(
-        db.from("setup_messages").insert({
-          account_id: caller.accountId,
-          user_id: caller.userId,
-          role: "user",
-          content: redact(said).text,
-        }),
-      ).then(() => undefined);
+        db
+          .from("setup_messages")
+          .insert({
+            account_id: caller.accountId,
+            user_id: caller.userId,
+            role: "user",
+            content: redact(said).text,
+          })
+          .select("id")
+          .single(),
+      ).then(
+        (r) => r.data?.id ?? null,
+        () => null,
+      );
 
   const ctx: SetupCtx = {
     req,
@@ -118,73 +116,30 @@ export async function streamNexa(
     ),
   };
   const parts: StoredPart[] = [];
-  const seen = new Map<string, unknown>(); // ferramenta+argumentos → resultado (não repete)
+  const secrets = new Set<string>();
 
-  const work: ToolSet = Object.fromEntries(
+  const work = buildWorkTools({
     // aqui a fala é o texto do stream: a ferramenta responder (do motor antigo) não entra
-    SETUP_TOOLS.filter((spec) => spec.name !== REPLY.name).map((spec) => [
-      spec.name,
-      tool({
-        description: spec.description,
-        inputSchema: jsonSchema<Record<string, unknown>>(spec.parameters as JSONSchema7),
-        execute: async (args: Record<string, unknown>) => {
-          const sig = `${spec.name}:${JSON.stringify(args)}`;
-          if (seen.has(sig)) return { ok: true, nota: "Já feito nesta rodada. Não repita." };
-          const started = Date.now();
-          let out: { ok: boolean; resultado?: string; erro?: string; acao?: SetupAction };
-          try {
-            const r = await runSetupTool(ctx, spec.name, args);
-            out = { ok: true, resultado: redact(r.content.slice(0, 16_000)).text };
-            if (r.action) {
-              out.acao = r.action;
-              parts.push({ type: "action", action: r.action });
-            }
-          } catch (err) {
-            const msg = err instanceof Error ? err.message : String(err);
-            const action: SetupAction = {
-              kind: "error",
-              label: msg.slice(0, 160),
-              tool: spec.name,
-            };
-            out = { ok: false, erro: redact(msg).text, acao: action };
-            parts.push({ type: "action", action });
-          }
-          seen.set(sig, out);
-          await db.from("agent_tool_calls").insert({
-            account_id: caller.accountId,
-            kind: "setup",
-            tool: spec.name,
-            // de ferramenta com segredo, só os nomes dos campos (nunca os valores)
-            args: (SECRET_TOOLS.has(spec.name)
-              ? { redigido: true, campos: argNames(args) }
-              : args) as never,
-            ok: out.ok,
-            error: out.ok ? null : (out.erro ?? "").slice(0, 500),
-            latency_ms: Date.now() - started,
-          });
-          return out;
-        },
-      }),
-    ]),
-  );
-  const stage: ToolSet = Object.fromEntries(
-    STAGE_TOOLS.map((spec) => [
-      spec.name,
-      tool({
-        description: spec.description,
-        inputSchema: jsonSchema<Record<string, unknown>>(spec.parameters as JSONSchema7),
-        execute: async (args: Record<string, unknown>) => {
-          try {
-            const block = toBlock(spec.name, args);
-            parts.push({ type: "block", block });
-            return { ok: true, bloco: block, nota: "Na tela. Agora fale com a pessoa e espere." };
-          } catch (err) {
-            return { ok: false, erro: err instanceof Error ? err.message : String(err) };
-          }
-        },
-      }),
-    ]),
-  );
+    specs: SETUP_TOOLS.filter((spec) => spec.name !== REPLY.name),
+    run: (name, args) => runSetupTool(ctx, name, args),
+    parts,
+    onSecrets: (values) => values.forEach((v) => secrets.add(v)),
+    log: async (e) => {
+      await db.from("agent_tool_calls").insert({
+        account_id: caller.accountId,
+        kind: "setup",
+        tool: e.tool,
+        // de ferramenta com segredo, só os nomes dos campos (nunca os valores)
+        args: (SECRET_TOOLS.has(e.tool)
+          ? { redigido: true, campos: argNames(e.args) }
+          : e.args) as never,
+        ok: e.ok,
+        error: e.error,
+        latency_ms: e.latencyMs,
+      });
+    },
+  });
+  const stage = buildStageTools(STAGE_TOOLS, parts);
 
   const system = setupSystem({
     snapshot,
@@ -198,6 +153,7 @@ export async function streamNexa(
     }),
   });
   const started = Date.now();
+  let failure: string | null = null;
 
   const result = streamText({
     model: modelOf(choice),
@@ -206,8 +162,9 @@ export async function streamNexa(
     messages: [...past, { role: "user", content: maskText(said) }],
     tools: { ...work, ...stage },
     stopWhen: stepCountIs(MAX_STEPS),
-    // o Gemini 2.5 pensa antes de falar e o pensamento conta no teto: com 1500 ele já
-    // devolveu rodada vazia (1470 tokens pensados, nenhuma palavra). Por isso o teto é alto.
+    maxRetries: MAX_RETRIES,
+    // o Gemini pensa antes de falar e o pensamento conta no teto: com 1500 ele já devolveu rodada
+    // vazia (1470 tokens pensados, nenhuma palavra). Por isso o teto é alto.
     // reasoning_effort "low" travou a volta depois da ferramenta (assinatura de pensamento que o
     // provedor compatível não devolve). "none" desliga o pensamento: sem assinatura e mais rápido.
     maxOutputTokens: MAX_OUTPUT,
@@ -224,19 +181,24 @@ export async function streamNexa(
       "cache-control": "no-cache, no-transform",
       "x-accel-buffering": "no",
     },
-    // segredo nunca volta para a tela: o texto de cada parte passa pela mesma máscara
     onError: (err) => {
-      console.error("[nexa] stream", err);
-      return "Não consegui responder agora. Tente de novo em instantes.";
+      console.error("[assistente] stream", err instanceof Error ? err.message : err);
+      failure = friendlyStreamError(err);
+      return failure;
     },
     onEnd: async ({ responseMessage }) => {
-      await savedUser;
+      const userId = await savedUser;
       const spoken = responseMessage.parts
         .filter((p) => p.type === "text")
         .map((p) => (p as { text: string }).text)
         .join("\n")
         .trim();
-      const final = redact(spoken || fallback(parts)).text;
+      // segredo nunca fica gravado: nem na resposta, nem na fala da pessoa
+      const final = hideSecrets(spoken || fallback(parts, failure), secrets);
+      if (userId && secrets.size) {
+        const clean = hideSecrets(said, secrets);
+        await db.from("setup_messages").update({ content: clean }).eq("id", userId);
+      }
       const usage = await Promise.resolve(result.totalUsage).catch(() => null);
       const input = usage?.inputTokens ?? null;
       const output = usage?.outputTokens ?? null;
@@ -257,7 +219,7 @@ export async function streamNexa(
           output_tokens: output,
           latency_ms: Date.now() - started,
           ok: Boolean(spoken || parts.length),
-          error: spoken || parts.length ? null : "resposta vazia",
+          error: spoken || parts.length ? null : (failure ?? "resposta vazia"),
         }),
         db.from("usage_ledger").insert({
           account_id: caller.accountId,
@@ -273,19 +235,19 @@ export async function streamNexa(
 }
 
 /** Se a IA só usou ferramentas e não falou nada, a pessoa ao menos sabe o que foi feito. */
-export function fallback(parts: StoredPart[]): string {
+export function fallback(parts: StoredPart[], failure: string | null = null): string {
   const acts = parts.filter((p) => p.type === "action").map((p) => p.action!);
   const done = acts.filter((a) => a.kind !== "error").map((a) => a.label);
   const failed = acts.filter((a) => a.kind === "error").map((a) => a.label);
   if (!done.length && !failed.length && parts.some((p) => p.type === "block"))
-    return "Escolha uma das opções abaixo ou me escreva do seu jeito.";
+    return failure ?? "Está aqui embaixo. Me diga se é isso ou o que quer mudar.";
   // nada feito e nada dito: não finge que respondeu
   if (!done.length && !failed.length)
-    return "Desculpa, me perdi aqui. Pode me dizer de novo, com outras palavras?";
+    return failure ?? "Desculpa, me perdi aqui. Pode me dizer de novo, com outras palavras?";
   return [
     done.length ? `Feito: ${done.join("; ")}.` : "",
     failed.length ? `Não consegui: ${failed.join("; ")}.` : "",
-    "O que mais você quer configurar?",
+    failure ?? "O que mais você quer configurar?",
   ]
     .filter(Boolean)
     .join(" ");

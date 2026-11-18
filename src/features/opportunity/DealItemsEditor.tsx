@@ -73,7 +73,7 @@ export function DealItemsEditor({ accountId, dealId, contactId }: Props) {
       <div className="flex items-end justify-between gap-3">
         <div>
           <p id="deal-items" className="eyebrow">
-            Itens da oportunidade
+            Itens do cliente
           </p>
           {list.length > 0 && (
             <p className="mt-1 text-[12px] text-muted-foreground">
@@ -111,7 +111,7 @@ export function DealItemsEditor({ accountId, dealId, contactId }: Props) {
         <Skeleton className="h-20 w-full rounded-xl" />
       ) : list.length === 0 ? (
         <p className="rounded-xl border border-dashed border-border px-3 py-3 text-[12px] text-muted-foreground">
-          Sem itens: o valor do negócio é o digitado acima. Adicione itens do catálogo para estimar
+          Sem itens: o valor do contrato é o digitado acima. Adicione itens do catálogo para estimar
           pelo que o cliente quer.
         </p>
       ) : (
@@ -139,8 +139,8 @@ export function DealItemsEditor({ accountId, dealId, contactId }: Props) {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="core">Interesse</SelectItem>
-              <SelectItem value="upsell">Upsell</SelectItem>
-              <SelectItem value="cross_sell">Cross-sell</SelectItem>
+              <SelectItem value="upsell">Plano maior</SelectItem>
+              <SelectItem value="cross_sell">Item complementar</SelectItem>
             </SelectContent>
           </Select>
           <Select value={productId} onValueChange={setProductId}>

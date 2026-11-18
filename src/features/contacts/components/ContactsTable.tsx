@@ -8,8 +8,10 @@ import {
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
+import { useAccountId } from "@/lib/account";
 import { cn } from "@/lib/utils";
 
+import { useHealthMap } from "../customer-health";
 import type { ContactRow, ContactSort, ContactSortColumn, TeamMember } from "../types";
 import { buildContactColumns, contactTableFeatures } from "./contactColumns";
 import { ContactsMobileList } from "./ContactsMobileList";
@@ -56,10 +58,11 @@ export function ContactsTable({
   onOpen,
   footer,
 }: Props) {
+  const { map: health } = useHealthMap(useAccountId());
   const memberMap = useMemo(() => new Map(members.map((m) => [m.userId, m])), [members]);
   const columns = useMemo(
-    () => buildContactColumns(memberMap, channels, onOpen),
-    [memberMap, channels, onOpen],
+    () => buildContactColumns(memberMap, channels, health, onOpen),
+    [memberMap, channels, health, onOpen],
   );
   const sorting = useMemo<SortingState>(() => [{ id: sort.column, desc: sort.desc }], [sort]);
 
@@ -182,6 +185,7 @@ export function ContactsTable({
         </tbody>
       </table>
       <ContactsMobileList
+        health={health}
         rows={rows}
         selection={selection}
         onSelectionChange={onSelectionChange}

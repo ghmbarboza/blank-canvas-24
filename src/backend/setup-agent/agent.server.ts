@@ -18,7 +18,7 @@ const MAX_STEPS = 6;
 const FORCE_REPLY_AT = 3;
 const HISTORY = 30;
 // ferramentas que recebem segredo: o argumento nunca vai para o log
-const SECRET_TOOLS = new Set(["conectar_integracao", "conectar_zernio"]);
+const SECRET_TOOLS = new Set(["conectar_integracao", "conectar_zernio", "conectar_whatsapp"]);
 
 export interface SetupReply {
   message: {

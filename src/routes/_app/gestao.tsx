@@ -15,7 +15,10 @@ export const Route = createFileRoute("/_app/gestao")({
       : {};
   },
   head: () =>
-    pageHead("Gestão", "Escala, indicadores, saúde dos clientes, importação e outro CRM."),
+    pageHead(
+      "Saúde da carteira",
+      "Clientes saudáveis, em atenção e em risco, e a escala da equipe.",
+    ),
   component: GestaoRoute,
 });
 

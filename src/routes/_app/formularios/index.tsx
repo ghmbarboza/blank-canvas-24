@@ -4,6 +4,6 @@ import { FormsPage } from "@/features/forms/FormsPage";
 import { pageHead } from "@/lib/page-head";
 
 export const Route = createFileRoute("/_app/formularios/")({
-  head: () => pageHead("Captação", "Formulários, landing pages e origem dos leads."),
+  head: () => pageHead("Captação", "Formulários, páginas de cadastro e origem dos contatos."),
   component: FormsPage,
 });

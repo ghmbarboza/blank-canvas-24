@@ -111,7 +111,7 @@ export function AssignDialog({
         <DialogHeader>
           <DialogTitle>Responsável pelo canal</DialogTitle>
           <DialogDescription>
-            Um vendedor dono vê as conversas deste número mesmo que não seja compartilhado.
+            Um atendente dono vê as conversas deste número mesmo que não seja compartilhado.
           </DialogDescription>
         </DialogHeader>
         <OwnerSelect id="assign-owner" members={members} value={owner} onChange={setOwner} />

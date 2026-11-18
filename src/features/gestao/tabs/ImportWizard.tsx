@@ -81,7 +81,7 @@ export function ImportWizard({
   const customLabels = Object.fromEntries(
     custom.map((c) => [
       `custom.${c.entity}.${c.key}`,
-      `${c.entity === "contact" ? "Contato" : c.entity === "company" ? "Empresa" : "Negócio"}: ${c.label}`,
+      `${c.entity === "contact" ? "Contato" : c.entity === "company" ? "Empresa" : "Carteira"}: ${c.label}`,
     ]),
   );
   const targets = [...Object.keys(TARGET_LABEL), ...Object.keys(customLabels)];
@@ -160,7 +160,7 @@ export function ImportWizard({
             ))}
           </div>
         )}
-        <p className="mt-3 text-[15px] font-medium">Traga seus contatos, empresas e negócios</p>
+        <p className="mt-3 text-[15px] font-medium">Traga seus clientes, empresas e a carteira</p>
         <p className="mx-auto mt-1 max-w-md text-[13px] text-muted-foreground">
           {EDITION.allIntegrations
             ? "Planilha CSV ou Excel (.xlsx), ou a exportação do RD Station CRM, Kommo, Pipedrive ou HubSpot. A gente reconhece as colunas e mostra tudo antes de gravar."
@@ -279,7 +279,8 @@ export function ImportWizard({
           <p className="mt-2 text-[15px] leading-relaxed">
             {formatNumber(t.contactsNew)} contatos novos, {formatNumber(t.contactsUpdated)} já
             existentes que serão completados, {formatNumber(t.companiesNew)} empresas novas (
-            {formatNumber(t.companiesExisting)} já existiam) e {formatNumber(t.deals)} negócios.
+            {formatNumber(t.companiesExisting)} já existiam) e {formatNumber(t.deals)} cartões na
+            carteira.
           </p>
           <p className="mt-1 text-[13px] text-primary-foreground/70">
             {formatNumber(t.mergedInFile)} linhas repetidas na planilha foram juntadas pelo e-mail
@@ -351,7 +352,7 @@ export function ImportWizard({
           <li>{formatNumber(r.contactsCreated)} contatos criados</li>
           <li>{formatNumber(r.contactsUpdated)} contatos completados</li>
           <li>{formatNumber(r.companiesCreated)} empresas criadas</li>
-          <li>{formatNumber(r.dealsCreated)} negócios criados</li>
+          <li>{formatNumber(r.dealsCreated)} cartões criados na carteira</li>
           <li>{formatNumber(r.mergedInFile)} repetidos juntados</li>
           <li>{formatNumber(r.skipped)} linhas fora</li>
         </ul>

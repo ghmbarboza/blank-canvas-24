@@ -5,6 +5,6 @@ import { pageHead } from "@/lib/page-head";
 
 export const Route = createFileRoute("/_app/treino")({
   head: () =>
-    pageHead("Treino", "Roleplay de vendas com cliente simulado pela IA e nota pelo playbook."),
+    pageHead("Treino", "Conversa de treino com cliente simulado pela IA e nota pelo roteiro."),
   component: TrainingPage,
 });

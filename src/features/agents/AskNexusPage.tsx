@@ -29,7 +29,10 @@ const SUGGESTIONS: { label: string; question: string }[] = [
         label: "Clientes sem resposta",
         question: "Quais clientes estão esperando resposta há mais de um dia?",
       },
-  { label: "Funil deste mês", question: "Como está o funil de vendas deste mês?" },
+  {
+    label: "Carteira deste mês",
+    question: "Como está a carteira de clientes este mês: quantos ativos, em risco e perdidos?",
+  },
 ];
 
 type Shown = Pick<AskAnswer, "answer" | "links"> &

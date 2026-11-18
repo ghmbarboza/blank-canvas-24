@@ -6,12 +6,13 @@ import { formatMoney } from "@/lib/format";
 import { useContactDeals } from "../api";
 import { PanelSection } from "./PanelSection";
 
-// Negócio principal: o aberto mais recente do contato, com valor e em que ponto do funil está.
+// Cartão principal do cliente na carteira. Fora da composição da Caixa de entrada: a etapa da
+// jornada já aparece em OpportunityBlock.
 export function MainDealCard({ accountId, contactId }: { accountId: string; contactId: string }) {
   const deals = useContactDeals(accountId, contactId);
   if (deals.isLoading) {
     return (
-      <PanelSection title="Negócio principal">
+      <PanelSection title="Na carteira">
         <Skeleton className="h-24 w-full rounded-xl" />
       </PanelSection>
     );
@@ -26,7 +27,7 @@ export function MainDealCard({ accountId, contactId }: { accountId: string; cont
   const more = (deals.data?.length ?? 1) - 1;
 
   return (
-    <PanelSection title="Negócio principal">
+    <PanelSection title="Na carteira">
       <Link
         to="/crm"
         search={{ negocio: deal.id }}
@@ -45,7 +46,7 @@ export function MainDealCard({ accountId, contactId }: { accountId: string; cont
         <div
           className="mt-4 h-1.5 overflow-hidden rounded-full bg-surface-3"
           role="progressbar"
-          aria-label="Avanço no funil"
+          aria-label="Avanço na jornada"
           aria-valuemin={0}
           aria-valuemax={100}
           aria-valuenow={pct}
@@ -66,7 +67,7 @@ export function MainDealCard({ accountId, contactId }: { accountId: string; cont
       </Link>
       {more > 0 && (
         <p className="mt-2 text-[12px] text-subtle">
-          Mais {more} {more === 1 ? "negócio aberto" : "negócios abertos"}
+          Mais {more} {more === 1 ? "cartão na carteira" : "cartões na carteira"}
         </p>
       )}
     </PanelSection>

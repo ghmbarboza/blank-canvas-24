@@ -25,7 +25,7 @@ export function DayTimeline({ events, now, tz }: Props) {
       <div className="rounded-xl border border-dashed border-border-strong px-5 py-6">
         <p className="text-[14px] font-medium">Agenda livre hoje.</p>
         <p className="mt-1 text-[13px] text-muted-foreground">
-          Bom momento para marcar uma demonstração com um lead quente.
+          Bom momento para marcar uma conversa de acompanhamento com um cliente.
         </p>
         <Button asChild variant="outline" size="sm" className="mt-3">
           <Link to="/agenda">

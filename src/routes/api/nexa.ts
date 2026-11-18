@@ -17,7 +17,15 @@ export const Route = createFileRoute("/api/nexa")({
           if (!text) throw new h.HttpError(400, "Escreva uma mensagem", "empty");
           await h.rateLimit(`setup-chat:${caller.userId}`, 40, 600);
           const { streamNexa } = await import("@/backend/setup-agent/nexa.server");
-          return streamNexa(req, caller, text, body.retry === true);
+          try {
+            return await streamNexa(req, caller, text, body.retry === true);
+          } catch (err) {
+            // IA sem crédito, sem chave ou acima do teto: a pessoa lê o motivo, não "Erro interno"
+            if (err instanceof h.HttpError) throw err;
+            const { friendlyStreamError } = await import("@/backend/setup-agent/nexa-tools");
+            console.error("[assistente] antes do stream", err instanceof Error ? err.message : err);
+            throw new h.HttpError(503, friendlyStreamError(err), "assistant_unavailable");
+          }
         })(ctx);
       },
     },

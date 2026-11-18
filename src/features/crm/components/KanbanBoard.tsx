@@ -29,7 +29,7 @@ type Props = {
 
 const SCREEN_READER = {
   draggable:
-    "Espaço pega o negócio. Setas movem entre posições e colunas. Espaço solta, Esc cancela.",
+    "Espaço pega o cartão. Setas movem entre posições e colunas. Espaço solta, Esc cancela.",
 };
 
 export function KanbanBoard({ stages, deals, members, onOpenDeal, onMove }: Props) {
@@ -53,7 +53,7 @@ export function KanbanBoard({ stages, deals, members, onOpenDeal, onMove }: Prop
 
   const stageName = (id: string | number | undefined) =>
     stages.find((s) => s.id === String(id))?.name ?? "";
-  const titleOf = (id: string | number) => dealById.get(String(id))?.title ?? "Negócio";
+  const titleOf = (id: string | number) => dealById.get(String(id))?.title ?? "Cartão";
   const announcements: Announcements = {
     onDragStart: ({ active }) => `Pegou ${titleOf(active.id)}.`,
     onDragOver: ({ active, over }) =>
@@ -82,7 +82,7 @@ export function KanbanBoard({ stages, deals, members, onOpenDeal, onMove }: Prop
       <div
         className="flex min-h-0 flex-1 snap-x snap-mandatory items-stretch gap-4 overflow-x-auto overflow-y-hidden p-4 md:snap-none md:p-6"
         role="region"
-        aria-label="Quadro do funil"
+        aria-label="Quadro da carteira"
       >
         {ordered.map((stage) => {
           const closed = stageKind(stage) !== "open";

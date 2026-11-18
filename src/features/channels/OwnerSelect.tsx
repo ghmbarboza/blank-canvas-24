@@ -21,7 +21,7 @@ export function OwnerSelect({ id, members, value, onChange }: Props) {
   const active = members.filter((m) => m.isActive);
   return (
     <div className="space-y-1.5">
-      <Label htmlFor={id}>Vendedor dono (opcional)</Label>
+      <Label htmlFor={id}>Atendente dono (opcional)</Label>
       <Select value={value ?? NONE} onValueChange={(v) => onChange(v === NONE ? null : v)}>
         <SelectTrigger id={id}>
           <SelectValue />

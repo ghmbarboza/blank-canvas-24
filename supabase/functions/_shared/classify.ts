@@ -198,7 +198,7 @@ async function maybeOpenDeal(
     auto_deal?: boolean;
     auto_deal_min_score?: number;
   };
-  if (settings.auto_deal === false) return;
+  if (settings.auto_deal !== true) return; // pós-venda: só abre cartão sozinho se a conta ligar
   if (score < (settings.auto_deal_min_score ?? 60)) return;
 
   // Com interesse no catálogo, a oportunidade é estimada pelos itens (e acrescenta itens novos

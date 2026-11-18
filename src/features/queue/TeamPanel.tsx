@@ -206,7 +206,7 @@ export function MemberRow({ row, accountId }: { row: TeamRow; accountId: string 
               <Input
                 value={skill}
                 onChange={(e) => setSkillText(e.target.value)}
-                placeholder="Ex.: suporte, cobrança, vendas, inglês"
+                placeholder="Ex.: suporte, cobrança, renovação, inglês"
                 className="h-8 w-56"
                 maxLength={40}
                 aria-label="Nova habilidade"

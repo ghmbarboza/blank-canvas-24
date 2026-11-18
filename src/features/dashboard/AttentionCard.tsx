@@ -1,9 +1,11 @@
 import { useMemo } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Briefcase, Flame, Hand, LifeBuoy, Loader2, type LucideIcon } from "lucide-react";
+import { Hand, HeartPulse, LifeBuoy, Loader2, MessageCircle, type LucideIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useHealthMap } from "@/features/contacts/customer-health";
+import { useAccountId } from "@/lib/account";
 import { errorMessage } from "@/lib/functions";
 import { cn } from "@/lib/utils";
 
@@ -14,32 +16,41 @@ import {
   type AttentionItem,
   type AttentionKind,
 } from "./attention";
-import { DEMO_ATTENTION } from "./demo";
 import { EmptyNote } from "./ui";
 
 const ICON: Record<AttentionKind, LucideIcon> = {
   ticket_late: LifeBuoy,
   ticket_due: LifeBuoy,
-  hot_waiting: Flame,
+  waiting: MessageCircle,
   handoff: Hand,
-  deal_stalled: Briefcase,
+  client_risk: HeartPulse,
 };
 
 const CONTEXT: Record<AttentionKind, string> = {
   ticket_late: "Atendimento",
   ticket_due: "Atendimento",
-  hot_waiting: "Caixa de entrada",
+  waiting: "Caixa de entrada",
   handoff: "Passagem da IA",
-  deal_stalled: "CRM",
+  client_risk: "Saúde da carteira",
 };
 
-// O que precisa de você: 3 a 5 pendências reais, cada uma com o motivo e um botão que resolve.
-export function AttentionCard({ demo, className }: { demo: boolean; className?: string }) {
-  const sources = useAttentionSources(!demo);
-  const items = useMemo(
-    () => (demo ? DEMO_ATTENTION : sources.data ? buildAttention(sources.data) : []),
-    [demo, sources.data],
-  );
+// O que precisa de você hoje: até 5 pendências reais, cada uma com o motivo e um botão que resolve.
+export function AttentionCard({ className }: { className?: string }) {
+  const sources = useAttentionSources(true);
+  const health = useHealthMap(useAccountId());
+  const items = useMemo(() => {
+    if (!sources.data) return [];
+    const risk = [...health.map.values()]
+      .filter((h) => h.result.level === "risk")
+      .map((h) => ({
+        contact_id: h.signals.contact_id,
+        name: h.signals.name ?? "Cliente sem nome",
+        score: h.result.score,
+        reason: h.result.factors.find((f) => f.points < 0)?.label ?? null,
+        next_action: h.result.nextAction,
+      }));
+    return buildAttention({ ...sources.data, risk });
+  }, [sources.data, health.map]);
 
   return (
     <section
@@ -51,12 +62,12 @@ export function AttentionCard({ demo, className }: { demo: boolean; className?: 
     >
       <header className="mb-5 flex items-baseline justify-between gap-3">
         <div className="min-w-0">
-          <p className="eyebrow">Agora</p>
+          <p className="eyebrow">Hoje</p>
           <h2
             id="painel-atencao"
             className="mt-1.5 font-display text-[20px] leading-tight font-medium text-foreground"
           >
-            O que precisa de você
+            O que precisa de você hoje
           </h2>
         </div>
         {items.length > 0 && (
@@ -66,23 +77,23 @@ export function AttentionCard({ demo, className }: { demo: boolean; className?: 
         )}
       </header>
 
-      {!demo && sources.isLoading ? (
+      {sources.isLoading ? (
         <div className="space-y-3" aria-busy="true" aria-label="Carregando pendências">
           {Array.from({ length: 3 }, (_, i) => (
             <Skeleton key={i} className="h-24 w-full rounded-xl" />
           ))}
         </div>
-      ) : !demo && sources.isError ? (
+      ) : sources.isError ? (
         <EmptyNote>Não deu para carregar as pendências: {errorMessage(sources.error)}</EmptyNote>
       ) : items.length === 0 ? (
         <EmptyNote>
-          Nada pendente agora. Lead quente sem resposta, passagem da IA sem dono, chamado perto do
-          prazo e negócio parado aparecem aqui.
+          Nada pendente agora. Cliente esperando resposta, passagem da IA sem dono, chamado perto do
+          prazo e cliente em risco aparecem aqui.
         </EmptyNote>
       ) : (
         <ol className="space-y-3">
           {items.map((item, i) => (
-            <Row key={item.key} item={item} first={i === 0} demo={demo} />
+            <Row key={item.key} item={item} first={i === 0} />
           ))}
         </ol>
       )}
@@ -90,7 +101,7 @@ export function AttentionCard({ demo, className }: { demo: boolean; className?: 
   );
 }
 
-function Row({ item, first, demo }: { item: AttentionItem; first: boolean; demo: boolean }) {
+function Row({ item, first }: { item: AttentionItem; first: boolean }) {
   const Icon = ICON[item.kind];
   return (
     <li
@@ -114,7 +125,7 @@ function Row({ item, first, demo }: { item: AttentionItem; first: boolean; demo:
         <p className="text-[14px] leading-snug font-semibold text-foreground">{item.title}</p>
         <p className="mt-0.5 text-[13px] leading-snug text-muted-foreground">{item.reason}</p>
         <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
-          <Action item={item} primary={first} demo={demo} />
+          <Action item={item} primary={first} />
           <span className="text-[11px] text-subtle">{CONTEXT[item.kind]}</span>
         </div>
       </div>
@@ -122,19 +133,12 @@ function Row({ item, first, demo }: { item: AttentionItem; first: boolean; demo:
   );
 }
 
-function Action({ item, primary, demo }: { item: AttentionItem; primary: boolean; demo: boolean }) {
+function Action({ item, primary }: { item: AttentionItem; primary: boolean }) {
   const navigate = useNavigate();
   const claim = useClaimConversation();
   const label = ATTENTION_ACTION[item.kind];
   const variant = primary ? "default" : "outline";
 
-  if (demo) {
-    return (
-      <Button size="sm" variant={variant} disabled title="Exemplo: conecte um canal para agir">
-        {label}
-      </Button>
-    );
-  }
   switch (item.kind) {
     case "handoff":
       return (
@@ -153,7 +157,7 @@ function Action({ item, primary, demo }: { item: AttentionItem; primary: boolean
           {label}
         </Button>
       );
-    case "hot_waiting":
+    case "waiting":
       return (
         <Button asChild size="sm" variant={variant}>
           <Link to="/inbox/$conversationId" params={{ conversationId: item.ref }}>
@@ -161,10 +165,10 @@ function Action({ item, primary, demo }: { item: AttentionItem; primary: boolean
           </Link>
         </Button>
       );
-    case "deal_stalled":
+    case "client_risk":
       return (
         <Button asChild size="sm" variant={variant}>
-          <Link to="/crm" search={{ negocio: item.ref }}>
+          <Link to="/contatos/$contactId" params={{ contactId: item.ref }}>
             {label}
           </Link>
         </Button>

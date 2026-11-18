@@ -123,7 +123,7 @@ export function useGerencial(days: Period) {
   });
 }
 
-// Conta sem nenhum movimento: o painel mostra o exemplo em vez de uma tela de zeros.
+// Conta sem nenhum movimento: o painel avisa e aponta o próximo passo (nada de dado de exemplo).
 export function isEmptyAccount(g: Gerencial | undefined): boolean {
   if (!g) return false;
   const k = g.kpis;
@@ -158,5 +158,5 @@ export const ROLE_LABEL: Record<string, string> = {
   admin: "Administrador",
   manager: "Gestor",
   agent: "Atendente",
-  seller: "Vendedor",
+  seller: "Atendente da própria carteira",
 };

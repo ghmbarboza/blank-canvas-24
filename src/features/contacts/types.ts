@@ -10,8 +10,8 @@ export type Lifecycle = "lead" | "opportunity" | "customer" | "inactive";
 export const LIFECYCLES: readonly Lifecycle[] = ["lead", "opportunity", "customer", "inactive"];
 
 export const LIFECYCLE_LABEL: Record<Lifecycle, string> = {
-  lead: "Lead",
-  opportunity: "Oportunidade",
+  lead: "Contato (ainda não comprou)",
+  opportunity: "Em negociação",
   customer: "Cliente",
   inactive: "Inativo",
 };

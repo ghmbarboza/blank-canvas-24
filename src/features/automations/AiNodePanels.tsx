@@ -66,7 +66,7 @@ export function AiAgentNodePanel({ accountId, config: c, readOnly, onPatch }: Pr
           id="np-goal"
           rows={3}
           value={str(c, "goal")}
-          placeholder="Ex.: retomar a proposta enviada e oferecer um horário para conversar"
+          placeholder="Ex.: perguntar como foi a primeira semana e oferecer um horário para conversar"
           onChange={(e) => onPatch({ goal: e.target.value })}
           disabled={readOnly}
         />
@@ -164,7 +164,7 @@ export function ComposioNodePanel({ accountId, config: c, readOnly, onPatch }: P
               ? (c["arguments"] as string)
               : JSON.stringify(c["arguments"] ?? {}, null, 2)
           }
-          placeholder={'{\n  "channel": "#vendas",\n  "text": "{{nome}} pediu proposta"\n}'}
+          placeholder={'{\n  "channel": "#clientes",\n  "text": "{{nome}} pediu ajuda"\n}'}
           onChange={(e) => onPatch({ arguments: e.target.value })}
           disabled={readOnly}
         />

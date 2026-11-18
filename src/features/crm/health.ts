@@ -74,7 +74,7 @@ export function dealHealth(s: HealthSignals, now: number = Date.now()): DealHeal
   else if (s.temperature === "cold") add(-10, "IA vê interesse baixo");
 
   if (s.expectedCloseDate && new Date(`${s.expectedCloseDate}T23:59:59`).getTime() < now)
-    add(-10, "Previsão de fechamento já passou");
+    add(-10, "Renovação ou recompra prevista já passou");
 
   const final = Math.max(0, Math.min(100, score));
   return {

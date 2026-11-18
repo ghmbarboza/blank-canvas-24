@@ -41,7 +41,11 @@ import { CompanyDialog } from "./CompanyDialog";
 import { CompanyTimeline } from "./CompanyTimeline";
 import { formatCnpj } from "./cnpj";
 
-const STATUS_LABEL: Record<string, string> = { open: "Aberto", won: "Ganho", lost: "Perdido" };
+const STATUS_LABEL: Record<string, string> = {
+  open: "Na carteira",
+  won: "Fidelizado",
+  lost: "Perdido",
+};
 
 export function CompanyDetailPage({ companyId }: { companyId: string }) {
   const { current, isManager } = useAccount();
@@ -146,7 +150,7 @@ export function CompanyDetailPage({ companyId }: { companyId: string }) {
                   remove.mutate(c.id, {
                     onSuccess: () => {
                       toast.success(
-                        "Empresa removida. Os contatos e negócios continuam, sem vínculo.",
+                        "Empresa removida. Os contatos e os cartões da carteira continuam, sem vínculo.",
                       );
                       void navigate({ to: "/empresas" });
                     },
@@ -161,29 +165,29 @@ export function CompanyDetailPage({ companyId }: { companyId: string }) {
         </div>
         {contacts.length === 0 && deals.length === 0 ? (
           <p className="mt-5 rounded-2xl border border-border bg-surface px-4 py-3 text-[13px] text-muted-foreground">
-            Sem pessoas nem negócios ainda. Vincule quem trabalha aqui na aba Pessoas e crie o
-            negócio no{" "}
+            Sem pessoas nem cartões ainda. Vincule quem trabalha aqui na aba Pessoas e coloque o
+            cliente na{" "}
             <Link
               to="/crm"
               className="font-medium text-foreground underline-offset-4 hover:underline"
             >
-              Funil de vendas
+              Carteira
             </Link>
             .
           </p>
         ) : (
           <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <Kpi label="Pessoas" value={String(contacts.length)} />
-            <Kpi label="Negócios abertos" value={String(open.length)} />
+            <Kpi label="Na carteira" value={String(open.length)} />
             <Kpi
-              label="Em aberto"
+              label="Valor em contratos"
               value={formatMoney(
                 open.reduce((s, d) => s + Number(d.value ?? 0), 0),
                 true,
               )}
             />
             <Kpi
-              label="Já ganho"
+              label="Já fidelizado"
               value={formatMoney(
                 won.reduce((s, d) => s + Number(d.value ?? 0), 0),
                 true,
@@ -198,7 +202,7 @@ export function CompanyDetailPage({ companyId }: { companyId: string }) {
           <TabsList className="mb-4">
             <TabsTrigger value="timeline">Linha do tempo</TabsTrigger>
             <TabsTrigger value="people">Pessoas</TabsTrigger>
-            <TabsTrigger value="deals">Negócios</TabsTrigger>
+            <TabsTrigger value="deals">Carteira</TabsTrigger>
           </TabsList>
           <TabsContent value="timeline">
             <CompanyTimeline companyId={companyId} />
@@ -266,8 +270,8 @@ export function CompanyDetailPage({ companyId }: { companyId: string }) {
             {deals.length === 0 ? (
               <EmptyState
                 icon={Building2}
-                title="Sem negócios com esta empresa"
-                description="Negócios abertos para pessoas da empresa aparecem aqui quando vinculados."
+                title="Nenhum cartão desta empresa na carteira"
+                description="Os cartões da carteira de pessoas desta empresa aparecem aqui quando vinculados."
                 className="py-10"
               />
             ) : (

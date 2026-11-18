@@ -10,12 +10,11 @@ import { useAccount, useAccountId } from "@/lib/account";
 import { useAuth } from "@/lib/auth";
 import { errorMessage } from "@/lib/functions";
 import { useTeamMembers } from "@/features/contacts/api";
-import { useForecastReport } from "@/features/reports/api";
 
 import { useBoardDeals, useDealsRealtime, useMoveDeal, usePipelines, useStages } from "../api";
 import { POSITION_GAP } from "../position";
 import { DEFAULT_DEAL_FILTERS, type BoardDeal, type DealFilters } from "../types";
-import { CrmToolbar, type ForecastState } from "./CrmToolbar";
+import { CrmToolbar } from "./CrmToolbar";
 import { DealSheet } from "./DealSheet";
 import { KanbanBoard } from "./KanbanBoard";
 import { NewDealDialog } from "./NewDealDialog";
@@ -55,16 +54,8 @@ export function CrmPage() {
   const team = useTeamMembers(accountId);
   const move = useMoveDeal(accountId, pipelineId ?? "");
   useDealsRealtime(accountId);
-  const forecastReport = useForecastReport(accountId, 1);
-  const thisMonth = forecastReport.data?.months[0];
-  const forecast: ForecastState = forecastReport.isPending
-    ? { status: "loading" }
-    : forecastReport.isError
-      ? { status: "error" }
-      : { status: "ready", won: thisMonth?.won ?? 0, commit: thisMonth?.commit ?? 0 };
-
   const [filters, setFilters] = useState<DealFilters>(DEFAULT_DEAL_FILTERS);
-  // ?negocio=<id> abre o negócio direto (links do "Meu dia", notificações e relatórios).
+  // ?negocio=<id> abre o cartão direto (links do "Meu dia", notificações e relatórios).
   const search = useSearch({ strict: false }) as { negocio?: string };
   const [openDealId, setOpenDealId] = useState<string | null>(search.negocio ?? null);
   const [creatingDeal, setCreatingDeal] = useState(false);
@@ -108,7 +99,7 @@ export function CrmPage() {
   let body: ReactNode;
   if (loading) {
     body = (
-      <div className="flex gap-4 overflow-hidden p-6" aria-busy aria-label="Carregando funil">
+      <div className="flex gap-4 overflow-hidden p-6" aria-busy aria-label="Carregando a carteira">
         {Array.from({ length: 4 }, (_, i) => (
           <div key={i} className="w-[288px] shrink-0 space-y-3">
             <Skeleton className="h-6 w-40" />
@@ -122,7 +113,7 @@ export function CrmPage() {
     body = (
       <EmptyState
         icon={SearchX}
-        title="Não deu para carregar o funil"
+        title="Não deu para carregar a carteira"
         description={errorMessage(error)}
         action={
           <Button
@@ -139,15 +130,15 @@ export function CrmPage() {
     body = (
       <EmptyState
         icon={KanbanSquare}
-        title="Nenhum funil criado"
+        title="Nenhuma jornada criada"
         description={
           isManager
-            ? "Crie o primeiro funil para organizar seus negócios."
-            : "Peça a um gestor para criar o funil da equipe."
+            ? "Crie a primeira jornada para acompanhar seus clientes etapa por etapa."
+            : "Peça a um gestor para criar a jornada da equipe."
         }
         action={
           isManager ? (
-            <Button onClick={() => setCreatingPipeline(true)}>Criar funil</Button>
+            <Button onClick={() => setCreatingPipeline(true)}>Criar jornada</Button>
           ) : undefined
         }
       />
@@ -156,11 +147,11 @@ export function CrmPage() {
     body = (
       <EmptyState
         icon={KanbanSquare}
-        title="Nenhum negócio ainda"
-        description="Quando a IA classificar um lead como quente, ele aparece aqui sozinho. Você também pode abrir um negócio agora."
+        title="Nenhum cliente na carteira ainda"
+        description="Cada cliente vira um cartão que anda pelas etapas da jornada: Novo cliente, Ativando, Ativo, Em risco, Recuperado. Coloque o primeiro agora."
         action={
           <Button onClick={() => setCreatingDeal(true)}>
-            <Plus aria-hidden /> Novo negócio
+            <Plus aria-hidden /> Novo cliente na carteira
           </Button>
         }
       />
@@ -170,7 +161,7 @@ export function CrmPage() {
       <>
         {hasFilters && visible.length === 0 && (
           <p className="px-6 pt-4 text-[13px] text-muted-foreground" role="status">
-            Nenhum negócio neste filtro.{" "}
+            Nenhum cliente neste filtro.{" "}
             <button
               type="button"
               className="text-primary hover:underline"
@@ -207,7 +198,6 @@ export function CrmPage() {
         onNewPipeline={() => setCreatingPipeline(true)}
         onNewDeal={() => setCreatingDeal(true)}
         canCreateDeal={stageList.length > 0}
-        forecast={forecast}
       />
       {pipelineId && !loading && !error && <SummaryStrip deals={visible} stages={stageList} />}
       {body}

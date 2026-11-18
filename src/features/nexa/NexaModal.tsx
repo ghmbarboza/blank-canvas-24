@@ -23,10 +23,11 @@ import { useNexa } from "./useNexa";
 import { useVoice } from "./useVoice";
 
 const STARTERS = [
-  { label: "Contar sobre a empresa", text: "Vou te contar sobre a empresa: " },
+  { label: "Ler o site da empresa", text: "O site da empresa é " },
   { label: "Conectar o WhatsApp", text: "Quero conectar o WhatsApp da empresa" },
-  { label: "Ensinar o atendente", text: "Tenho documentos para o atendente aprender" },
-  { label: "Regras de pós-venda", text: "Quais regras de pós-venda eu posso ligar?" },
+  { label: "Criar o atendente", text: "Crie e ligue o atendente de pós-venda" },
+  { label: "Ligar as regras", text: "Liga todas as regras de pós-venda" },
+  { label: "O que falta?", text: "O que falta configurar?" },
 ];
 
 function greeting(name: string, ready: boolean): { title: string; text: string } {
@@ -34,7 +35,7 @@ function greeting(name: string, ready: boolean): { title: string; text: string }
   if (ready) return { title: hi, text: "O pós-venda está de pé. O que você quer ajustar hoje?" };
   return {
     title: hi,
-    text: "Estou aqui para ajudar a deixar o pós-venda da sua empresa funcionando no WhatsApp. Para começar: qual é o nome da empresa e o que vocês vendem?",
+    text: "Eu configuro a central com você por aqui. Para começar: qual é o nome da empresa e o que vocês vendem? Se tiver site, cole o endereço que eu leio.",
   };
 }
 
@@ -220,7 +221,7 @@ export function NexaModal({ accountId, open, onOpenChange, segment, onOpenStep }
                 {BRAND.assistant}, {BRAND.assistantRole}
               </DialogPrimitive.Title>
               <p className="truncate text-[12px] text-muted-foreground">
-                {nexa.working ? `${nexa.working}…` : "Tira dúvidas e faz os passos com você"}
+                {nexa.working ? `${nexa.working}…` : "Peça do seu jeito: ela configura para você"}
               </p>
             </div>
             <div className="ml-auto flex items-center gap-1">
@@ -289,6 +290,7 @@ export function NexaModal({ accountId, open, onOpenChange, segment, onOpenStep }
                     </div>
                   ) : (
                     <Thread
+                      accountId={accountId}
                       turns={nexa.turns}
                       working={nexa.working}
                       error={nexa.error}
@@ -330,8 +332,8 @@ export function NexaModal({ accountId, open, onOpenChange, segment, onOpenStep }
                   inputRef={box}
                 />
                 <p className="mt-2 text-center text-[11.5px] text-muted-foreground">
-                  A {BRAND.assistant} ajuda e guarda o que você conta. Prefere formulário e botão?
-                  Use o passo a passo: o que faltar fica no aviso do menu.
+                  A {BRAND.assistant} faz a configuração por você e guarda o que você conta. Prefere
+                  formulário e botão? Use o passo a passo.
                 </p>
               </div>
             </div>

@@ -7,7 +7,7 @@ const ALL_TIMELINE_FILTERS: { id: string; label: string; kinds: string[] }[] = [
   { id: "calls", label: "Ligações", kinds: ["call"] },
   { id: "meetings", label: "Reuniões", kinds: ["meeting", "event"] },
   { id: "work", label: "Tarefas e notas", kinds: ["activity"] },
-  { id: "deals", label: "Negócios", kinds: ["deal", "proposal", "payment"] },
+  { id: "deals", label: "Carteira", kinds: ["deal", "proposal", "payment"] },
   { id: "ai", label: "IA", kinds: ["classification"] },
   { id: "support", label: "Atendimento", kinds: ["ticket"] },
   { id: "forms", label: "Captação", kinds: ["form"] },

@@ -108,7 +108,7 @@ export function KanbanColumn({
             <span className="truncate">{stage.name}</span>
             <span
               className="rounded-full bg-surface-3 px-2 py-[2px] text-[11px] font-medium text-muted-foreground tabular-nums"
-              aria-label={`${deals.length} negócio${deals.length === 1 ? "" : "s"}`}
+              aria-label={`${deals.length} cliente${deals.length === 1 ? "" : "s"}`}
             >
               {deals.length}
             </span>
@@ -116,7 +116,7 @@ export function KanbanColumn({
           <span className="flex items-center gap-1">
             <span
               className="text-[13px] font-medium text-muted-foreground tabular-nums"
-              title={`Total em ${stage.name}: ${formatMoney(total)}`}
+              title={`Valor em contratos em ${stage.name}: ${formatMoney(total)}`}
             >
               {formatMoney(total, total >= 1_000_000)}
             </span>
@@ -138,7 +138,7 @@ export function KanbanColumn({
           aria-valuenow={stage.probability}
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-label={`Probabilidade de fechamento ${stage.probability}%`}
+          aria-label={`Chance de continuar cliente ${stage.probability}%`}
         >
           <div
             className={cn("h-full", stageBarClass(stage.color))}
@@ -164,7 +164,7 @@ export function KanbanColumn({
           ))}
           {deals.length === 0 && (
             <p className="rounded-xl border border-dashed border-border px-3 py-6 text-center text-[12px] text-subtle">
-              Arraste um negócio para cá
+              Arraste um cliente para cá
             </p>
           )}
         </div>

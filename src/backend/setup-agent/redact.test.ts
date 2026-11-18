@@ -56,3 +56,60 @@ describe("resposta de formulário de chave sem formato conhecido", () => {
     expect(redact("A chave: ok").text).toBe("A chave: ok");
   });
 });
+
+describe("chave da Evolution e da Zernio coladas na conversa", () => {
+  it("mascara a chave do servidor do WhatsApp dita no meio da frase e mantém o endereço", () => {
+    const r = redact(
+      "o endereço é https://evo.minhaloja.com.br e a chave é B6D711FCDE4D4FD5936544120E713976",
+    );
+    expect(r.text).toBe(`o endereço é https://evo.minhaloja.com.br e a chave é ${MASK}`);
+  });
+  it("mascara chave curta (sem formato conhecido) pelo rótulo", () => {
+    expect(redact("a chave da evolution é minhaChave2024").text).toBe(
+      `a chave da evolution é ${MASK}`,
+    );
+    expect(redact("Chave do servidor: Loja#Segura99").text).toBe(`Chave do servidor: ${MASK}`);
+    expect(redact("apikey=abc12345xyz").text).toBe(`apikey=${MASK}`);
+  });
+  it("mascara a chave da Zernio em qualquer lugar da frase", () => {
+    expect(redact("segue sk_FakeZernio1234567890abcd para o instagram").text).toBe(
+      `segue ${MASK} para o instagram`,
+    );
+    expect(redact("Chave da Zernio: sk_FakeZernio1234567890abcd").text).toBe(
+      `Chave da Zernio: ${MASK}`,
+    );
+  });
+  it("não confunde frase comum com chave", () => {
+    for (const t of [
+      "a chave é importante para o negócio",
+      "qual é a chave do servidor?",
+      "o endereço do servidor é https://evo.minhaloja.com.br, já mando a chave",
+      "minha senha é fraca",
+    ])
+      expect(redact(t).text, t).toBe(t);
+  });
+});
+
+import { hideSecrets, modelText } from "./nexa-tools";
+
+describe("segredo usado numa ferramenta some da resposta e do histórico", () => {
+  it("tira o valor exato que a ferramenta recebeu, mesmo sem formato de chave", () => {
+    const said = "o servidor é https://evo.loja.com.br, chave lojabonita";
+    expect(hideSecrets(said, ["lojabonita"])).toBe(
+      "o servidor é https://evo.loja.com.br, chave ••••",
+    );
+    expect(hideSecrets("guardei a chave lojabonita no cofre", ["lojabonita"])).not.toContain(
+      "lojabonita",
+    );
+  });
+  it("o que a IA lê de volta de uma ferramenta é só texto, sem bloco nem ação", () => {
+    const text = modelText({
+      ok: true,
+      resultado: "QR Code na tela",
+      bloco: { kind: "whatsapp", title: "QR", channelId: "c1" },
+      acao: { kind: "done", label: "QR Code gerado", tool: "conectar_whatsapp" },
+    });
+    expect(text).toBe("QR Code na tela");
+    expect(modelText({ ok: false, erro: "servidor fora do ar" })).toBe("ERRO: servidor fora do ar");
+  });
+});

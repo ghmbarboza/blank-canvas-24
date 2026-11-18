@@ -4,7 +4,7 @@ import { CompanyDetailPage } from "@/features/companies/CompanyDetailPage";
 import { pageHead } from "@/lib/page-head";
 
 export const Route = createFileRoute("/_app/empresas/$companyId")({
-  head: () => pageHead("Empresa", "Pessoas, negócios e dados da empresa."),
+  head: () => pageHead("Empresa", "Pessoas, carteira e dados da empresa."),
   component: CompanyRoute,
 });
 

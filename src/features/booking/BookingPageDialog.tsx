@@ -624,7 +624,7 @@ export function BookingPageDialog({
               />
             </div>
             <label className="flex items-center justify-between gap-3 rounded-xl border border-border px-4 py-3 text-[13px]">
-              <span>Abrir um negócio no funil para cada agendamento</span>
+              <span>Colocar o cliente na carteira a cada agendamento</span>
               <Switch checked={f.create_deal} onCheckedChange={(c) => set("create_deal", c)} />
             </label>
             <label className="flex items-center justify-between gap-3 rounded-xl border border-border px-4 py-3 text-[13px]">

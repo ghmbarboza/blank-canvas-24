@@ -46,7 +46,6 @@ import { moneyInputValue, parseMoneyInput } from "../money";
 import { stageKind, type BoardDeal, type Stage } from "../types";
 import { DealRoom } from "./DealRoom";
 import { DealTimeline } from "./DealTimeline";
-import { DealItemsEditor } from "@/features/opportunity/DealItemsEditor";
 import { EmailComposerDialog } from "@/features/email/EmailComposerDialog";
 import { hasChannel } from "@/lib/edition";
 import { EnrollDialog } from "@/features/automations/EnrollDialog";
@@ -101,8 +100,8 @@ function DealSheetBody({
   const stage = stages.find((s) => s.id === stageId);
   const isLost = stageKind(stage) === "lost";
   const parsedValue = parseMoneyInput(value);
-  const titleError = !title.trim() ? "Dê um nome ao negócio" : null;
-  const lostError = isLost && !lostReason.trim() ? "Conte por que perdemos" : null;
+  const titleError = !title.trim() ? "Dê um nome ao cartão" : null;
+  const lostError = isLost && !lostReason.trim() ? "Conte por que o cliente saiu" : null;
   const valueError = parsedValue === null ? "Valor inválido" : null;
   const invalid = Boolean(titleError || lostError || valueError);
 
@@ -123,7 +122,7 @@ function DealSheetBody({
     }
     try {
       await update.mutateAsync({ id: deal.id, patch });
-      toast.success("Negócio salvo");
+      toast.success("Cartão salvo");
     } catch (err) {
       toast.error(errorMessage(err));
     }
@@ -132,7 +131,7 @@ function DealSheetBody({
   async function destroy() {
     try {
       await remove.mutateAsync(deal.id);
-      toast.success("Negócio excluído");
+      toast.success("Cartão excluído");
       onClose();
     } catch (err) {
       toast.error(errorMessage(err));
@@ -145,11 +144,6 @@ function DealSheetBody({
         <SheetTitle className="pr-8 font-display text-xl font-medium">{deal.title}</SheetTitle>
         <SheetDescription className="flex items-baseline gap-3 font-display text-[15px] font-semibold text-foreground tabular-nums">
           {formatMoney(deal.value)}
-          {Number(deal.potential_value) > Number(deal.value) && (
-            <span className="font-sans text-[12px] font-normal text-muted-foreground">
-              potencial {formatMoney(deal.potential_value)}
-            </span>
-          )}
         </SheetDescription>
       </SheetHeader>
 
@@ -172,7 +166,7 @@ function DealSheetBody({
           {titleError && <p className="text-[12px] text-danger">{titleError}</p>}
         </div>
         <div className="grid gap-1.5">
-          <Label htmlFor="deal-value">Valor (R$)</Label>
+          <Label htmlFor="deal-value">Valor do contrato (R$)</Label>
           <Input
             id="deal-value"
             inputMode="decimal"
@@ -183,7 +177,7 @@ function DealSheetBody({
             aria-invalid={Boolean(valueError)}
           />
           {byItems ? (
-            <p className="text-[12px] text-subtle">Calculado pelos itens aceitos abaixo.</p>
+            <p className="text-[12px] text-subtle">Calculado pelos itens do cliente.</p>
           ) : (
             valueError && <p className="text-[12px] text-danger">{valueError}</p>
           )}
@@ -205,7 +199,7 @@ function DealSheetBody({
         </div>
         {isLost && (
           <div className="grid gap-1.5 sm:col-span-2">
-            <Label htmlFor="deal-lost">Motivo da perda</Label>
+            <Label htmlFor="deal-lost">Motivo da saída</Label>
             <Textarea
               id="deal-lost"
               value={lostReason}
@@ -216,11 +210,11 @@ function DealSheetBody({
           </div>
         )}
         <div className="grid gap-1.5">
-          <Label htmlFor="deal-owner">Dono</Label>
+          <Label htmlFor="deal-owner">Responsável</Label>
           <OwnerSelect id="deal-owner" members={members} value={ownerId} onChange={setOwnerId} />
         </div>
         <div className="grid gap-1.5">
-          <Label htmlFor="deal-close">Previsão de fechamento</Label>
+          <Label htmlFor="deal-close">Renovação ou recompra prevista</Label>
           <Input
             id="deal-close"
             type="date"
@@ -229,7 +223,7 @@ function DealSheetBody({
           />
         </div>
         <div className="grid gap-1.5 sm:col-span-2">
-          <Label htmlFor="deal-contact">Contato</Label>
+          <Label htmlFor="deal-contact">Cliente</Label>
           <ContactPicker
             id="deal-contact"
             accountId={accountId}
@@ -242,7 +236,7 @@ function DealSheetBody({
               params={{ contactId: contact.id }}
               className="inline-flex items-center gap-1 text-[12px] text-primary hover:underline"
             >
-              Abrir contato <ExternalLink className="size-3" aria-hidden />
+              Abrir ficha do cliente <ExternalLink className="size-3" aria-hidden />
             </Link>
           )}
           {contact && (
@@ -253,7 +247,7 @@ function DealSheetBody({
                   onClick={() => setEmailing(true)}
                   className="inline-flex w-fit items-center gap-1 text-[12px] text-primary hover:underline"
                 >
-                  <Mail className="size-3" aria-hidden /> Enviar e-mail sobre este negócio
+                  <Mail className="size-3" aria-hidden /> Enviar e-mail para este cliente
                 </button>
               )}
               <CallButton contactId={contact.id} name={contact.name} size="sm" variant="ghost" />
@@ -270,10 +264,10 @@ function DealSheetBody({
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Excluir este negócio?</AlertDialogTitle>
+                  <AlertDialogTitle>Tirar este cliente da carteira?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    A linha do tempo dele também some. Para registrar que não fechou, mova para
-                    “Perdido”.
+                    O cartão e a linha do tempo dele somem; a ficha do cliente continua em Clientes.
+                    Para registrar que ele saiu, mova para “Perdido”.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -296,10 +290,6 @@ function DealSheetBody({
         <DealRoom accountId={accountId} deal={deal} />
       </div>
 
-      <div className="border-b border-border p-5">
-        <DealItemsEditor accountId={accountId} dealId={deal.id} contactId={deal.contact_id} />
-      </div>
-
       <EmailComposerDialog
         accountId={accountId}
         open={emailing}
@@ -311,7 +301,7 @@ function DealSheetBody({
       {deal.contact_id && (
         <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-3">
           <p className="text-[12px] text-muted-foreground">
-            Cadência de vendas: toques automáticos até o contato responder.
+            Sequência de acompanhamento: mensagens automáticas até o cliente responder.
           </p>
           <Button type="button" size="sm" variant="outline" onClick={() => setEnrolling(true)}>
             <Zap /> Inscrever

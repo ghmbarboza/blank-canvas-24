@@ -71,7 +71,7 @@ export function AutomationsPage() {
     <div className="flex min-h-0 flex-1 flex-col">
       <PageHeader
         title="Automações"
-        description="Fluxos que atendem, nutrem e cobram o vendedor sozinhos, no horário que você definir."
+        description="Fluxos que atendem, acompanham o cliente e lembram a equipe sozinhos, no horário que você definir."
         actions={
           isManager && (
             <Button
@@ -118,7 +118,7 @@ export function AutomationsPage() {
                 description={
                   isManager
                     ? templatesFor().length > 0
-                      ? "Escolha um modelo abaixo: boas-vindas do lead, recuperação de quem não respondeu, lembrete de reunião, pós-venda com NPS. Você ajusta e liga quando quiser."
+                      ? "Escolha um modelo abaixo: boas-vindas, retomada de quem não respondeu, lembrete de reunião, pesquisa de satisfação. Você ajusta e liga quando quiser."
                       : "As regras prontas ficam em Regras de pós-venda. Aqui você monta um fluxo do zero: quando acontecer algo, o que enviar no WhatsApp e o que a equipe faz."
                     : "Quando um gestor ligar uma automação, ela aparece aqui com o que rodou hoje."
                 }

@@ -42,6 +42,7 @@ import { Route as ApiAiRouteImport } from './routes/api/ai'
 import { Route as ApiAutomationsRouteImport } from './routes/api/automations'
 import { Route as ApiCalendarRouteImport } from './routes/api/calendar'
 import { Route as ApiCallcenterRouteImport } from './routes/api/callcenter'
+import { Route as ApiCatalogImportRouteImport } from './routes/api/catalog-import'
 import { Route as ApiEmailRouteImport } from './routes/api/email'
 import { Route as ApiGestaoRouteImport } from './routes/api/gestao'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
@@ -314,6 +315,11 @@ const ApiCalendarRoute = ApiCalendarRouteImport.update({
 const ApiCallcenterRoute = ApiCallcenterRouteImport.update({
   id: '/api/callcenter',
   path: '/api/callcenter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCatalogImportRoute = ApiCatalogImportRouteImport.update({
+  id: '/api/catalog-import',
+  path: '/api/catalog-import',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiEmailRoute = ApiEmailRouteImport.update({
@@ -900,6 +906,7 @@ export interface FileRoutesByFullPath {
   '/api/automations': typeof ApiAutomationsRoute
   '/api/calendar': typeof ApiCalendarRoute
   '/api/callcenter': typeof ApiCallcenterRoute
+  '/api/catalog-import': typeof ApiCatalogImportRoute
   '/api/email': typeof ApiEmailRoute
   '/api/gestao': typeof ApiGestaoRoute
   '/api/health': typeof ApiHealthRoute
@@ -1042,6 +1049,7 @@ export interface FileRoutesByTo {
   '/api/automations': typeof ApiAutomationsRoute
   '/api/calendar': typeof ApiCalendarRoute
   '/api/callcenter': typeof ApiCallcenterRoute
+  '/api/catalog-import': typeof ApiCatalogImportRoute
   '/api/email': typeof ApiEmailRoute
   '/api/gestao': typeof ApiGestaoRoute
   '/api/health': typeof ApiHealthRoute
@@ -1187,6 +1195,7 @@ export interface FileRoutesById {
   '/api/automations': typeof ApiAutomationsRoute
   '/api/calendar': typeof ApiCalendarRoute
   '/api/callcenter': typeof ApiCallcenterRoute
+  '/api/catalog-import': typeof ApiCatalogImportRoute
   '/api/email': typeof ApiEmailRoute
   '/api/gestao': typeof ApiGestaoRoute
   '/api/health': typeof ApiHealthRoute
@@ -1332,6 +1341,7 @@ export interface FileRouteTypes {
     | '/api/automations'
     | '/api/calendar'
     | '/api/callcenter'
+    | '/api/catalog-import'
     | '/api/email'
     | '/api/gestao'
     | '/api/health'
@@ -1474,6 +1484,7 @@ export interface FileRouteTypes {
     | '/api/automations'
     | '/api/calendar'
     | '/api/callcenter'
+    | '/api/catalog-import'
     | '/api/email'
     | '/api/gestao'
     | '/api/health'
@@ -1618,6 +1629,7 @@ export interface FileRouteTypes {
     | '/api/automations'
     | '/api/calendar'
     | '/api/callcenter'
+    | '/api/catalog-import'
     | '/api/email'
     | '/api/gestao'
     | '/api/health'
@@ -1743,6 +1755,7 @@ export interface RootRouteChildren {
   ApiAutomationsRoute: typeof ApiAutomationsRoute
   ApiCalendarRoute: typeof ApiCalendarRoute
   ApiCallcenterRoute: typeof ApiCallcenterRoute
+  ApiCatalogImportRoute: typeof ApiCatalogImportRoute
   ApiEmailRoute: typeof ApiEmailRoute
   ApiGestaoRoute: typeof ApiGestaoRoute
   ApiHealthRoute: typeof ApiHealthRoute
@@ -2053,6 +2066,13 @@ declare module '@tanstack/react-router' {
       path: '/api/callcenter'
       fullPath: '/api/callcenter'
       preLoaderRoute: typeof ApiCallcenterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/catalog-import': {
+      id: '/api/catalog-import'
+      path: '/api/catalog-import'
+      fullPath: '/api/catalog-import'
+      preLoaderRoute: typeof ApiCatalogImportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/email': {
@@ -2957,6 +2977,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAutomationsRoute: ApiAutomationsRoute,
   ApiCalendarRoute: ApiCalendarRoute,
   ApiCallcenterRoute: ApiCallcenterRoute,
+  ApiCatalogImportRoute: ApiCatalogImportRoute,
   ApiEmailRoute: ApiEmailRoute,
   ApiGestaoRoute: ApiGestaoRoute,
   ApiHealthRoute: ApiHealthRoute,

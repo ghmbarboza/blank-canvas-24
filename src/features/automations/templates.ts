@@ -26,9 +26,9 @@ const DAY = 1440;
 export const TEMPLATES: AutomationTemplate[] = [
   {
     key: "boas_vindas",
-    name: "Boas-vindas do lead",
+    name: "Boas-vindas de quem preencheu o formulário",
     description:
-      "Quem preenche um formulário recebe WhatsApp na hora, e-mail com material e uma tarefa para o vendedor se não responder.",
+      "Quem preenche um formulário recebe WhatsApp na hora, e-mail com material e uma tarefa para o atendente se não responder.",
     kind: "journey",
     trigger: { type: "event", event: "form.submitted" },
     graph: chain([
@@ -62,7 +62,7 @@ export const TEMPLATES: AutomationTemplate[] = [
         id: "t1",
         type: "task",
         config: {
-          title: "Ligar para {{nome}} (lead novo sem resposta)",
+          title: "Ligar para {{nome}} (contato novo sem resposta)",
           type: "call",
           due_in_minutes: 60,
         },
@@ -75,7 +75,7 @@ export const TEMPLATES: AutomationTemplate[] = [
     key: "recuperacao",
     name: "Recuperação de quem não respondeu",
     description:
-      "Conversa parada há 24 h: lembrete no WhatsApp, depois e-mail, depois aviso ao vendedor.",
+      "Conversa parada há 24 h: lembrete no WhatsApp, depois e-mail, depois aviso ao atendente.",
     kind: "sequence",
     trigger: { type: "no_reply", hours: 24 },
     graph: chain([
@@ -94,7 +94,7 @@ export const TEMPLATES: AutomationTemplate[] = [
         type: "email",
         config: {
           subject: "Ainda posso ajudar, {{primeiro_nome}}?",
-          body: "Olá, {{primeiro_nome}}.\n\nNão quero insistir, mas queria saber se ainda está buscando uma solução. Se preferir, me diga o melhor horário para conversarmos.",
+          body: "Olá, {{primeiro_nome}}.\n\nNão quero insistir, mas queria saber se ainda precisa de ajuda. Se preferir, me diga o melhor horário para conversarmos.",
         },
         next: "n1",
       },
@@ -130,7 +130,8 @@ export const TEMPLATES: AutomationTemplate[] = [
   {
     key: "pos_venda_nps",
     name: "Pós-venda com NPS",
-    description: "Negócio ganho: boas-vindas, check-in em 7 dias e pesquisa de satisfação em 30.",
+    description:
+      "Cliente fidelizado na carteira: boas-vindas, check-in em 7 dias e pesquisa de satisfação em 30.",
     kind: "journey",
     trigger: { type: "event", event: "deal.won" },
     exit_rules: { on_customer: false, on_reply: false, on_meeting: false },
@@ -173,7 +174,7 @@ export const TEMPLATES: AutomationTemplate[] = [
     key: "reativacao",
     name: "Reativação de inativos",
     description:
-      "Contatos sem interação há 90 dias recebem uma oferta e, se clicarem, viram tarefa para o vendedor.",
+      "Contatos sem interação há 90 dias recebem uma oferta e, se clicarem, viram tarefa para o atendente.",
     kind: "journey",
     trigger: { type: "manual" },
     graph: chain([
@@ -231,9 +232,9 @@ export const TEMPLATES: AutomationTemplate[] = [
   },
   {
     key: "cadencia_sdr",
-    name: "Cadência de prospecção (SDR)",
+    name: "Cadência de contato ativo",
     description:
-      "5 toques em 10 dias alternando WhatsApp, e-mail e ligação. Pausa sozinha quando o lead responde.",
+      "5 toques em 10 dias alternando WhatsApp, e-mail e ligação. Pausa sozinha quando o contato responde.",
     kind: "sequence",
     trigger: { type: "manual" },
     graph: chain([
@@ -297,9 +298,15 @@ function needsMissingChannel(t: AutomationTemplate, edition: Edition): boolean {
   });
 }
 
+/** Modelos de captação de cliente novo: só na edição completa. */
+const SALES_TEMPLATES: ReadonlySet<string> = new Set(["cadencia_sdr"]);
+
 /** Modelos que a galeria mostra: fora os que usam e-mail, SMS ou ligação sem o canal. */
 export function templatesFor(edition: Edition = EDITION): AutomationTemplate[] {
-  return TEMPLATES.filter((t) => !needsMissingChannel(t, edition));
+  return TEMPLATES.filter(
+    (t) =>
+      !needsMissingChannel(t, edition) && (edition.allIntegrations || !SALES_TEMPLATES.has(t.key)),
+  );
 }
 
 export function blankGraph(): Graph {

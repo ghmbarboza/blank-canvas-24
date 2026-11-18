@@ -110,14 +110,14 @@ export function SegmentBuilder({
     switch (r.field) {
       case "temperature":
         return select([
-          { value: "hot", label: "Quente" },
-          { value: "warm", label: "Morno" },
-          { value: "cold", label: "Frio" },
+          { value: "hot", label: "Interesse alto" },
+          { value: "warm", label: "Interesse médio" },
+          { value: "cold", label: "Interesse baixo" },
         ]);
       case "lifecycle":
         return select([
-          { value: "lead", label: "Lead" },
-          { value: "opportunity", label: "Oportunidade" },
+          { value: "lead", label: "Contato (ainda não comprou)" },
+          { value: "opportunity", label: "Em negociação" },
           { value: "customer", label: "Cliente" },
           { value: "inactive", label: "Inativo" },
         ]);
@@ -191,7 +191,7 @@ export function SegmentBuilder({
                 id="seg-name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Ex.: Leads quentes sem dono"
+                placeholder="Ex.: Clientes em risco sem responsável"
               />
             </div>
             <div className="flex items-center gap-2 text-[13px]">
@@ -267,7 +267,7 @@ export function SegmentBuilder({
               onClick={() =>
                 setFilter((f) => ({
                   ...f,
-                  rules: [...f.rules, { field: "lifecycle", op: "eq", value: "lead" }],
+                  rules: [...f.rules, { field: "lifecycle", op: "eq", value: "customer" }],
                 }))
               }
             >

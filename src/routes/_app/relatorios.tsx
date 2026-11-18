@@ -28,12 +28,12 @@ function ReportsRoute() {
   const navigate = useNavigate();
   return (
     <ReportsPage
-      tab={aba ?? "vendas"}
+      tab={aba ?? "atendimento"}
       reportId={relatorio}
       onTabChange={(t) =>
         void navigate({
           to: "/relatorios",
-          search: t === "vendas" ? {} : { aba: t },
+          search: t === "atendimento" ? {} : { aba: t },
           replace: true,
         })
       }

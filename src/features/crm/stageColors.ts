@@ -30,8 +30,8 @@ export const STAGE_COLOR_LABEL: Record<StageColor, string> = {
   violet: "Aço claro",
   amber: "Aço",
   orange: "Azul escuro",
-  emerald: "Verde (ganho)",
-  rose: "Coral (perda)",
+  emerald: "Verde (fidelizado)",
+  rose: "Coral (perdido)",
   teal: "Navy",
 };
 

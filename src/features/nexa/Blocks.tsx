@@ -41,6 +41,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
+import { SiteImportBlockView, WhatsAppBlockView } from "./WorkBlocks";
+
 const ICONS: Record<StageIcon, ComponentType<{ className?: string }>> = {
   saude: HeartPulse,
   imovel: Home,
@@ -122,6 +124,10 @@ interface BlockProps {
   compact?: boolean;
   /** em resposta antiga: o que a pessoa já escolheu */
   picked?: string[];
+  /** conta atual: os blocos que agem na central (QR Code, prévia do site) precisam dela */
+  accountId?: string;
+  /** false em resposta antiga: bloco que age na central vira só um registro */
+  live?: boolean;
 }
 
 /** Convite e links gerados pela Nexa: copiar para mandar pelo WhatsApp se o e-mail não chegar. */
@@ -387,7 +393,16 @@ export function StageBlockView(props: BlockProps) {
   if (b.kind === "choices") return <Choices {...props} block={b} />;
   if (b.kind === "form") return <Form {...props} block={b} />;
   if (b.kind === "cards") return <Cards block={b} compact={props.compact} />;
-  return <Steps block={b} compact={props.compact} />;
+  if (b.kind === "steps") return <Steps block={b} compact={props.compact} />;
+  if (!props.accountId) return null;
+  const common = {
+    accountId: props.accountId,
+    live: props.live !== false,
+    active: props.active,
+    onAnswer: props.onAnswer,
+  };
+  if (b.kind === "whatsapp") return <WhatsAppBlockView block={b} {...common} />;
+  return <SiteImportBlockView block={b} {...common} />;
 }
 
 /** O que as ferramentas deixaram: botão de conexão, atalho para tela, feito, erro. */

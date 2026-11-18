@@ -115,7 +115,7 @@ describe("ordem da fila", () => {
       /acabando/,
     );
     expect(rankReason({ ...base, id: "1", customer_value: 10, created_at: iso(-9) }, NOW)).toMatch(
-      /negócio/,
+      /carteira/,
     );
   });
 });

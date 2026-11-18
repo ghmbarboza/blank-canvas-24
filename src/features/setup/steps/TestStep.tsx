@@ -61,9 +61,9 @@ export function TestStep({ onGo, detail }: StepProps & { detail: RoteiroDetail |
           </p>
         ) : connected ? (
           <p className="mt-3 text-[13px] text-muted-foreground">
-            Nada chegou ainda. A mensagem precisa sair de um número diferente do que está
-            conectado: mandar do próprio número conectado não aparece aqui. Confira também se o
-            celular conectado está com internet.
+            Nada chegou ainda. A mensagem precisa sair de um número diferente do que está conectado:
+            mandar do próprio número conectado não aparece aqui. Confira também se o celular
+            conectado está com internet.
           </p>
         ) : null}
       </div>

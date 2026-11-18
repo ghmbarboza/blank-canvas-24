@@ -30,7 +30,7 @@ function ChartTooltip({ active, payload, label }: TooltipProps<number, string>) 
       <dl className="mt-2 space-y-1 text-[13px]">
         <Row color="#9FBDE4" label="Recebidas" value={row.in} />
         <Row color="#5E7B9E" label="Enviadas" value={row.out} />
-        <Row color="#FFFFFF" label="Novos leads" value={row.leads} />
+        <Row color="#FFFFFF" label="Contatos novos" value={row.leads} />
       </dl>
     </div>
   );

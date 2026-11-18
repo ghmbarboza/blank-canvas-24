@@ -146,9 +146,9 @@ export function TimelineEntry({ r, who }: { r: TimelineRow; who?: string | null 
       </span>
     );
   } else if (r.kind === "deal" && typeof m["value"] === "number") {
-    sub = `${formatMoney(m["value"] as number)} · ${m["status"] === "won" ? "ganho" : m["status"] === "lost" ? "perdido" : "aberto"}`;
+    sub = `${formatMoney(m["value"] as number)} · ${m["status"] === "won" ? "fidelizado" : m["status"] === "lost" ? "perdido" : "na carteira"}`;
   } else if (r.kind === "classification") {
-    sub = `Score ${String(m["score"] ?? "—")}`;
+    sub = "Resumo atualizado pela IA";
   } else if (r.kind === "call" || r.kind === "meeting") {
     const secs = Number(m["duration_seconds"] ?? 0);
     sub = secs ? `${Math.round(secs / 60)} min` : null;

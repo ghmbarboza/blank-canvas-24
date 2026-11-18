@@ -40,7 +40,7 @@ export function NewPipelineDialog({
     if (!clean) return;
     try {
       const id = await create.mutateAsync({ name: clean.slice(0, 80), position: nextPosition });
-      toast.success("Funil criado com as etapas padrão");
+      toast.success("Jornada criada com as etapas padrão");
       setName("");
       onOpenChange(false);
       onCreated(id);
@@ -53,9 +53,9 @@ export function NewPipelineDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-sm">
         <DialogHeader>
-          <DialogTitle>Novo funil</DialogTitle>
+          <DialogTitle>Nova jornada</DialogTitle>
           <DialogDescription>
-            Começa com as etapas padrão. Depois você ajusta em “Configurar funil”.
+            Começa com as etapas padrão. Depois você ajusta em “Configurar jornada”.
           </DialogDescription>
         </DialogHeader>
         <form
@@ -81,7 +81,7 @@ export function NewPipelineDialog({
             </Button>
             <Button type="submit" disabled={!name.trim() || create.isPending}>
               {create.isPending && <Loader2 className="animate-spin" aria-hidden />}
-              Criar funil
+              Criar jornada
             </Button>
           </DialogFooter>
         </form>

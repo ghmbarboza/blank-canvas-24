@@ -4,7 +4,16 @@ import { useId, type ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 
-type LinkTo = "/agenda" | "/contatos" | "/inbox" | "/canais" | "/crm" | "/ajustes" | "/origem";
+type LinkTo =
+  | "/agenda"
+  | "/contatos"
+  | "/inbox"
+  | "/canais"
+  | "/crm"
+  | "/ajustes"
+  | "/gestao"
+  | "/pos-venda"
+  | "/atendimento";
 
 interface CardProps {
   id: string;
@@ -166,43 +175,6 @@ export function Sparkline({
         vectorEffect="non-scaling-stroke"
       />
     </svg>
-  );
-}
-
-// Anel de nota 0–100 (nota da IA no lead).
-export function ScoreRing({ score, size = 36 }: { score: number | null; size?: number }) {
-  const s = Math.max(0, Math.min(100, score ?? 0));
-  const r = (size - 4) / 2;
-  const c = 2 * Math.PI * r;
-  return (
-    <span
-      className="relative inline-grid shrink-0 place-items-center"
-      style={{ width: size, height: size }}
-    >
-      <svg width={size} height={size} className="-rotate-90" aria-hidden>
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={r}
-          fill="none"
-          stroke="var(--surface-3)"
-          strokeWidth="3"
-        />
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={r}
-          fill="none"
-          stroke="var(--primary)"
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeDasharray={`${(s / 100) * c} ${c}`}
-        />
-      </svg>
-      <span className="absolute text-[11px] font-semibold tabular-nums" aria-label={`Nota ${s}`}>
-        {score ?? "—"}
-      </span>
-    </span>
   );
 }
 

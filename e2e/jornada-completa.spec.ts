@@ -312,13 +312,13 @@ test("06 · Caixa: visitante escreve, a dona responde, nota interna não vaza, n
 
   // negócio a partir da conversa
   await page
-    .getByRole("button", { name: /Criar negócio/ })
+    .getByRole("button", { name: /Colocar na carteira/ })
     .first()
     .click();
-  const d = dialogo("Criar negócio");
-  await d.getByLabel("Valor (R$)").fill("180,00");
-  await d.getByRole("button", { name: "Criar negócio" }).click();
-  await toast("Negócio criado");
+  const d = dialogo("Colocar na carteira");
+  await d.getByLabel("Valor do contrato (R$)").fill("180,00");
+  await d.getByRole("button", { name: "Colocar na carteira" }).click();
+  await toast("Cliente colocado na carteira");
 
   // resolver
   const resolver = page.getByRole("button", { name: "Resolver", exact: true });
@@ -351,7 +351,7 @@ test("07 · Chamados: abre chamado com prioridade e o prazo de SLA aparece", asy
 // ───────────────────────── 3. vender ─────────────────────────
 
 test("08 · Contatos: cria à mão (abre a ficha), consentimento LGPD e importação CSV", async () => {
-  await abrir("/contatos", "Contatos e leads");
+  await abrir("/contatos", "Clientes");
   await page
     .getByRole("button", { name: /^Novo contato$|^Novo$/ })
     .first()
@@ -366,7 +366,7 @@ test("08 · Contatos: cria à mão (abre a ficha), consentimento LGPD e importa�
 
   // ao criar, o app abre a ficha completa do contato
   await expect(page.getByRole("heading", { name: "Carlos Demo", level: 1 })).toBeVisible();
-  for (const aba of ["Linha do tempo", "Conversas", "Negócios", "Notas"])
+  for (const aba of ["Linha do tempo", "Conversas", "Carteira", "Notas"])
     await expect(page.getByRole("tab", { name: aba, exact: true })).toBeVisible();
   const email = page.getByRole("switch", { name: "E-mail marketing" });
   await email.scrollIntoViewIfNeeded();
@@ -381,7 +381,7 @@ test("08 · Contatos: cria à mão (abre a ficha), consentimento LGPD e importa�
   await expect(status.getByText("Autorizado (manual)").first()).toBeVisible({ timeout: 15_000 });
 
   // importação de planilha
-  await abrir("/contatos", "Contatos e leads");
+  await abrir("/contatos", "Clientes");
   await page
     .getByRole("button", { name: /Importar (planilha|CSV)/ })
     .first()
@@ -711,7 +711,7 @@ test("18 · Varredura: toda tela do menu abre sem erro e o Painel mostra os dado
     ["/inbox", "Caixa de entrada"],
     ["/atendimento", "Chamados"],
     ["/crm", undefined],
-    ["/contatos", "Contatos e leads"],
+    ["/contatos", "Clientes"],
     ["/agenda", undefined],
     ["/agendamentos", "Agendamentos"],
     ["/empresas", undefined],

@@ -24,8 +24,8 @@ export function SegmentTemplateSetupStep({ accountId, onDone }: StepProps) {
       <div>
         <h2 className="font-display text-[18px] font-medium">Qual é o seu negócio?</h2>
         <p className="mt-1 text-[13px] text-muted-foreground">
-          Escolha o mais parecido. A gente monta o funil, os campos, as respostas rápidas, as
-          cadências e os textos da IA do seu segmento. Dá para mudar tudo depois.
+          Escolha o mais parecido. A gente monta a jornada do cliente, os campos, as respostas
+          rápidas, as cadências e os textos da IA do seu segmento. Dá para mudar tudo depois.
         </p>
       </div>
       <SegmentTemplatePicker accountId={accountId} onApplied={onDone} />
@@ -54,7 +54,7 @@ export function ImportSetupStep({ accountId, onDone }: StepProps) {
         <summary className="flex cursor-pointer items-center gap-2 text-[13px] font-medium">
           <BrandTile id="rdstation" size={24} />
           <BrandTile id="hubspot" size={24} />
-          Prefere manter o RD Station ou o HubSpot ligado ao Nexus?
+          Prefere manter o RD Station ou o HubSpot ligado à central?
         </summary>
         <div className="mt-4 grid gap-4 lg:grid-cols-2">
           <CrmSyncPanel accountId={accountId} provider="rdstation_crm" canEdit />

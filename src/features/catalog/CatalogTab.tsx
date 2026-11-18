@@ -1,8 +1,15 @@
 import { useMemo, useState } from "react";
-import { ArrowUpRight, Package, Plus, Puzzle, Trash2, Wrench } from "lucide-react";
+import { ArrowUpRight, Globe, Package, Plus, Puzzle, Trash2, Wrench } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SettingsCard } from "@/features/settings/SettingsCard";
 import { useAccount } from "@/lib/account";
@@ -12,6 +19,7 @@ import { cn } from "@/lib/utils";
 
 import { BILLING_LABEL, useDeleteProduct, useProducts, useRelations, type Product } from "./api";
 import { ProductDialog } from "./ProductDialog";
+import { SiteImportBox } from "./SiteImportBox";
 
 export function CatalogTab() {
   const { current, isManager } = useAccount();
@@ -21,6 +29,7 @@ export function CatalogTab() {
   const remove = useDeleteProduct(accountId);
   const [editing, setEditing] = useState<Product | null>(null);
   const [open, setOpen] = useState(false);
+  const [importing, setImporting] = useState(false);
 
   const list = useMemo(() => products.data ?? [], [products.data]);
   const rels = relations.data ?? [];
@@ -47,9 +56,14 @@ export function CatalogTab() {
       readOnlyNote={isManager ? undefined : "Só gestores e administradores editam o catálogo."}
       actions={
         isManager && (
-          <Button size="sm" variant={list.length === 0 ? "outline" : "default"} onClick={openNew}>
-            <Plus /> Novo item
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button size="sm" variant="outline" onClick={() => setImporting(true)}>
+              <Globe /> Importar do site
+            </Button>
+            <Button size="sm" variant={list.length === 0 ? "outline" : "default"} onClick={openNew}>
+              <Plus /> Novo item
+            </Button>
+          </div>
         )
       }
     >
@@ -160,6 +174,22 @@ export function CatalogTab() {
           })}
         </ul>
       )}
+      <Dialog open={importing} onOpenChange={setImporting}>
+        <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-xl">
+          <DialogHeader>
+            <DialogTitle>Importar do site</DialogTitle>
+            <DialogDescription>
+              Cole o endereço do site ou da loja online. Eu leio as páginas, mostro o que achei e
+              você escolhe o que entra no catálogo.
+            </DialogDescription>
+          </DialogHeader>
+          <SiteImportBox
+            accountId={accountId}
+            label="Endereço do site ou da loja"
+            onDone={() => toast.success("Catálogo atualizado com o que veio do site")}
+          />
+        </DialogContent>
+      </Dialog>
       <ProductDialog
         accountId={accountId}
         open={open}

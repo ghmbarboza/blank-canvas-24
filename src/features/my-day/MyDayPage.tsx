@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { enabledModules } from "@/components/layout/modules";
 import { useAccount } from "@/lib/account";
 import { useAuth } from "@/lib/auth";
 
@@ -36,6 +37,8 @@ export function MyDayPage() {
   const name =
     (user?.user_metadata?.["full_name"] as string | undefined)?.split(" ")[0] ??
     user?.email?.split("@")[0];
+  // o anel é da meta de venda: só aparece para quem ligou o extra Metas e comissão
+  const metasOn = enabledModules(current?.settings).has("metas");
   const d = day.data;
   const eventCount = d?.events.length;
 
@@ -53,7 +56,7 @@ export function MyDayPage() {
               <span className="block font-normal text-subtle">O que temos para hoje.</span>
             </h1>
           </div>
-          <GoalRing accountId={accountId} userId={userId} />
+          {metasOn && <GoalRing accountId={accountId} userId={userId} />}
         </div>
 
         <NowStrip accountId={accountId} userId={userId} />

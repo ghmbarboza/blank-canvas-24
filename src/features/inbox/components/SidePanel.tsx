@@ -15,7 +15,6 @@ import { OpportunityBlock } from "@/features/opportunity/OpportunityBlock";
 import { CallButton } from "@/features/telephony/softphone/CallButton";
 import { EventsBlock } from "./EventsBlock";
 import { IntelligenceBlock } from "./IntelligenceBlock";
-import { MainDealCard } from "./MainDealCard";
 import { RecentHistory } from "./RecentHistory";
 import { NextStepBlock } from "./NextStepBlock";
 import { PanelSection } from "./PanelSection";
@@ -46,7 +45,7 @@ export function SidePanel({ accountId, conversation, channel, contact, contactLo
       <EmptyState
         icon={UserRoundX}
         title="Sem contato vinculado"
-        description="Esta conversa ainda não tem um contato no CRM."
+        description="Esta conversa ainda não está ligada a um cliente."
       />
     );
   }
@@ -62,15 +61,14 @@ export function SidePanel({ accountId, conversation, channel, contact, contactLo
       <PanelSection title="Etiquetas da conversa">
         <ConversationTags accountId={accountId} conversation={conversation} />
       </PanelSection>
-      <PanelSection title="Nota do contato">
+      <PanelSection title="Saúde do cliente">
         <IntelligenceBlock accountId={accountId} contact={contact} />
       </PanelSection>
       <div className="px-5 pb-5">
         <NextStepBlock accountId={accountId} contact={contact} />
       </div>
-      <MainDealCard accountId={accountId} contactId={contact.id} />
       <RecentHistory accountId={accountId} contactId={contact.id} />
-      <PanelSection title="Oportunidade">
+      <PanelSection title="Jornada do cliente">
         <OpportunityBlock accountId={accountId} contact={contact} />
       </PanelSection>
       <EventsBlock accountId={accountId} contactId={contact.id} />
@@ -80,7 +78,7 @@ export function SidePanel({ accountId, conversation, channel, contact, contactLo
           params={{ contactId: contact.id }}
           className="inline-flex items-center gap-1 rounded text-[13px] font-medium text-primary hover:underline focus-visible:ring-2 focus-visible:ring-ring"
         >
-          Ver contato completo <ArrowUpRight className="size-3.5" aria-hidden />
+          Ver ficha completa <ArrowUpRight className="size-3.5" aria-hidden />
         </Link>
       </div>
     </div>

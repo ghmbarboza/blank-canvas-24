@@ -1,4 +1,4 @@
-// Modelos prontos por segmento. Cada modelo aplica de uma vez: funil e etapas, campos, respostas
+// Modelos prontos por segmento. Cada modelo aplica de uma vez: jornada e etapas, campos, respostas
 // rápidas (macros), cadências (em rascunho), textos dos agentes de IA e o formulário de qualidade.
 // Agentes e formulário de qualidade são de outras áreas: vão como jsonb em account_templates
 // (area "agents" e "qa_form"), que as outras frentes leem depois. Nada aqui depende delas.
@@ -156,7 +156,7 @@ const COMMON_CRITERIA: QaCriterion[] = [
   },
   {
     key: "registro",
-    label: "Registrou no CRM",
+    label: "Registrou na ficha do cliente",
     weight: 15,
     description: "Campos e etapa atualizados com o que foi conversado.",
   },
@@ -179,29 +179,23 @@ const COMMON_CRITERIA: QaCriterion[] = [
 const AGENT_LIMITS =
   "Use o histórico do cliente em todos os canais e os dados do CRM antes de responder. Nunca invente preço, prazo ou condição: se não está na base, diga que vai confirmar e passe para uma pessoa. Se perguntarem se é robô, responda com honestidade e siga ajudando.";
 
-// Os funis de VENDA de cada ramo (abaixo, em "pipelines") ficam guardados como referência, mas não
-// são mais aplicados: na Central de CS todo ramo usa a jornada de pós-venda (features/posvenda/journey).
-// Como apply_segment_template acha funil e etapa pelo nome, aplicar um ramo numa conta nova não
-// cria nada por cima do funil "Pós-venda" que ela já tem; numa conta antiga, cria a jornada.
-const SALES_SEGMENTS: SegmentTemplate[] = [
+// Todo ramo usa a jornada de pós-venda (features/posvenda/journey). Como apply_segment_template
+// acha quadro e etapa pelo nome, aplicar um ramo numa conta nova não cria nada por cima do quadro
+// "Pós-venda" que ela já tem; numa conta antiga, cria a jornada.
+const POS_VENDA_PIPELINES: SegmentModel["pipelines"] = [
+  { name: POS_VENDA_PIPELINE, stages: POS_VENDA_STAGES.map((st) => ({ ...st })) },
+];
+
+// Cada ramo traz o pós-venda dele: boas-vindas, acompanhamento, pesquisa de satisfação, recompra
+// ou renovação e a volta de quem parou. As cadências entram em rascunho.
+export const SEGMENT_TEMPLATES: SegmentTemplate[] = [
   {
     key: "clinica",
     name: "Clínica e consultório",
-    pitch: "Agenda cheia e paciente que volta: confirmação de consulta, retorno e avaliação.",
+    pitch: "Paciente bem cuidado volta: acompanhamento depois da consulta, retorno e avaliação.",
     model: {
       version: VERSION,
-      pipelines: [
-        {
-          name: "Pacientes novos",
-          stages: [
-            { name: "Primeiro contato", kind: "open", probability: 10, color: "slate" },
-            { name: "Avaliação agendada", kind: "open", probability: 40, color: "sky" },
-            { name: "Compareceu", kind: "open", probability: 70, color: "violet" },
-            { name: "Tratamento fechado", kind: "won", probability: 100, color: "emerald" },
-            { name: "Não seguiu", kind: "lost", probability: 0, color: "rose" },
-          ],
-        },
-      ],
+      pipelines: POS_VENDA_PIPELINES,
       fields: [
         {
           entity: "contact",
@@ -213,18 +207,18 @@ const SALES_SEGMENTS: SegmentTemplate[] = [
         {
           entity: "contact",
           key: "especialidade",
-          label: "Especialidade de interesse",
+          label: "Especialidade em que é atendido",
           type: "text",
         },
         { entity: "contact", key: "data_nascimento", label: "Data de nascimento", type: "date" },
-        { entity: "deal", key: "procedimento", label: "Procedimento", type: "text" },
+        { entity: "deal", key: "procedimento", label: "Procedimento realizado", type: "text" },
         { entity: "contact", key: "ultima_consulta", label: "Última consulta", type: "date" },
       ],
       macros: [
         {
           shortcut: "confirma",
-          title: "Confirmar consulta",
-          body: "Oi, {{primeiro_nome}}. Sua consulta está marcada para {{data}}. Posso confirmar sua presença?",
+          title: "Confirmar retorno",
+          body: "Oi, {{primeiro_nome}}. Seu retorno está marcado para {{data}}. Posso confirmar sua presença?",
         },
         {
           shortcut: "remarcar",
@@ -232,14 +226,19 @@ const SALES_SEGMENTS: SegmentTemplate[] = [
           body: "Sem problema, {{primeiro_nome}}. Me diga dois horários que funcionam para você e eu vejo a agenda.",
         },
         {
-          shortcut: "convenio",
-          title: "Pergunta de convênio",
-          body: "Você vai usar convênio ou particular? Se for convênio, me mande o nome e o número da carteirinha.",
+          shortcut: "pos_consulta",
+          title: "Como está depois da consulta",
+          body: "Oi, {{primeiro_nome}}. Como você está depois da consulta? Se ficou alguma dúvida sobre as orientações, é só me chamar.",
         },
         {
           shortcut: "preparo",
           title: "Preparo do exame",
           body: "Para o exame, siga as orientações que vou te mandar por aqui. Qualquer dúvida, é só responder.",
+        },
+        {
+          shortcut: "avaliacao",
+          title: "Pedir avaliação",
+          body: "{{primeiro_nome}}, de 0 a 10, como foi o seu atendimento com a gente? Sua resposta ajuda a clínica a melhorar.",
         },
       ],
       cadences: [
@@ -247,28 +246,28 @@ const SALES_SEGMENTS: SegmentTemplate[] = [
           "clinica",
           "retorno",
           "Lembrete de retorno",
-          "Paciente que não marcou retorno recebe lembrete e vira tarefa para a recepção.",
+          "Paciente que não marcou o retorno recebe lembrete e vira tarefa para a recepção.",
           { type: "manual" },
           "Oi, {{primeiro_nome}}. Já está na hora do seu retorno. Quer que eu veja um horário para você esta semana?",
           "{{primeiro_nome}}, ainda consigo um horário para o seu retorno. Prefere manhã ou tarde?",
-          "Ligar para {{nome}} sobre o retorno",
+          "Falar com {{nome}} sobre o retorno",
         ),
         followUp(
           "clinica",
           "orcamento",
-          "Orçamento sem resposta",
-          "Quem pediu orçamento e sumiu recebe acompanhamento.",
-          { type: "no_reply", hours: 48 },
-          "Oi, {{primeiro_nome}}. Ficou alguma dúvida sobre o orçamento que te passei?",
-          "{{primeiro_nome}}, se quiser, marco uma avaliação sem compromisso para você conhecer a clínica.",
-          "Ligar para {{nome}}: orçamento parado",
+          "Depois da consulta",
+          "Quem passou por consulta ou procedimento recebe acompanhamento e a pesquisa de satisfação.",
+          { type: "manual" },
+          "Oi, {{primeiro_nome}}. Como você está depois da consulta? Deu tudo certo com as orientações?",
+          "{{primeiro_nome}}, de 0 a 10, como foi o seu atendimento com a gente? Sua opinião ajuda a clínica a melhorar.",
+          "Falar com {{nome}}: sem resposta depois da consulta",
         ),
       ],
       agents: [
         {
           role: "agendamento",
           name: "Recepção",
-          goal: "Marcar, confirmar e remarcar consultas sem fila de espera.",
+          goal: "Marcar, confirmar e remarcar retornos sem fila de espera.",
           instructions: `Você é da recepção da clínica. Consulte a agenda, o convênio e o histórico do paciente antes de oferecer horário. Ofereça no máximo dois horários por vez. ${AGENT_LIMITS}`,
           handoff: "Dúvida clínica, sintoma, urgência ou reclamação vai para a equipe com resumo.",
           tools: ["agenda", "crm", "base_de_conhecimento"],
@@ -276,7 +275,7 @@ const SALES_SEGMENTS: SegmentTemplate[] = [
         {
           role: "sac",
           name: "Atendimento ao paciente",
-          goal: "Responder dúvidas de preparo, valores e convênios com a base da clínica.",
+          goal: "Responder dúvidas de preparo, pós-consulta e convênios com a base da clínica.",
           instructions: `Responda com base nas orientações cadastradas. Nunca dê orientação médica nem diagnóstico. ${AGENT_LIMITS}`,
           handoff:
             "Qualquer pergunta sobre sintoma, remédio ou resultado de exame vai para a equipe.",
@@ -301,83 +300,72 @@ const SALES_SEGMENTS: SegmentTemplate[] = [
   {
     key: "imobiliaria",
     name: "Imobiliária",
-    pitch: "Do anúncio à visita: qualificação do interessado, agenda de visita e proposta.",
+    pitch: "Depois do contrato: entrega das chaves, vistoria, manutenção e renovação da locação.",
     model: {
       version: VERSION,
-      pipelines: [
-        {
-          name: "Venda e locação",
-          stages: [
-            { name: "Interessado", kind: "open", probability: 10, color: "slate" },
-            { name: "Qualificado", kind: "open", probability: 25, color: "sky" },
-            { name: "Visita marcada", kind: "open", probability: 45, color: "violet" },
-            { name: "Proposta", kind: "open", probability: 70, color: "amber" },
-            { name: "Contrato assinado", kind: "won", probability: 100, color: "emerald" },
-            { name: "Desistiu", kind: "lost", probability: 0, color: "rose" },
-          ],
-        },
-      ],
+      pipelines: POS_VENDA_PIPELINES,
       fields: [
         {
           entity: "deal",
           key: "finalidade",
-          label: "Finalidade",
+          label: "Tipo de contrato",
           type: "select",
           options: ["Comprar", "Alugar", "Investir"],
         },
-        { entity: "deal", key: "faixa_preco", label: "Faixa de preço", type: "money" },
-        { entity: "deal", key: "bairros", label: "Bairros de interesse", type: "text" },
+        { entity: "deal", key: "faixa_preco", label: "Valor do contrato", type: "money" },
+        { entity: "deal", key: "bairros", label: "Bairro do imóvel", type: "text" },
         { entity: "deal", key: "quartos", label: "Quartos", type: "number" },
         { entity: "deal", key: "codigo_imovel", label: "Código do imóvel", type: "text" },
-        { entity: "contact", key: "financiamento", label: "Vai financiar", type: "boolean" },
+        { entity: "contact", key: "financiamento", label: "Imóvel financiado", type: "boolean" },
       ],
       macros: [
         {
           shortcut: "visita",
-          title: "Marcar visita",
-          body: "{{primeiro_nome}}, consigo te levar para ver o imóvel. Qual dia e horário ficam bons?",
+          title: "Marcar vistoria",
+          body: "{{primeiro_nome}}, preciso marcar a vistoria do imóvel. Qual dia e horário ficam bons?",
         },
         {
           shortcut: "documentos",
-          title: "Documentos para proposta",
-          body: "Para seguir com a proposta, preciso de RG, CPF, comprovante de renda e de residência. Pode mandar por aqui.",
+          title: "Documentos da renovação",
+          body: "Para renovar o contrato, preciso do comprovante de renda e de residência atualizados. Pode mandar por aqui.",
         },
         {
           shortcut: "similares",
-          title: "Imóveis parecidos",
-          body: "Separei outras opções no mesmo perfil. Quer que eu mande as fotos?",
+          title: "Pedido de manutenção",
+          body: "Recebi o seu pedido, {{primeiro_nome}}. Me mande uma foto e diga o melhor horário para a visita do técnico.",
         },
       ],
       cadences: [
         followUp(
           "imobiliaria",
           "pos_visita",
-          "Depois da visita",
-          "Interessado que visitou recebe acompanhamento para a proposta.",
+          "Depois da entrega das chaves",
+          "Quem acabou de receber o imóvel recebe acompanhamento nos primeiros dias.",
           { type: "manual" },
-          "Oi, {{primeiro_nome}}. O que achou do imóvel? Ficou alguma dúvida?",
-          "{{primeiro_nome}}, se quiser, já preparo uma simulação de proposta para você avaliar com calma.",
-          "Ligar para {{nome}} depois da visita",
+          "Oi, {{primeiro_nome}}. Como estão os primeiros dias no imóvel? Está tudo funcionando bem?",
+          "{{primeiro_nome}}, se precisar de algum reparo ou tiver dúvida do contrato, é só me chamar por aqui.",
+          "Falar com {{nome}} depois da entrega das chaves",
         ),
         followUp(
           "imobiliaria",
           "lead_portal",
-          "Lead de portal",
-          "Quem chegou pelo portal recebe resposta rápida e é qualificado.",
-          { type: "event", event: "form.submitted" },
-          "Oi, {{primeiro_nome}}. Vi seu interesse no imóvel. Você procura para morar ou investir?",
-          "{{primeiro_nome}}, tenho horários de visita nesta semana. Quer que eu reserve um?",
-          "Ligar para {{nome}} (lead de portal sem resposta)",
+          "Renovação do contrato",
+          "Locação perto do vencimento recebe a conversa de renovação com antecedência.",
+          { type: "manual" },
+          "Oi, {{primeiro_nome}}. O seu contrato vence em breve. Quer que eu já prepare a renovação?",
+          "{{primeiro_nome}}, consigo deixar a renovação pronta esta semana. Posso seguir?",
+          "Falar com {{nome}}: renovação do contrato sem resposta",
         ),
       ],
       agents: [
         {
-          role: "sdr",
-          name: "Corretor virtual",
-          goal: "Qualificar o interessado e marcar a visita com o corretor certo.",
-          instructions: `Descubra finalidade, faixa de preço, bairros e prazo conversando, sem questionário. Use os imóveis cadastrados para sugerir opções. ${AGENT_LIMITS}`,
-          handoff: "Proposta, negociação de valor e documentação vão para o corretor com resumo.",
-          tools: ["catalogo", "agenda", "crm"],
+          role: "pos_venda",
+          name: "Atendimento ao cliente",
+          goal: "Acompanhar quem já comprou ou alugou: vistoria, manutenção, boleto e renovação.",
+          instructions: `Confirme qual é o imóvel e o contrato do cliente antes de responder. Registre pedidos de reparo com o detalhe e a foto. ${AGENT_LIMITS}`,
+          handoff:
+            "Reajuste, rescisão, cobrança contestada e problema grave no imóvel vão para o responsável com resumo.",
+          tools: ["agenda", "crm", "base_de_conhecimento"],
         },
       ],
       qa_form: { name: "Qualidade do atendimento imobiliário", criteria: COMMON_CRITERIA },
@@ -389,17 +377,7 @@ const SALES_SEGMENTS: SegmentTemplate[] = [
     pitch: "Pedido, troca e recompra: atendimento rápido no WhatsApp e cliente que volta.",
     model: {
       version: VERSION,
-      pipelines: [
-        {
-          name: "Pedidos",
-          stages: [
-            { name: "Orçamento", kind: "open", probability: 20, color: "slate" },
-            { name: "Aguardando pagamento", kind: "open", probability: 60, color: "sky" },
-            { name: "Pago", kind: "won", probability: 100, color: "emerald" },
-            { name: "Desistiu", kind: "lost", probability: 0, color: "rose" },
-          ],
-        },
-      ],
+      pipelines: POS_VENDA_PIPELINES,
       fields: [
         { entity: "contact", key: "tamanho", label: "Tamanho preferido", type: "text" },
         { entity: "contact", key: "ultima_compra", label: "Última compra", type: "date" },
@@ -415,8 +393,8 @@ const SALES_SEGMENTS: SegmentTemplate[] = [
       macros: [
         {
           shortcut: "pix",
-          title: "Pagamento por Pix",
-          body: "Pode pagar pelo Pix que vou te mandar agora. Assim que cair, eu separo o pedido.",
+          title: "Pedido recebido",
+          body: "Recebemos o seu pedido, {{primeiro_nome}}. Já estou separando e aviso assim que sair para entrega.",
         },
         {
           shortcut: "troca",
@@ -433,29 +411,29 @@ const SALES_SEGMENTS: SegmentTemplate[] = [
         followUp(
           "varejo",
           "carrinho",
-          "Orçamento parado",
-          "Quem pediu orçamento e não pagou recebe lembrete.",
-          { type: "no_reply", hours: 24 },
-          "Oi, {{primeiro_nome}}. Separei o que você pediu. Quer que eu mande o link de pagamento?",
-          "{{primeiro_nome}}, o item está reservado até amanhã. Posso garantir para você?",
-          "Ligar para {{nome}}: orçamento sem pagamento",
+          "Depois da entrega",
+          "Quem recebeu o pedido recebe acompanhamento e a pesquisa de satisfação.",
+          { type: "manual" },
+          "Oi, {{primeiro_nome}}. Seu pedido chegou direitinho? Ficou do jeito que você esperava?",
+          "{{primeiro_nome}}, de 0 a 10, como foi comprar com a gente? Sua resposta ajuda a loja a melhorar.",
+          "Falar com {{nome}}: sem resposta depois da entrega",
         ),
         followUp(
           "varejo",
           "recompra",
           "Recompra",
           "Cliente sem compra há um tempo recebe novidade.",
-          { type: "manual" },
+          { type: "inactive", days: 60 },
           "Oi, {{primeiro_nome}}. Chegou coisa nova que tem a sua cara. Quer ver?",
           "{{primeiro_nome}}, tenho uma condição boa para quem já é cliente esta semana.",
-          "Ligar para {{nome}} (recompra)",
+          "Falar com {{nome}} (recompra)",
         ),
       ],
       agents: [
         {
           role: "sac",
           name: "Atendimento da loja",
-          goal: "Responder sobre produto, estoque, pagamento, entrega e troca.",
+          goal: "Responder sobre pedido, entrega, troca e uso do produto.",
           instructions: `Consulte o catálogo e o pedido antes de responder. Fale curto, como no WhatsApp. ${AGENT_LIMITS}`,
           handoff: "Reclamação, defeito e pedido de reembolso vão para uma pessoa.",
           tools: ["catalogo", "crm", "pagamento"],
@@ -467,50 +445,28 @@ const SALES_SEGMENTS: SegmentTemplate[] = [
   {
     key: "saas_b2b",
     name: "SaaS B2B",
-    pitch: "Demonstração, teste, fechamento e renovação, com saúde do cliente no centro.",
+    pitch: "Implantação, uso e renovação, com a saúde do cliente no centro.",
     model: {
       version: VERSION,
-      pipelines: [
-        {
-          name: "Novos negócios",
-          stages: [
-            { name: "Lead", kind: "open", probability: 5, color: "slate" },
-            { name: "Qualificado", kind: "open", probability: 20, color: "sky" },
-            { name: "Demonstração", kind: "open", probability: 40, color: "violet" },
-            { name: "Proposta", kind: "open", probability: 60, color: "amber" },
-            { name: "Negociação", kind: "open", probability: 80, color: "orange" },
-            { name: "Ganho", kind: "won", probability: 100, color: "emerald" },
-            { name: "Perdido", kind: "lost", probability: 0, color: "rose" },
-          ],
-        },
-        {
-          name: "Renovação",
-          stages: [
-            { name: "90 dias para renovar", kind: "open", probability: 70, color: "slate" },
-            { name: "Em conversa", kind: "open", probability: 80, color: "sky" },
-            { name: "Renovado", kind: "won", probability: 100, color: "emerald" },
-            { name: "Cancelou", kind: "lost", probability: 0, color: "rose" },
-          ],
-        },
-      ],
+      pipelines: POS_VENDA_PIPELINES,
       fields: [
         { entity: "company", key: "funcionarios", label: "Funcionários", type: "number" },
-        { entity: "company", key: "ferramenta_atual", label: "Ferramenta atual", type: "text" },
+        { entity: "company", key: "ferramenta_atual", label: "Ferramenta anterior", type: "text" },
         { entity: "deal", key: "usuarios", label: "Licenças", type: "number" },
-        { entity: "deal", key: "decisor", label: "Quem decide", type: "text" },
-        { entity: "deal", key: "dor_principal", label: "Dor principal", type: "long_text" },
+        { entity: "deal", key: "decisor", label: "Contato principal", type: "text" },
+        { entity: "deal", key: "dor_principal", label: "Objetivo do cliente", type: "long_text" },
         { entity: "company", key: "data_renovacao", label: "Data de renovação", type: "date" },
       ],
       macros: [
         {
           shortcut: "demo",
-          title: "Convite para demonstração",
-          body: "{{primeiro_nome}}, que tal 30 minutos para eu te mostrar como resolvemos isso? Tenho horários amanhã e quinta.",
+          title: "Convite para treinamento",
+          body: "{{primeiro_nome}}, que tal 30 minutos para eu mostrar ao seu time como tirar mais proveito? Tenho horários amanhã e quinta.",
         },
         {
           shortcut: "proposta",
-          title: "Envio de proposta",
-          body: "Mandei a proposta por aqui. Posso te passar os pontos principais amanhã?",
+          title: "Resumo de uso",
+          body: "{{primeiro_nome}}, preparei um resumo de como o seu time está usando a ferramenta. Posso te passar os pontos principais amanhã?",
         },
         {
           shortcut: "onboarding",
@@ -522,32 +478,33 @@ const SALES_SEGMENTS: SegmentTemplate[] = [
         followUp(
           "saas_b2b",
           "pos_demo",
-          "Depois da demonstração",
-          "Quem viu a demonstração recebe acompanhamento até a proposta.",
-          { type: "event", event: "meeting.ended" },
-          "{{primeiro_nome}}, obrigado pela conversa. Separei um resumo do que vimos. Posso mandar a proposta?",
+          "Implantação",
+          "Cliente novo recebe acompanhamento até o time dele estar usando.",
+          { type: "manual" },
+          "{{primeiro_nome}}, como estão os primeiros dias de uso? O time já conseguiu entrar e fazer o básico?",
           "{{primeiro_nome}}, ficou alguma dúvida do time? Posso fazer uma sessão rápida com eles.",
-          "Ligar para {{nome}} depois da demonstração",
+          "Falar com {{nome}}: implantação sem resposta",
         ),
         followUp(
           "saas_b2b",
           "renovacao",
           "Renovação",
-          "90 dias antes da renovação: conversa de valor e proposta.",
+          "90 dias antes da renovação: conversa sobre o que deu resultado.",
           { type: "manual" },
           "Oi, {{primeiro_nome}}. Faltam alguns meses para a renovação. Quer marcar uma conversa para ver o que deu resultado?",
           "{{primeiro_nome}}, preparei um resumo do uso do seu time. Posso mandar?",
-          "Ligar para {{nome}}: renovação chegando",
+          "Falar com {{nome}}: renovação chegando",
         ),
       ],
       agents: [
         {
-          role: "sdr",
-          name: "SDR",
-          goal: "Qualificar a empresa e marcar a demonstração com o vendedor.",
-          instructions: `Descubra dor, tamanho do time, ferramenta atual e quem decide, conversando. Use o site e os materiais da empresa como base. ${AGENT_LIMITS}`,
-          handoff: "Preço, desconto e contrato vão para o vendedor com resumo.",
-          tools: ["agenda", "crm", "base_de_conhecimento"],
+          role: "sac",
+          name: "Suporte",
+          goal: "Tirar dúvidas de uso e resolver o que trava o dia a dia do cliente.",
+          instructions: `Entenda o que o cliente está tentando fazer antes de responder e use a base de conhecimento. Abra chamado quando não resolver na conversa. ${AGENT_LIMITS}`,
+          handoff:
+            "Falha que afeta vários usuários, cobrança e contrato vão para a equipe com resumo.",
+          tools: ["chamados", "crm", "base_de_conhecimento"],
         },
         {
           role: "pos_venda",
@@ -559,14 +516,14 @@ const SALES_SEGMENTS: SegmentTemplate[] = [
         },
       ],
       qa_form: {
-        name: "Qualidade da venda consultiva",
+        name: "Qualidade do acompanhamento do cliente",
         criteria: [
           ...COMMON_CRITERIA,
           {
             key: "descoberta",
-            label: "Fez descoberta antes de apresentar",
+            label: "Entendeu o objetivo do cliente antes de orientar",
             weight: 20,
-            description: "Entendeu dor, impacto e decisor antes de falar do produto.",
+            description: "Perguntou o que o cliente quer alcançar antes de explicar a ferramenta.",
           },
         ],
       },
@@ -575,22 +532,10 @@ const SALES_SEGMENTS: SegmentTemplate[] = [
   {
     key: "stand_automovel",
     name: "Stand automóvel",
-    pitch: "A viatura no centro: interessados por carro, retoma, test drive e dias em stock.",
+    pitch: "Depois da entrega da viatura: garantia, revisão e o cliente que volta para trocar.",
     model: {
       version: VERSION,
-      pipelines: [
-        {
-          name: "Venda de viaturas",
-          stages: [
-            { name: "Interessado", kind: "open", probability: 10, color: "slate" },
-            { name: "Test drive marcado", kind: "open", probability: 35, color: "sky" },
-            { name: "Avaliação de retoma", kind: "open", probability: 50, color: "violet" },
-            { name: "Proposta", kind: "open", probability: 70, color: "amber" },
-            { name: "Vendido", kind: "won", probability: 100, color: "emerald" },
-            { name: "Não avançou", kind: "lost", probability: 0, color: "rose" },
-          ],
-        },
-      ],
+      pipelines: POS_VENDA_PIPELINES,
       fields: [
         {
           entity: "deal",
@@ -598,7 +543,7 @@ const SALES_SEGMENTS: SegmentTemplate[] = [
           label: "Viatura (matrícula ou referência)",
           type: "text",
         },
-        { entity: "deal", key: "tem_retoma", label: "Tem retoma", type: "boolean" },
+        { entity: "deal", key: "tem_retoma", label: "Entregou retoma", type: "boolean" },
         { entity: "deal", key: "retoma_modelo", label: "Viatura da retoma", type: "text" },
         {
           entity: "deal",
@@ -612,49 +557,49 @@ const SALES_SEGMENTS: SegmentTemplate[] = [
       macros: [
         {
           shortcut: "testdrive",
-          title: "Marcar test drive",
-          body: "{{primeiro_nome}}, a viatura está disponível para test drive. Que dia lhe dá jeito?",
+          title: "Marcar revisão",
+          body: "{{primeiro_nome}}, a sua viatura está na altura da revisão. Que dia lhe dá jeito?",
         },
         {
           shortcut: "retoma",
-          title: "Avaliação de retoma",
-          body: "Para avaliar a sua retoma, envie fotos, quilómetros e o ano da viatura.",
+          title: "Pedido de garantia",
+          body: "Para abrir o pedido de garantia, envie fotos, os quilómetros e uma descrição do que aconteceu.",
         },
         {
           shortcut: "simulacao",
-          title: "Simulação de crédito",
-          body: "Consigo fazer uma simulação de crédito. Qual a entrada e o prazo que pretende?",
+          title: "Documentos da viatura",
+          body: "{{primeiro_nome}}, os documentos da viatura estão prontos. Prefere levantar no stand ou receber por correio?",
         },
       ],
       cadences: [
         followUp(
           "stand_automovel",
           "interessado",
-          "Interessado na viatura",
-          "Quem perguntou por uma viatura recebe resposta e convite para test drive.",
-          { type: "event", event: "form.submitted" },
-          "Olá, {{primeiro_nome}}. A viatura que viu ainda está disponível. Quer marcar um test drive?",
-          "{{primeiro_nome}}, tenho outras viaturas no mesmo perfil, se preferir comparar.",
-          "Ligar a {{nome}}: interessado sem resposta",
+          "Depois da entrega da viatura",
+          "Quem levantou a viatura recebe acompanhamento nos primeiros dias.",
+          { type: "manual" },
+          "Olá, {{primeiro_nome}}. Como estão os primeiros dias com a viatura? Está tudo como esperava?",
+          "{{primeiro_nome}}, de 0 a 10, como foi a sua experiência no stand? A sua opinião ajuda-nos a melhorar.",
+          "Ligar a {{nome}}: sem resposta depois da entrega",
         ),
         followUp(
           "stand_automovel",
           "pos_testdrive",
-          "Depois do test drive",
-          "Acompanhamento para a proposta.",
+          "Revisão e garantia",
+          "Lembrete da revisão e do fim da garantia.",
           { type: "manual" },
-          "{{primeiro_nome}}, o que achou da viatura? Posso preparar a proposta com a retoma?",
-          "{{primeiro_nome}}, a proposta fica válida até sexta. Quer avançar?",
-          "Ligar a {{nome}} depois do test drive",
+          "{{primeiro_nome}}, a sua viatura está na altura da revisão. Quer que marque um horário?",
+          "{{primeiro_nome}}, tenho vaga na oficina esta semana. Posso reservar?",
+          "Ligar a {{nome}}: revisão por marcar",
         ),
       ],
       agents: [
         {
-          role: "sdr",
-          name: "Comercial do stand",
-          goal: "Responder sobre a viatura certa e marcar test drive ou avaliação de retoma.",
-          instructions: `A viatura é a unidade de gestão: confirme sempre qual viatura o cliente quer e consulte o stock antes de responder. ${AGENT_LIMITS}`,
-          handoff: "Preço final, valor da retoma e crédito vão para o comercial com resumo.",
+          role: "pos_venda",
+          name: "Apoio ao cliente do stand",
+          goal: "Acompanhar quem já comprou: documentos, garantia, revisão e dúvidas da viatura.",
+          instructions: `A viatura é a unidade de gestão: confirme sempre de qual viatura o cliente fala e consulte o histórico antes de responder. ${AGENT_LIMITS}`,
+          handoff: "Avaria, pedido de garantia e reclamação vão para o responsável com resumo.",
           tools: ["catalogo", "agenda", "crm"],
         },
       ],
@@ -664,24 +609,13 @@ const SALES_SEGMENTS: SegmentTemplate[] = [
   {
     key: "escola",
     name: "Escola e curso",
-    pitch: "Captação de matrícula, visita, rematrícula e cobrança de mensalidade.",
+    pitch: "Família acompanhada o ano todo: boas-vindas, frequência, mensalidade e rematrícula.",
     model: {
       version: VERSION,
-      pipelines: [
-        {
-          name: "Matrículas",
-          stages: [
-            { name: "Interessado", kind: "open", probability: 10, color: "slate" },
-            { name: "Visita ou aula experimental", kind: "open", probability: 40, color: "sky" },
-            { name: "Proposta enviada", kind: "open", probability: 60, color: "violet" },
-            { name: "Matriculado", kind: "won", probability: 100, color: "emerald" },
-            { name: "Não matriculou", kind: "lost", probability: 0, color: "rose" },
-          ],
-        },
-      ],
+      pipelines: POS_VENDA_PIPELINES,
       fields: [
         { entity: "contact", key: "nome_aluno", label: "Nome do aluno", type: "text" },
-        { entity: "contact", key: "serie", label: "Série ou turma de interesse", type: "text" },
+        { entity: "contact", key: "serie", label: "Série ou turma", type: "text" },
         {
           entity: "contact",
           key: "turno",
@@ -700,13 +634,13 @@ const SALES_SEGMENTS: SegmentTemplate[] = [
       macros: [
         {
           shortcut: "visita",
-          title: "Convite para visita",
-          body: "{{primeiro_nome}}, que tal conhecer a escola? Tenho visitas na terça e na quinta às 10h.",
+          title: "Convite para reunião",
+          body: "{{primeiro_nome}}, que tal uma conversa com a coordenação sobre o andamento do aluno? Tenho horários na terça e na quinta às 10h.",
         },
         {
           shortcut: "documentos",
-          title: "Documentos da matrícula",
-          body: "Para a matrícula, precisamos de certidão, histórico escolar e comprovante de residência.",
+          title: "Documentos da rematrícula",
+          body: "Para a rematrícula, precisamos do comprovante de residência atualizado e da ficha de saúde.",
         },
         {
           shortcut: "mensalidade",
@@ -718,12 +652,12 @@ const SALES_SEGMENTS: SegmentTemplate[] = [
         followUp(
           "escola",
           "pos_visita",
-          "Depois da visita",
-          "Família que visitou recebe acompanhamento até a matrícula.",
+          "Primeiras semanas de aula",
+          "Família de aluno novo recebe acompanhamento no começo.",
           { type: "manual" },
-          "Oi, {{primeiro_nome}}. Foi um prazer receber vocês. Ficou alguma dúvida sobre a escola?",
-          "{{primeiro_nome}}, as vagas da turma estão fechando. Quer que eu reserve uma?",
-          "Ligar para {{nome}} depois da visita",
+          "Oi, {{primeiro_nome}}. Como foram as primeiras semanas de aula? O aluno está se adaptando bem?",
+          "{{primeiro_nome}}, se quiser conversar com a coordenação, eu marco um horário para vocês.",
+          "Falar com {{nome}}: primeiras semanas sem resposta",
         ),
         followUp(
           "escola",
@@ -733,15 +667,15 @@ const SALES_SEGMENTS: SegmentTemplate[] = [
           { type: "manual" },
           "Oi, {{primeiro_nome}}. A rematrícula para o próximo ano já abriu. Posso te mandar as condições?",
           "{{primeiro_nome}}, a condição de rematrícula antecipada vale até o fim do mês.",
-          "Ligar para {{nome}}: rematrícula",
+          "Falar com {{nome}}: rematrícula",
         ),
       ],
       agents: [
         {
-          role: "sdr",
+          role: "sac",
           name: "Secretaria",
-          goal: "Responder famílias, marcar visita e conduzir a matrícula.",
-          instructions: `Converse com o responsável, descubra série, turno e o que é importante para a família. Use a base com valores e calendário. ${AGENT_LIMITS}`,
+          goal: "Responder famílias sobre calendário, documentos, boletim e rematrícula.",
+          instructions: `Converse com o responsável e confirme de qual aluno ele fala. Use a base com calendário, valores e regras da escola. ${AGENT_LIMITS}`,
           handoff: "Bolsa, desconto e questão pedagógica vão para a coordenação.",
           tools: ["agenda", "crm", "base_de_conhecimento"],
         },
@@ -758,15 +692,6 @@ const SALES_SEGMENTS: SegmentTemplate[] = [
     },
   },
 ];
-
-const POS_VENDA_PIPELINES: SegmentModel["pipelines"] = [
-  { name: POS_VENDA_PIPELINE, stages: POS_VENDA_STAGES.map((st) => ({ ...st })) },
-];
-
-export const SEGMENT_TEMPLATES: SegmentTemplate[] = SALES_SEGMENTS.map((t) => ({
-  ...t,
-  model: { ...t.model, pipelines: POS_VENDA_PIPELINES },
-}));
 
 export function segmentTemplate(key: string): SegmentTemplate | undefined {
   return SEGMENT_TEMPLATES.find((t) => t.key === key);

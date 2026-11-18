@@ -139,7 +139,7 @@ export function QueueRules({ accountId }: { accountId: string }) {
               <EmptyState
                 icon={ListOrdered}
                 title="Nenhuma regra ainda"
-                description="Crie uma regra para cada tipo de atendimento (ex.: Suporte e Vendas). Sem regra, tudo entra na fila geral e vai para qualquer pessoa livre."
+                description="Crie uma regra para cada tipo de atendimento (ex.: Suporte e Renovação). Sem regra, tudo entra na fila geral e vai para qualquer pessoa livre."
                 action={
                   <Button onClick={() => setEditing("new")}>
                     <Plus /> Criar a primeira regra

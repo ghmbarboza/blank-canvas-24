@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { SiteImportBox } from "@/features/catalog/SiteImportBox";
 import {
   useDeleteDocument,
   useDocuments,
@@ -145,6 +146,7 @@ export function KnowledgeStep({ accountId, onNext, done }: StepProps & { done: b
           <TabsTrigger value="arquivos">Subir arquivos</TabsTrigger>
           <TabsTrigger value="texto">Colar texto</TabsTrigger>
           <TabsTrigger value="qa">Pergunta e resposta</TabsTrigger>
+          <TabsTrigger value="site">Ler o site</TabsTrigger>
         </TabsList>
 
         <TabsContent value="arquivos" className="mt-3">
@@ -252,6 +254,13 @@ export function KnowledgeStep({ accountId, onNext, done }: StepProps & { done: b
               Guardar pergunta e resposta
             </Button>
           </form>
+        </TabsContent>
+
+        <TabsContent value="site" className="mt-3">
+          <SiteImportBox
+            accountId={accountId}
+            hint="Eu leio o site e guardo o resumo, as políticas (troca, entrega, garantia) e o que vocês vendem para o atendente consultar."
+          />
         </TabsContent>
       </Tabs>
 

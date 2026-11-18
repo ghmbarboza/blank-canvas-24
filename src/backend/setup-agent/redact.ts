@@ -24,12 +24,26 @@ const GENERIC = /\b(?=[A-Za-z0-9_+/=-]*\d)(?=[A-Za-z0-9_+/=-]*[A-Za-z])[A-Za-z0-
 const LABELED =
   /^[^\S\n]*[^\n:]*\b(?:chave|key|secret|segredo|token|senha|password)\b[^\n:]*:[^\S\n]*(\S{8,})[^\S\n]*$/gim;
 
+// Chave dita no meio da frase ("a chave é abc123XYZ", "chave da Evolution: abc123XYZ", "apikey=…"):
+// o valor depois do rótulo é segredo quando tem número ou é longo. Endereço e e-mail não contam.
+const INLINE =
+  /(?<![\p{L}\d])(?:chave|api\s?key|apikey|token|senha)(?![\p{L}\d])[^\n]{0,40}?(?:\s(?:é|eh)\s+|[:=]\s*)(\S{8,})/giu;
+
+function looksSecret(v: string): boolean {
+  if (v.includes("•") || /^https?:\/\//i.test(v) || v.includes("@")) return false;
+  return /\d/.test(v) || v.length >= 20;
+}
+
 export const MASK = "•••• (guardado no cofre)";
 
 export function findSecrets(text: string): string[] {
   const found = new Set<string>();
   for (const re of [...PATTERNS, GENERIC]) for (const m of text.matchAll(re)) found.add(m[0]);
   for (const m of text.matchAll(LABELED)) if (m[1] && !m[1].includes("•")) found.add(m[1]);
+  for (const m of text.matchAll(INLINE)) {
+    const v = (m[1] ?? "").replace(/[.,;)]+$/, "");
+    if (v.length >= 8 && looksSecret(v)) found.add(v);
+  }
   return [...found];
 }
 

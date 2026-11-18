@@ -16,7 +16,20 @@ async function assertPublic(url: URL) {
   if (addrs.some((a) => isPrivateHost(a.address))) throw new Error("endereço interno bloqueado");
 }
 
-async function fetchText(raw: string): Promise<{ url: string; html: string; type: string }> {
+export interface FetchOpts {
+  /** cabeçalho accept (padrão: página de texto) */
+  accept?: string;
+  /** prazo desta chamada, em ms (padrão 12 s) */
+  timeoutMs?: number;
+  /** tamanho máximo da resposta (padrão 2 MB; página inicial de loja passa disso) */
+  maxBytes?: number;
+}
+
+/** Busca crua com a proteção de endereço interno (cada redirecionamento é conferido). Sem cookies. */
+export async function fetchRaw(
+  raw: string,
+  opts: FetchOpts = {},
+): Promise<{ url: string; html: string; type: string }> {
   let url = new URL(/^https?:\/\//i.test(raw) ? raw : `https://${raw}`);
   // segue até 4 redirecionamentos checando cada destino
   for (let hop = 0; hop < 5; hop++) {
@@ -24,10 +37,12 @@ async function fetchText(raw: string): Promise<{ url: string; html: string; type
     const res = await fetch(url, {
       headers: {
         "user-agent": UA,
-        accept: "text/html,application/xhtml+xml,text/plain;q=0.9,*/*;q=0.5",
+        accept: opts.accept ?? "text/html,application/xhtml+xml,text/plain;q=0.9,*/*;q=0.5",
+        "accept-language": "pt-BR,pt;q=0.9",
       },
       redirect: "manual",
-      signal: AbortSignal.timeout(TIMEOUT_MS),
+      credentials: "omit",
+      signal: AbortSignal.timeout(opts.timeoutMs ?? TIMEOUT_MS),
     });
     const loc = res.headers.get("location");
     if (res.status >= 300 && res.status < 400 && loc) {
@@ -37,14 +52,14 @@ async function fetchText(raw: string): Promise<{ url: string; html: string; type
     if (!res.ok) throw new Error(`o site respondeu ${res.status}`);
     const type = res.headers.get("content-type") ?? "";
     const buf = new Uint8Array(await res.arrayBuffer());
-    if (buf.byteLength > MAX_BYTES) throw new Error("página grande demais");
+    if (buf.byteLength > (opts.maxBytes ?? MAX_BYTES)) throw new Error("página grande demais");
     return { url: url.toString(), html: new TextDecoder().decode(buf), type };
   }
   throw new Error("redirecionamentos demais");
 }
 
 export async function readPage(raw: string) {
-  const { url, html, type } = await fetchText(raw);
+  const { url, html, type } = await fetchRaw(raw);
   if (!/html|text\/plain/i.test(type)) throw new Error(`não é uma página de texto (${type})`);
   const { title, text } = /html/i.test(type) ? htmlToText(html) : { title: "", text: html };
   return {

@@ -207,18 +207,20 @@ describe("roteiroState", () => {
 });
 
 describe("abertura da conversa", () => {
-  it("primeiro uso: a Cris se apresenta, fala dos 6 passos e pede nome e ramo", () => {
+  it("primeiro uso: a Cris diz o que faz, pede o nome e o que vende e oferece ler o site", () => {
     const o = opener({
       state: roteiroState(base, []),
       company: PLACEHOLDER_COMPANY,
       person: "Ana",
     });
     expect(textOf(o)).toMatch(/^Oi, Ana! Eu sou a Cris\./);
-    expect(textOf(o)).toContain("6 passos");
-    expect(textOf(o)).toContain("Como se chama a empresa");
+    expect(textOf(o)).toContain("Eu configuro a central com você por aqui");
+    expect(textOf(o)).toContain("Qual é o nome da empresa e o que vocês vendem?");
+    expect(textOf(o)).toContain("cole o endereço que eu leio");
     expect(o.messages).toHaveLength(2);
-    expect(o.messages[0]!.blocks).toEqual([]);
-    expect(o.messages[1]!.blocks.map((b) => b.kind)).toEqual(["choices"]);
+    // pergunta aberta: sem botões de ramo (a Cris deduz o ramo pelo que a empresa vende)
+    expect(blocksOf(o)).toEqual([]);
+    expect(textOf(o)).not.toContain("—");
   });
 
   it("toda abertura de passo traz o botão que abre a tela dele", () => {

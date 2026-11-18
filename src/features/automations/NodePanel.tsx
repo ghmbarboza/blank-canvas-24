@@ -314,7 +314,8 @@ export function NodePanel({
             </SelectContent>
           </Select>
           <p className="text-[11px] text-subtle">
-            Move o negócio que iniciou a automação, ou o negócio aberto mais recente do contato.
+            Move o cartão que iniciou a automação, ou o cartão aberto mais recente do cliente na
+            carteira.
           </p>
         </div>
       );
@@ -342,7 +343,7 @@ export function NodePanel({
     }
     case "add_tag":
     case "remove_tag":
-      body = text("tag", "Etiqueta", "ex.: lead-quente");
+      body = text("tag", "Etiqueta", "ex.: cliente-vip");
       break;
     case "set_field":
       body = (
@@ -436,16 +437,16 @@ export function NodePanel({
                 )}
               {s("kind") === "lifecycle_eq"
                 ? select("value", "Fase", [
-                    { value: "lead", label: "Lead" },
-                    { value: "opportunity", label: "Oportunidade" },
+                    { value: "lead", label: "Contato" },
+                    { value: "opportunity", label: "Em negociação" },
                     { value: "customer", label: "Cliente" },
                     { value: "inactive", label: "Inativo" },
                   ])
                 : s("kind") === "temperature_eq"
                   ? select("value", "Temperatura", [
-                      { value: "hot", label: "Quente" },
-                      { value: "warm", label: "Morno" },
-                      { value: "cold", label: "Frio" },
+                      { value: "hot", label: "Interesse alto" },
+                      { value: "warm", label: "Interesse médio" },
+                      { value: "cold", label: "Interesse baixo" },
                     ])
                   : text("value", "Valor")}
             </>
@@ -478,7 +479,7 @@ export function NodePanel({
     case "notify":
       body = (
         <>
-          {text("title", "Aviso", "Ex.: {{nome}} clicou na proposta")}
+          {text("title", "Aviso", "Ex.: {{nome}} respondeu a pesquisa")}
           {text("body", "Detalhe (opcional)", "", 3)}
           {ownerSelect}
         </>

@@ -5,7 +5,8 @@ import { pageHead } from "@/lib/page-head";
 
 // "Qual campanha deu retorno": o relatório de origem em tela própria, sem as abas de Relatórios.
 export const Route = createFileRoute("/_app/origem")({
-  head: () => pageHead("Origem dos leads", "De onde vêm os leads e qual campanha deu retorno."),
+  head: () =>
+    pageHead("Origem dos contatos", "De onde vêm os contatos novos e qual campanha deu retorno."),
   component: OriginRoute,
 });
 

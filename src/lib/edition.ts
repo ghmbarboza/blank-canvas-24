@@ -126,6 +126,10 @@ const CHANNEL_ROUTES: { prefix: string; anyOf: EditionChannel[]; except?: string
   { prefix: "/campanhas", anyOf: ["email"], except: ["/campanhas/whatsapp"] },
   // a Biblioteca só guarda trechos de ligações e reuniões gravadas
   { prefix: "/biblioteca", anyOf: ["phone", "video"] },
+  // telas só de venda (prospecção, origem de leads, metas de vendas): ficam para a edição completa
+  { prefix: "/sdr", anyOf: ["phone"] },
+  { prefix: "/origem", anyOf: ["phone"] },
+  { prefix: "/metas", anyOf: ["phone"] },
 ];
 
 const under = (path: string, prefix: string) => path === prefix || path.startsWith(`${prefix}/`);

@@ -156,16 +156,18 @@ export function TicketLinks({ accountId, ticket: t }: { accountId: string; ticke
           <Handshake className="size-3.5 shrink-0 text-muted-foreground" aria-hidden />
           <Select
             value={t.deal_id ?? NONE}
-            onValueChange={(v) => patch({ deal_id: v === NONE ? null : v }, "Negócio ligado")}
+            onValueChange={(v) =>
+              patch({ deal_id: v === NONE ? null : v }, "Cartão da carteira ligado")
+            }
             disabled={!t.contact_id}
           >
-            <SelectTrigger className="h-7 text-[12px]" aria-label="Negócio ligado">
+            <SelectTrigger className="h-7 text-[12px]" aria-label="Cartão da carteira ligado">
               <SelectValue
-                placeholder={t.contact_id ? "Ligar a um negócio" : "Chamado sem contato"}
+                placeholder={t.contact_id ? "Ligar ao cartão na carteira" : "Chamado sem contato"}
               />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value={NONE}>Sem negócio</SelectItem>
+              <SelectItem value={NONE}>Sem cartão na carteira</SelectItem>
               {(deals.data ?? []).map((d) => (
                 <SelectItem key={d.id} value={d.id}>
                   {d.title}

@@ -8,6 +8,6 @@ export const Route = createFileRoute("/_app/crm")({
     const v = search["negocio"];
     return typeof v === "string" && /^[0-9a-f-]{36}$/i.test(v) ? { negocio: v } : {};
   },
-  head: () => pageHead("CRM", "Oportunidades de vendas e funil comercial na Central de CS."),
+  head: () => pageHead("Carteira", "Seus clientes, etapa por etapa da jornada de pós-venda."),
   component: CrmPage,
 });

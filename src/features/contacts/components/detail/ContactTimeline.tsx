@@ -4,7 +4,6 @@ import { History, Bot } from "lucide-react";
 import { ChannelIcon } from "@/components/brand/ChannelIcon";
 import { PLATFORM_LABEL } from "@/components/brand/platform-label";
 import { EmptyState } from "@/components/common/EmptyState";
-import { TEMPERATURE_LABEL, isTemperature } from "@/components/common/temperature";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import {
@@ -53,7 +52,6 @@ export function ContactTimeline({ accountId, contactId }: Props) {
       });
     }
     for (const c of classifications.data ?? []) {
-      const temp = isTemperature(c.temperature) ? TEMPERATURE_LABEL[c.temperature] : c.temperature;
       out.push({
         key: `c-${c.id}`,
         at: c.created_at,
@@ -61,7 +59,7 @@ export function ContactTimeline({ accountId, contactId }: Props) {
           <TimelineItem
             icon={<Bot className="size-3.5" />}
             tone="bg-primary-soft text-primary border-primary-line"
-            title={`IA classificou como ${temp} (${c.score})`}
+            title="IA atualizou o resumo do cliente"
             at={c.created_at}
             meta={c.intent ?? undefined}
           >

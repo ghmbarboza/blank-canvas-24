@@ -13,7 +13,7 @@ const KIND_ICON: Record<string, typeof Bell> = {
   meeting_soon: CalendarClock,
 };
 
-// Sino do menu lateral: avisos do usuário (lead quente, atribuição, lembretes), em tempo real.
+// Sino do menu lateral: avisos do usuário (cliente pedindo atenção, atribuição, lembretes), em tempo real.
 export function NotificationsBell({ expanded }: { expanded: boolean }) {
   const accountId = useAccountId();
   const { data } = useNotifications(accountId);
@@ -64,7 +64,7 @@ export function NotificationsBell({ expanded }: { expanded: boolean }) {
         <ul className="max-h-[420px] overflow-y-auto py-1">
           {list.length === 0 && (
             <li className="px-4 py-8 text-center text-[12px] text-muted-foreground">
-              Nada por aqui. Avisamos quando um lead esquentar ou algo for atribuído a você.
+              Nada por aqui. Avisamos quando um cliente pedir atenção ou algo for atribuído a você.
             </li>
           )}
           {list.map((n) => (

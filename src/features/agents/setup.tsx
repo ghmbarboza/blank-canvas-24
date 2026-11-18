@@ -167,7 +167,7 @@ export function ComposioSetupStep({ accountId, onDone }: StepProps) {
         ))}
       </div>
       <p className="text-[14px] leading-relaxed text-muted-foreground">
-        Opcional. Ligue o Gmail ou o Outlook do vendedor, a Agenda do Google, o HubSpot e outros
+        Opcional. Ligue o Gmail ou o Outlook do atendente, a Agenda do Google, o HubSpot e outros
         apps para a equipe de IA ler e agir neles. A conexão é feita por um link da Composio, com a
         conta gratuita da sua empresa.
       </p>

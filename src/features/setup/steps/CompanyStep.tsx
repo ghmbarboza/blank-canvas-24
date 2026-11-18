@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { SiteImportBox } from "@/features/catalog/SiteImportBox";
 import { errorMessage } from "@/lib/functions";
 import { cn } from "@/lib/utils";
 
@@ -64,93 +65,106 @@ export function CompanyStep({
   }
 
   return (
-    <form onSubmit={submit} className="space-y-5" noValidate>
-      <div className="space-y-1.5">
-        <Label htmlFor={`${uid}-name`}>Nome da empresa</Label>
-        <Input
-          id={`${uid}-name`}
-          value={name}
-          maxLength={120}
-          autoComplete="organization"
-          placeholder="Ex.: Loja Bela Casa"
-          onChange={(e) => setName(e.target.value)}
-        />
-      </div>
+    <div className="space-y-6">
+      <SiteImportBox
+        accountId={accountId}
+        fillCompany
+        hint="Eu leio o site, preencho os campos abaixo e trago o que vocês vendem para o catálogo. Você confere antes de gravar."
+        onPreview={(p) => {
+          // só preenche o que a pessoa ainda não escreveu
+          if (p.company.name) setName((cur) => cur || p.company.name || "");
+          if (p.company.sells) setSells((cur) => cur || (p.company.sells ?? "").slice(0, 600));
+          if (p.company.tone) setTone((cur) => cur || (p.company.tone ?? "").slice(0, 300));
+        }}
+      />
+      <form onSubmit={submit} className="space-y-5" noValidate>
+        <div className="space-y-1.5">
+          <Label htmlFor={`${uid}-name`}>Nome da empresa</Label>
+          <Input
+            id={`${uid}-name`}
+            value={name}
+            maxLength={120}
+            autoComplete="organization"
+            placeholder="Ex.: Loja Bela Casa"
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
 
-      <fieldset>
-        <legend className="text-[14px] font-medium">Ramo</legend>
-        <div className="mt-2 grid gap-2 sm:grid-cols-2" role="radiogroup" aria-label="Ramo">
-          {SEGMENT_LABELS.map((s) => {
-            const on = segment === s.id;
-            return (
+        <fieldset>
+          <legend className="text-[14px] font-medium">Ramo</legend>
+          <div className="mt-2 grid gap-2 sm:grid-cols-2" role="radiogroup" aria-label="Ramo">
+            {SEGMENT_LABELS.map((s) => {
+              const on = segment === s.id;
+              return (
+                <button
+                  key={s.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={on}
+                  onClick={() => setSegment(s.id)}
+                  className={cn(
+                    "min-h-11 rounded-xl border px-3 py-2 text-left text-[13px] transition",
+                    "focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
+                    on
+                      ? "border-primary bg-primary-soft font-medium"
+                      : "border-border hover:border-foreground/30",
+                  )}
+                >
+                  {s.label}
+                </button>
+              );
+            })}
+          </div>
+        </fieldset>
+
+        <div className="space-y-1.5">
+          <Label htmlFor={`${uid}-sells`}>O que vocês vendem</Label>
+          <Textarea
+            id={`${uid}-sells`}
+            value={sells}
+            rows={2}
+            maxLength={600}
+            placeholder="Ex.: móveis planejados para casa e escritório, com entrega e montagem"
+            onChange={(e) => setSells(e.target.value)}
+          />
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor={`${uid}-tone`}>Como vocês falam com o cliente</Label>
+          <div className="flex flex-wrap gap-2">
+            {TONES.map((t) => (
               <button
-                key={s.id}
+                key={t}
                 type="button"
-                role="radio"
-                aria-checked={on}
-                onClick={() => setSegment(s.id)}
+                aria-pressed={tone === t}
+                onClick={() => setTone(t)}
                 className={cn(
-                  "min-h-11 rounded-xl border px-3 py-2 text-left text-[13px] transition",
+                  "min-h-9 rounded-full border px-3 py-1 text-[13px] transition",
                   "focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
-                  on
-                    ? "border-primary bg-primary-soft font-medium"
-                    : "border-border hover:border-foreground/30",
+                  tone === t ? "border-primary bg-primary-soft font-medium" : "border-border",
                 )}
               >
-                {s.label}
+                {t}
               </button>
-            );
-          })}
+            ))}
+          </div>
+          <Input
+            id={`${uid}-tone`}
+            value={tone}
+            maxLength={300}
+            placeholder="Ou escreva do seu jeito"
+            onChange={(e) => setTone(e.target.value)}
+          />
         </div>
-      </fieldset>
 
-      <div className="space-y-1.5">
-        <Label htmlFor={`${uid}-sells`}>O que vocês vendem</Label>
-        <Textarea
-          id={`${uid}-sells`}
-          value={sells}
-          rows={2}
-          maxLength={600}
-          placeholder="Ex.: móveis planejados para casa e escritório, com entrega e montagem"
-          onChange={(e) => setSells(e.target.value)}
-        />
-      </div>
+        {error ? <StepError>{error}</StepError> : null}
 
-      <div className="space-y-1.5">
-        <Label htmlFor={`${uid}-tone`}>Como vocês falam com o cliente</Label>
-        <div className="flex flex-wrap gap-2">
-          {TONES.map((t) => (
-            <button
-              key={t}
-              type="button"
-              aria-pressed={tone === t}
-              onClick={() => setTone(t)}
-              className={cn(
-                "min-h-9 rounded-full border px-3 py-1 text-[13px] transition",
-                "focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
-                tone === t ? "border-primary bg-primary-soft font-medium" : "border-border",
-              )}
-            >
-              {t}
-            </button>
-          ))}
-        </div>
-        <Input
-          id={`${uid}-tone`}
-          value={tone}
-          maxLength={300}
-          placeholder="Ou escreva do seu jeito"
-          onChange={(e) => setTone(e.target.value)}
-        />
-      </div>
-
-      {error ? <StepError>{error}</StepError> : null}
-
-      <Button type="submit" className="h-11" disabled={save.isPending}>
-        {save.isPending ? <Loader2 className="animate-spin" aria-hidden /> : null}
-        Salvar e continuar
-        <ArrowRight aria-hidden />
-      </Button>
-    </form>
+        <Button type="submit" className="h-11" disabled={save.isPending}>
+          {save.isPending ? <Loader2 className="animate-spin" aria-hidden /> : null}
+          Salvar e continuar
+          <ArrowRight aria-hidden />
+        </Button>
+      </form>
+    </div>
   );
 }

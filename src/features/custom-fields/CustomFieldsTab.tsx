@@ -91,8 +91,8 @@ export function CustomFieldsTab() {
         <Loader2 className="mx-auto my-8 animate-spin text-subtle" />
       ) : list.length === 0 ? (
         <p className="rounded-xl border border-dashed border-border px-4 py-8 text-center text-[13px] text-muted-foreground">
-          Nenhum campo em {ENTITY_LABEL[entity].toLowerCase()} ainda. Exemplos: segmento, origem do
-          lead, número de unidades.
+          Nenhum campo em {ENTITY_LABEL[entity].toLowerCase()} ainda. Exemplos: segmento, plano
+          contratado, número de unidades.
         </p>
       ) : (
         <ul className="divide-y divide-border rounded-xl border border-border">

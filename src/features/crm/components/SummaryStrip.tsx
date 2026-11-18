@@ -6,6 +6,8 @@ import type { BoardDeal, Stage } from "../types";
 
 type Props = { deals: BoardDeal[]; stages: Stage[] };
 
+const normalize = (s: string) => s.normalize("NFD").replace(/\p{M}/gu, "").trim().toLowerCase();
+
 function Metric({
   label,
   value,
@@ -31,37 +33,28 @@ function Metric({
   );
 }
 
-// Faixa de números do funil. Calculada sobre os negócios visíveis (a RLS já limita o vendedor aos dele).
+// Faixa de números da carteira, sobre os cartões visíveis (a RLS já limita cada pessoa aos dela).
 export function SummaryStrip({ deals, stages }: Props) {
-  const prob = new Map(stages.map((s) => [s.id, s.probability]));
+  const atRiskStage = stages.find((s) => normalize(s.name) === "em risco")?.id ?? null;
   const monthStart = startOfMonth(new Date()).toISOString();
   let openValue = 0;
-  let weighted = 0;
   let openCount = 0;
-  let wonMonth = 0;
-  let won = 0;
-  let lost = 0;
+  let atRisk = 0;
+  let lostMonth = 0;
   for (const d of deals) {
-    const v = Number(d.value);
     if (d.status === "open") {
-      openValue += v;
+      openValue += Number(d.value);
       openCount += 1;
-      weighted += (v * (prob.get(d.stage_id) ?? 0)) / 100;
-    } else if (d.status === "won") {
-      won += 1;
-      if (d.closed_at && d.closed_at >= monthStart) wonMonth += v;
-    } else if (d.status === "lost") lost += 1;
+      if (d.stage_id === atRiskStage) atRisk += 1;
+    } else if (d.status === "lost" && d.closed_at && d.closed_at >= monthStart) lostMonth += 1;
   }
-  const conversion =
-    won + lost > 0 ? `${((won / (won + lost)) * 100).toFixed(1).replace(".", ",")}%` : "—";
 
   return (
     <dl className="flex h-9 shrink-0 items-center gap-6 overflow-x-auto border-b border-border bg-surface-2 px-4 text-[13px] md:px-6">
-      <Metric label="Em aberto" value={formatMoney(openValue)} />
-      <Metric label="Negócios" value={formatNumber(openCount)} />
-      <Metric label="Previsão ponderada" value={formatMoney(weighted)} />
-      <Metric label="Ganho no mês" value={formatMoney(wonMonth)} />
-      <Metric label="Conversão" value={conversion} accent />
+      <Metric label="Clientes na carteira" value={formatNumber(openCount)} />
+      {atRiskStage && <Metric label="Em risco" value={formatNumber(atRisk)} accent={atRisk > 0} />}
+      <Metric label="Perdidos no mês" value={formatNumber(lostMonth)} />
+      {openValue > 0 && <Metric label="Valor em contratos" value={formatMoney(openValue)} />}
     </dl>
   );
 }

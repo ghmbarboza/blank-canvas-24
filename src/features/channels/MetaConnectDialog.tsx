@@ -30,7 +30,11 @@ type Field = keyof typeof EMPTY;
 
 const FIELDS: { key: Field; label: string; hint?: string; secret?: boolean; numeric?: boolean }[] =
   [
-    { key: "name", label: "Nome do canal", hint: "Como a equipe vai ver. Ex.: WhatsApp Vendas" },
+    {
+      key: "name",
+      label: "Nome do canal",
+      hint: "Como a equipe vai ver. Ex.: WhatsApp Atendimento",
+    },
     {
       key: "phoneNumberId",
       label: "ID do número (Phone Number ID)",

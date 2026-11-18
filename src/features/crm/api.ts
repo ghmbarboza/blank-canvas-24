@@ -6,6 +6,7 @@ import type { TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
 
 import type { BoardDeal, DealContact, DealNextStep, DealRow, Pipeline, Stage } from "./types";
 import { stageKind } from "./types";
+import { POS_VENDA_STAGES } from "@/features/posvenda/journey";
 
 const PAGE = 1000;
 
@@ -402,14 +403,13 @@ export function useSaveStages(accountId: string, pipelineId: string) {
   });
 }
 
-const DEFAULT_STAGES: Array<Omit<StageDraft, "id">> = [
-  { name: "Novo lead", color: "sky", probability: 10, kind: "open" },
-  { name: "Qualificado", color: "violet", probability: 30, kind: "open" },
-  { name: "Proposta", color: "amber", probability: 60, kind: "open" },
-  { name: "Negociação", color: "orange", probability: 80, kind: "open" },
-  { name: "Ganho", color: "emerald", probability: 100, kind: "won" },
-  { name: "Perdido", color: "rose", probability: 0, kind: "lost" },
-];
+// Jornada nova nasce com as mesmas etapas do pós-venda padrão (posvenda/journey.ts).
+const DEFAULT_STAGES: Array<Omit<StageDraft, "id">> = POS_VENDA_STAGES.map((s) => ({
+  name: s.name,
+  color: s.color,
+  probability: s.probability,
+  kind: s.kind,
+}));
 
 export function useCreatePipeline(accountId: string) {
   const qc = useQueryClient();

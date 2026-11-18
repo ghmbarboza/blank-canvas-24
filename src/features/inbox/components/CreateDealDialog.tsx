@@ -49,8 +49,8 @@ export function CreateDealDialog({ open, onOpenChange, accountId, contactId, con
       <DialogContent className="sm:max-w-md">
         <form onSubmit={onSubmit} className="space-y-4">
           <DialogHeader>
-            <DialogTitle>Criar negócio</DialogTitle>
-            <DialogDescription>Entra no funil padrão, na primeira etapa.</DialogDescription>
+            <DialogTitle>Colocar na carteira</DialogTitle>
+            <DialogDescription>Entra na jornada do cliente, na primeira etapa.</DialogDescription>
           </DialogHeader>
           <div className="space-y-1.5">
             <Label htmlFor="deal-title">Título</Label>
@@ -63,7 +63,7 @@ export function CreateDealDialog({ open, onOpenChange, accountId, contactId, con
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="deal-value">Valor (R$)</Label>
+            <Label htmlFor="deal-value">Valor do contrato (R$)</Label>
             <Input
               id="deal-value"
               inputMode="decimal"
@@ -82,7 +82,7 @@ export function CreateDealDialog({ open, onOpenChange, accountId, contactId, con
             </Button>
             <Button type="submit" disabled={!valid || create.isPending}>
               {create.isPending && <Loader2 className="animate-spin" />}
-              Criar negócio
+              Colocar na carteira
             </Button>
           </DialogFooter>
         </form>

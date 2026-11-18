@@ -32,7 +32,7 @@ const WORKING: Record<string, string> = {
   salvar_empresa: "Salvando a empresa",
   ler_site: "Lendo o site",
   pesquisar_web: "Pesquisando na internet",
-  guardar_conhecimento: "Guardando na biblioteca",
+  guardar_conhecimento: "Guardando na base de conhecimento",
   conectar_integracao: "Guardando a chave no cofre",
   conectar_zernio: "Conectando a Zernio",
   link_whatsapp: "Preparando o WhatsApp",
@@ -41,11 +41,29 @@ const WORKING: Record<string, string> = {
   link_ferramenta: "Preparando a conexão",
   importar_drive: "Importando do Drive",
   criar_agente: "Criando o agente",
-  convidar_pessoa: "Mandando o convite",
+  convidar_pessoa: "Gerando o link do convite",
   registrar_desejo: "Anotando o seu pedido",
   ligar_recurso: "Ligando o recurso",
   escolher_recursos: "Ajustando o menu",
   abrir_tela: "Preparando a tela",
+  conectar_whatsapp: "Conectando o WhatsApp",
+  ver_whatsapp: "Conferindo o WhatsApp",
+  desconectar_whatsapp: "Desconectando o WhatsApp",
+  listar_conhecimento: "Olhando a base de conhecimento",
+  apagar_conhecimento: "Apagando da base",
+  configurar_atendente: "Ajustando o atendente",
+  testar_atendente: "Testando o atendente",
+  ver_regras: "Olhando as regras",
+  configurar_regras: "Ajustando as regras de pós-venda",
+  listar_equipe: "Olhando a equipe",
+  mudar_papel: "Mudando o papel",
+  cadastrar_clientes: "Cadastrando os clientes",
+  marcar_cliente: "Marcando o cliente",
+  consultar_clientes: "Consultando a carteira",
+  importar_do_site: "Lendo o site (leva até 40 segundos)",
+  listar_catalogo: "Olhando o catálogo",
+  remover_produto: "Removendo do catálogo",
+  diagnostico: "Conferindo se está tudo funcionando",
   mostrar_opcoes: "Montando as opções",
   mostrar_formulario: "Montando o formulário",
   mostrar_cartoes: "Montando o resumo",
@@ -121,6 +139,29 @@ function workingOf(m: UIMessage | undefined): string | null {
         p.type.startsWith("tool-") && p.state !== "output-available" && p.state !== "output-error",
     );
   return running ? (WORKING[running.type.slice(5)] ?? "Trabalhando") : null;
+}
+
+const GENERIC_ERROR = "Não consegui responder agora.";
+
+/** A frase que o servidor mandou (crédito de IA, limite, demora); erro técnico vira a genérica. */
+export function serverMessage(err: unknown): string {
+  let msg = err instanceof Error ? err.message.trim() : "";
+  // erro antes do stream começar chega como JSON da rota: { error: "frase" }
+  if (msg.startsWith("{")) {
+    try {
+      const parsed = JSON.parse(msg) as { error?: unknown };
+      msg = typeof parsed.error === "string" && parsed.error !== "Erro interno" ? parsed.error : "";
+    } catch {
+      msg = "";
+    }
+  }
+  if (
+    !msg ||
+    msg.length > 240 ||
+    /^[{[<]|fetch|network|NetworkError|Failed to|TypeError/i.test(msg)
+  )
+    return GENERIC_ERROR;
+  return msg;
 }
 
 export function useNexa(accountId: string, person: string) {
@@ -211,7 +252,7 @@ export function useNexa(accountId: string, person: string) {
     loading: history === null,
     busy,
     working: busy ? (workingOf(live.at(-1)) ?? "Pensando") : null,
-    error: chat.error ? "Não consegui responder agora." : null,
+    error: chat.error ? serverMessage(chat.error) : null,
     send,
     retry,
     stop: chat.stop,

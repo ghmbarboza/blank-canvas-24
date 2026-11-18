@@ -15,7 +15,6 @@ import { toast } from "sonner";
 
 import { ContactAvatar } from "@/components/common/ContactAvatar";
 import { EmptyState } from "@/components/common/EmptyState";
-import { TempChip } from "@/components/common/TempChip";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -34,7 +33,7 @@ import { ContactFormDialog } from "../ContactFormDialog";
 import { EmailComposerDialog } from "@/features/email/EmailComposerDialog";
 import { hasChannel } from "@/lib/edition";
 import { NewTicketDialog } from "@/features/support/NewTicketDialog";
-import { LeadScoreCard } from "@/features/sdr/LeadScoreCard";
+import { HealthChip, useHealthMap } from "../../customer-health";
 import { ContactAiPanel } from "./ContactAiPanel";
 import { ContactProfileCard } from "./ContactProfileCard";
 import { OpportunityBlock } from "@/features/opportunity/OpportunityBlock";
@@ -54,14 +53,15 @@ export function ContactDetailPage({ contactId }: Props) {
   const contact = useContact(accountId, contactId);
   const conversations = useContactConversations(accountId, contactId);
   const classify = useClassifyContact(accountId);
+  const health = useHealthMap(accountId).map.get(contactId);
   const [editing, setEditing] = useState(false);
   const [emailing, setEmailing] = useState(false);
   const [ticketing, setTicketing] = useState(false);
 
   async function reclassify() {
     try {
-      const r = await classify.mutateAsync(contactId);
-      toast.success(`Reclassificado: score ${r.score}`);
+      await classify.mutateAsync(contactId);
+      toast.success("Resumo do cliente atualizado");
     } catch (err) {
       toast.error(errorMessage(err));
     }
@@ -93,7 +93,7 @@ export function ContactDetailPage({ contactId }: Props) {
         }
         action={
           <Button asChild variant="outline">
-            <Link to="/contatos">Voltar para contatos</Link>
+            <Link to="/contatos">Voltar para clientes</Link>
           </Button>
         }
       />
@@ -111,7 +111,7 @@ export function ContactDetailPage({ contactId }: Props) {
           to="/contatos"
           className="mb-3 inline-flex items-center gap-1 text-[13px] text-muted-foreground hover:text-foreground"
         >
-          <ArrowLeft className="size-3.5" aria-hidden /> Contatos
+          <ArrowLeft className="size-3.5" aria-hidden /> Clientes
         </Link>
         <div className="flex flex-wrap items-end gap-x-4 gap-y-3">
           <ContactAvatar
@@ -132,7 +132,7 @@ export function ContactDetailPage({ contactId }: Props) {
               <span className="rounded-md border border-border bg-surface-2 px-1.5 py-0.5 text-[11px]">
                 {lifecycleLabel(c.lifecycle)}
               </span>
-              <TempChip level={c.temperature} score={c.score} />
+              {health && <HealthChip level={health.result.level} score={health.result.score} />}
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -175,7 +175,7 @@ export function ContactDetailPage({ contactId }: Props) {
                 </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => void reclassify()} disabled={classify.isPending}>
                   {classify.isPending ? <Loader2 className="animate-spin" /> : <Bot />}
-                  Reclassificar com IA
+                  Atualizar resumo com IA
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -188,7 +188,7 @@ export function ContactDetailPage({ contactId }: Props) {
           <TabsList className="mb-4 w-full justify-start overflow-x-auto sm:w-auto">
             <TabsTrigger value="timeline">Linha do tempo</TabsTrigger>
             <TabsTrigger value="conversations">Conversas</TabsTrigger>
-            <TabsTrigger value="deals">Negócios</TabsTrigger>
+            <TabsTrigger value="deals">Carteira</TabsTrigger>
             <TabsTrigger value="notes">Notas</TabsTrigger>
           </TabsList>
           <TabsContent value="timeline">
@@ -207,12 +207,11 @@ export function ContactDetailPage({ contactId }: Props) {
 
         <aside className="space-y-4" aria-label="Resumo do contato">
           <ContactAiPanel accountId={accountId} contact={c} />
-          <LeadScoreCard accountId={accountId} contactId={c.id} />
           <section
             className="rounded-2xl border border-border bg-surface p-5"
-            aria-label="Oportunidade"
+            aria-label="Jornada do cliente"
           >
-            <p className="eyebrow mb-4">Fluxo comercial</p>
+            <p className="eyebrow mb-4">Jornada do cliente</p>
             <OpportunityBlock accountId={accountId} contact={c} />
           </section>
           <ContactCompanyCard accountId={accountId} contact={c} />

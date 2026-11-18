@@ -5,9 +5,9 @@ export type ItemKind = "core" | "upsell" | "cross_sell";
 export type ItemStatus = "suggested" | "accepted" | "declined";
 
 export const KIND_LABEL: Record<ItemKind, string> = {
-  core: "Interesse",
-  upsell: "Upsell",
-  cross_sell: "Cross-sell",
+  core: "Principal",
+  upsell: "Plano maior",
+  cross_sell: "Item complementar",
 };
 
 export interface Totals {

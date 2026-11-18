@@ -201,17 +201,17 @@ export function EventDialog({ open, onOpenChange, event, draft }: Props) {
           </Field>
 
           {contact && (
-            <Field id="ev-deal" label="Negócio do contato (opcional)">
+            <Field id="ev-deal" label="Cartão do cliente na carteira (opcional)">
               <Controller
                 control={control}
                 name="dealId"
                 render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger id="ev-deal">
-                      <SelectValue placeholder="Sem negócio" />
+                      <SelectValue placeholder="Sem cartão na carteira" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value={NONE}>Sem negócio</SelectItem>
+                      <SelectItem value={NONE}>Sem cartão na carteira</SelectItem>
                       {(deals.data ?? []).map((d) => (
                         <SelectItem key={d.id} value={d.id}>
                           {d.title} · {formatMoney(d.value)}

@@ -51,7 +51,7 @@ export function useClassifyContact(accountId: string, contactId: string) {
         queryClient.invalidateQueries({ queryKey: inboxKeys.contact(accountId, contactId) }),
         queryClient.invalidateQueries({ queryKey: inboxKeys.conversations(accountId) }),
       ]);
-      toast.success("Contato reclassificado");
+      toast.success("Resumo do cliente atualizado");
     },
     onError: (err) => {
       const noHistory = err instanceof FunctionError && err.code === "no_history";
@@ -97,7 +97,7 @@ interface NewDeal {
   value: number;
 }
 
-// Negócio novo entra no funil padrão, na primeira etapa aberta.
+// Cartão novo entra na jornada padrão da carteira, na primeira etapa aberta.
 export function useCreateDeal(accountId: string, contactId: string) {
   const queryClient = useQueryClient();
   const { user } = useAuth();
@@ -112,7 +112,10 @@ export function useCreateDeal(accountId: string, contactId: string) {
         .limit(1);
       if (pErr) throw pErr;
       const pipeline = pipelines?.[0];
-      if (!pipeline) throw new Error("Nenhum funil criado. Configure um funil no CRM primeiro.");
+      if (!pipeline)
+        throw new Error(
+          "Nenhuma jornada criada. Abra a Carteira e crie a jornada do cliente primeiro.",
+        );
       const { data: stage, error: sErr } = await supabase
         .from("pipeline_stages")
         .select("id")
@@ -123,7 +126,7 @@ export function useCreateDeal(accountId: string, contactId: string) {
         .limit(1)
         .maybeSingle();
       if (sErr) throw sErr;
-      if (!stage) throw new Error("O funil padrão não tem etapa aberta.");
+      if (!stage) throw new Error("A jornada padrão não tem etapa aberta.");
       const { error } = await supabase.from("deals").insert({
         account_id: accountId,
         pipeline_id: pipeline.id,
@@ -138,7 +141,7 @@ export function useCreateDeal(accountId: string, contactId: string) {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["deals", accountId] });
-      toast.success("Negócio criado");
+      toast.success("Cliente colocado na carteira");
     },
     onError: (err) => toast.error(errorMessage(err)),
   });

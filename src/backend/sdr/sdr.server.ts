@@ -188,8 +188,8 @@ export async function routeContact(
       _account: accountId,
       _user: pick.userId,
       _kind: "lead_new",
-      _title: `Novo lead para você: ${data.name ?? data.email ?? "sem nome"}`,
-      _body: "Distribuído pelo roteamento de leads",
+      _title: `Novo contato para você: ${data.name ?? data.email ?? "sem nome"}`,
+      _body: "Distribuído pelo rodízio de contatos",
       _link: `/contatos/${contactId}`,
     });
   return { owner: pick.userId };

@@ -505,8 +505,8 @@ function NextUp({
       </div>
       {blockReason && <p className="mt-3 text-[12px] text-primary-foreground/80">{blockReason}</p>}
       <p className="mt-3 text-[11px] text-primary-foreground/60">
-        Ordem: prazo de resposta acabando, depois cliente com negócio em aberto, depois ordem de
-        chegada. Quem já cuida do caso do cliente recebe primeiro.
+        Ordem: prazo de resposta acabando, depois cliente de maior valor na carteira, depois ordem
+        de chegada. Quem já cuida do caso do cliente recebe primeiro.
       </p>
     </section>
   );

@@ -14,7 +14,8 @@ import { Button } from "@/components/ui/button";
 import { pageHead } from "@/lib/page-head";
 
 export const Route = createFileRoute("/convite/$token")({
-  head: () => pageHead("Convite", "Aceite seu convite para participar de uma equipe na Central de CS."),
+  head: () =>
+    pageHead("Convite", "Aceite seu convite para participar de uma equipe na Central de CS."),
   component: Invite,
 });
 
@@ -22,7 +23,7 @@ const ROLE_LABEL: Record<string, string> = {
   admin: "administrador",
   manager: "gestor",
   agent: "atendente",
-  seller: "vendedor",
+  seller: "atendente da própria carteira",
 };
 
 function Invite() {

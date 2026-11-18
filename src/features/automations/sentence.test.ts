@@ -29,7 +29,7 @@ describe("buildSentence", () => {
       "manda WhatsApp",
       "manda e-mail",
       "se não responder em 1 dia,",
-      "cria tarefa para o vendedor",
+      "cria tarefa para o atendente",
     ]);
     expect(s.more).toBe(0);
   });

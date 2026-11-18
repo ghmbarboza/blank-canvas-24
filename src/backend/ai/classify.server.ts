@@ -31,14 +31,15 @@ const SCHEMA = {
       type: "integer",
       minimum: 0,
       maximum: 100,
-      description: "Chance de virar venda nos próximos 30 dias",
+      description: "Chance de comprar de novo ou renovar nos próximos 30 dias",
     },
     temperature: { type: "string", enum: ["hot", "warm", "cold"] },
     intent: { type: "string", description: "O que a pessoa quer, em até 8 palavras" },
     summary: { type: "string", description: "Resumo da situação em até 2 frases, em português" },
     next_step: {
       type: "string",
-      description: "Ação concreta recomendada ao vendedor, começando por verbo",
+      description:
+        "Ação concreta recomendada a quem atende o cliente (resolver, acompanhar, pedir avaliação, oferecer recompra), começando por verbo",
     },
     signals: {
       type: "array",
@@ -75,10 +76,11 @@ const SCHEMA = {
   required: ["score", "temperature", "intent", "summary", "next_step", "signals"],
 };
 
-const SYSTEM = `Você é analista comercial de uma empresa brasileira e classifica leads a partir das conversas.
+const SYSTEM = `Você é analista de pós-venda (sucesso do cliente) de uma empresa brasileira e lê as conversas para resumir a situação de cada cliente.
+Contexto: a maioria das pessoas já comprou. No resumo e no próximo passo fale de atendimento, uso do que foi comprado, satisfação, renovação e recompra. Não chame a pessoa de lead nem sugira "enviar proposta" ou "qualificar".
 Regras:
 - Use só o que está nas mensagens. Não invente orçamento, prazo nem produto.
-- hot (70-100): pediu preço, proposta, prazo ou quer comprar/agendar já.
+- hot (70-100): quer comprar de novo, renovar, contratar mais ou agendar já.
 - warm (35-69): interesse real, mas sem urgência ou com objeção aberta.
 - cold (0-34): curiosidade, fora do perfil, sem resposta ou pediu para parar.
 - Se a pessoa pediu para não ser contatada, score 0 e next_step "Respeitar o pedido e não contatar".
@@ -220,7 +222,7 @@ async function maybeOpenDeal(
     auto_deal?: boolean;
     auto_deal_min_score?: number;
   };
-  if (settings.auto_deal === false || score < (settings.auto_deal_min_score ?? 60)) return;
+  if (settings.auto_deal !== true || score < (settings.auto_deal_min_score ?? 60)) return;
   if (hasInterest) {
     const { error } = await db.rpc("build_opportunity", { _contact: contact.id });
     if (error) console.error("[classify] build_opportunity", error.message);
@@ -257,7 +259,7 @@ async function maybeOpenDeal(
       contact_id: contact.id,
       title:
         result.suggested_deal_title?.slice(0, 160) ||
-        `Oportunidade · ${contact.name ?? "novo lead"}`,
+        `Acompanhamento · ${contact.name ?? "cliente"}`,
       value: result.estimated_value && result.estimated_value > 0 ? result.estimated_value : 0,
       owner_user_id: contact.owner_user_id,
       source: "ia",
@@ -270,7 +272,7 @@ async function maybeOpenDeal(
       contact_id: contact.id,
       deal_id: deal.id,
       type: "ai",
-      title: `Negócio aberto pela IA (score ${score})`,
+      title: `Cliente colocado na carteira pela IA (nota ${score})`,
       body: result.summary,
     });
 }

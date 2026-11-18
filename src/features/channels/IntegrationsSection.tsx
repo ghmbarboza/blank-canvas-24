@@ -114,7 +114,7 @@ function AiCard({ accountId, state }: { accountId: string; state: IntegrationsSt
     <IntegrationCard
       icon={Bot}
       title="IA própria"
-      description={`Quem classifica leads e sugere respostas. Em uso agora: ${options.find((o) => o.value === saved)?.label ?? "IA inclusa"}.`}
+      description={`Quem resume os clientes e sugere respostas. Em uso agora: ${options.find((o) => o.value === saved)?.label ?? "IA inclusa"}.`}
       integration={choice === "bundled" ? undefined : state?.byProvider[choice]}
       showStatus={choice !== "bundled"}
     >

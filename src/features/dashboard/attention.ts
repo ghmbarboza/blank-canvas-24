@@ -1,9 +1,9 @@
-import { formatMoney, formatRelative } from "@/lib/format";
+import { formatRelative } from "@/lib/format";
 import { slaState } from "@/features/support/constants";
 
-// "O que precisa de você": pendências reais, cada uma com motivo e uma ação. Ordem por urgência.
-export type AttentionKind =
-  "ticket_late" | "hot_waiting" | "handoff" | "ticket_due" | "deal_stalled";
+// "O que precisa de você hoje": pendências reais do pós-venda, cada uma com motivo e uma ação.
+// Ordem por urgência: prazo estourado, cliente esperando, passagem da IA, prazo perto, cliente em risco.
+export type AttentionKind = "ticket_late" | "waiting" | "handoff" | "ticket_due" | "client_risk";
 
 export interface AttentionItem {
   key: string;
@@ -17,24 +17,25 @@ export interface AttentionItem {
 
 const RANK: Record<AttentionKind, number> = {
   ticket_late: 0,
-  hot_waiting: 1,
+  waiting: 1,
   handoff: 2,
   ticket_due: 3,
-  deal_stalled: 4,
+  client_risk: 4,
 };
 
 export const ATTENTION_ACTION: Record<AttentionKind, string> = {
   ticket_late: "Abrir chamado",
-  hot_waiting: "Responder agora",
+  waiting: "Responder agora",
   handoff: "Assumir conversa",
   ticket_due: "Abrir chamado",
-  deal_stalled: "Retomar negócio",
+  client_risk: "Ver cliente",
 };
 
-export const STALLED_DAYS = 7;
 export const ATTENTION_MAX = 5;
+/** Quantos clientes em risco entram na lista (os de pior saúde). */
+export const RISK_MAX = 2;
 
-export interface HotWaitingRow {
+export interface WaitingRow {
   id: string;
   name: string;
   unread: number;
@@ -46,12 +47,14 @@ export interface HandoffRow {
   reason: string | null;
   at: string;
 }
-export interface StalledDealRow {
-  id: string;
-  title: string;
-  value: number;
-  contact: string | null;
-  updated_at: string;
+/** Cliente em risco pela saúde da carteira (features/gestao/health.ts). */
+export interface RiskRow {
+  contact_id: string;
+  name: string;
+  score: number;
+  /** Sinal que mais pesou na nota. */
+  reason: string | null;
+  next_action: string;
 }
 export interface TicketRow {
   id: string;
@@ -65,20 +68,20 @@ export interface TicketRow {
 }
 
 export interface AttentionSources {
-  hot: HotWaitingRow[];
+  waiting: WaitingRow[];
   handoffs: HandoffRow[];
-  deals: StalledDealRow[];
+  risk: RiskRow[];
   tickets: TicketRow[];
 }
 
 export function buildAttention(src: AttentionSources, now = Date.now()): AttentionItem[] {
   const items: AttentionItem[] = [];
-  for (const c of src.hot) {
+  for (const c of src.waiting) {
     const since = c.last_inbound_at ? `, escreveu ${formatRelative(c.last_inbound_at)}` : "";
     items.push({
-      key: `hot-${c.id}`,
-      kind: "hot_waiting",
-      title: `Lead quente sem resposta: ${c.name}`,
+      key: `waiting-${c.id}`,
+      kind: "waiting",
+      title: `Cliente esperando resposta: ${c.name}`,
       reason: `${c.unread} ${c.unread === 1 ? "mensagem não lida" : "mensagens não lidas"}${since}.`,
       ref: c.id,
       at: c.last_inbound_at ?? new Date(now).toISOString(),
@@ -106,14 +109,15 @@ export function buildAttention(src: AttentionSources, now = Date.now()): Attenti
       at: new Date(now + (sla.minutesLeft ?? 0) * 60_000).toISOString(),
     });
   }
-  for (const d of src.deals) {
+  // Pior saúde primeiro: a nota entra na âncora para ordenar dentro do tipo.
+  for (const r of [...src.risk].sort((a, b) => a.score - b.score).slice(0, RISK_MAX)) {
     items.push({
-      key: `deal-${d.id}`,
-      kind: "deal_stalled",
-      title: `Negócio parado: ${d.title}`,
-      reason: `${formatMoney(d.value)}${d.contact ? ` com ${d.contact}` : ""}, sem movimento desde ${formatRelative(d.updated_at)}.`,
-      ref: d.id,
-      at: d.updated_at,
+      key: `risk-${r.contact_id}`,
+      kind: "client_risk",
+      title: `Cliente em risco: ${r.name}`,
+      reason: `Saúde ${r.score} de 100${r.reason ? `. ${r.reason}` : ""}. ${r.next_action}.`,
+      ref: r.contact_id,
+      at: String(r.score).padStart(3, "0"),
     });
   }
   return items

@@ -5,14 +5,14 @@ import { EVENT_LABEL } from "./triggerSummary";
 
 const TRIGGER_PHRASE: Record<string, string> = {
   "contact.created": "Quando um contato é criado",
-  "contact.became_hot": "Quando um contato esquenta",
+  "contact.became_hot": "Quando um cliente pede atenção",
   "contact.lifecycle_changed": "Quando um contato muda de fase",
   "customer.new": "Quando alguém vira cliente",
   "nps.answered": "Quando o cliente responde a pesquisa",
-  "deal.created": "Quando um negócio é criado",
-  "deal.stage_changed": "Quando um negócio muda de etapa",
-  "deal.won": "Quando um negócio é ganho",
-  "deal.lost": "Quando um negócio é perdido",
+  "deal.created": "Quando um cliente entra na carteira",
+  "deal.stage_changed": "Quando um cliente muda de etapa na carteira",
+  "deal.won": "Quando um cliente é fidelizado",
+  "deal.lost": "Quando um cliente é perdido",
   "message.received": "Quando chega uma mensagem",
   "form.submitted": "Quando um formulário é enviado",
   "meeting.scheduled": "Quando uma reunião é marcada",
@@ -88,7 +88,7 @@ export function stepPhrase(n: AutoNode): string {
     case "voice_call":
       return "liga com o agente de voz";
     case "task":
-      return "cria tarefa para o vendedor";
+      return "cria tarefa para o atendente";
     case "ticket":
       return "abre um chamado";
     case "notify":
@@ -96,7 +96,7 @@ export function stepPhrase(n: AutoNode): string {
     case "assign":
       return "distribui para a equipe";
     case "move_stage":
-      return "move o negócio de etapa";
+      return "move o cliente de etapa na carteira";
     case "add_tag":
       return str(c, "tag") ? `põe a etiqueta ${str(c, "tag")}` : "põe uma etiqueta";
     case "remove_tag":

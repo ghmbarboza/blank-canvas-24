@@ -1,10 +1,10 @@
 import type { RowSelectionState } from "@tanstack/react-table";
 
 import { ContactAvatar } from "@/components/common/ContactAvatar";
-import { TempChip } from "@/components/common/TempChip";
 import { Checkbox } from "@/components/ui/checkbox";
 import { formatRelative } from "@/lib/format";
 
+import { HealthChip, type CustomerHealth } from "../customer-health";
 import { isPlatformSource, type ContactRow } from "../types";
 import { ChannelBadges } from "./ChannelBadges";
 
@@ -13,15 +13,17 @@ type Props = {
   selection: RowSelectionState;
   onSelectionChange: (next: RowSelectionState) => void;
   channels: Map<string, string[]>;
+  health: Map<string, CustomerHealth>;
   onOpen: (id: string) => void;
 };
 
-// Em tela pequena a tabela vira lista: nome, temperatura e próximo passo, que é o que importa no celular.
+// Em tela pequena a tabela vira lista: nome, saúde e próximo passo, que é o que importa no celular.
 export function ContactsMobileList({
   rows,
   selection,
   onSelectionChange,
   channels,
+  health,
   onOpen,
 }: Props) {
   function toggle(id: string, checked: boolean) {
@@ -60,7 +62,12 @@ export function ContactsMobileList({
                 </span>
               </span>
               <span className="mt-1 flex flex-wrap items-center gap-1.5">
-                <TempChip level={c.temperature} score={c.score} />
+                {health.get(c.id) && (
+                  <HealthChip
+                    level={health.get(c.id)!.result.level}
+                    score={health.get(c.id)!.result.score}
+                  />
+                )}
                 <ChannelBadges contact={c} platforms={channels.get(c.id)} />
               </span>
               {c.company && (

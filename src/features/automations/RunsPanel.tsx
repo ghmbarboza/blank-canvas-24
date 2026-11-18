@@ -62,7 +62,7 @@ export function RunsPanel({
           <EmptyState
             icon={Users}
             title="Ninguém inscrito ainda"
-            description="Os contatos entram pelo gatilho ou pela inscrição manual (lista de contatos, segmento ou negócio)."
+            description="Os contatos entram pelo gatilho ou pela inscrição manual (lista de clientes, segmento ou cartão da carteira)."
             className="py-10"
           />
         ) : (

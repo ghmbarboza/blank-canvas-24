@@ -91,7 +91,7 @@ export function rankReason(item: RankableItem, now: Date, riskSeconds = 120): st
   if (item.sla_due_at && new Date(item.sla_due_at).getTime() < now.getTime())
     return "Prazo de resposta já passou";
   if (atRisk(item.sla_due_at, now, riskSeconds)) return "Prazo de resposta acabando";
-  if (item.customer_value > 0) return "Cliente com negócio em aberto";
+  if (item.customer_value > 0) return "Cliente na carteira";
   return "Ordem de chegada";
 }
 
@@ -388,7 +388,7 @@ export const WRAP_RESULTS = [
   "Resolvido",
   "Retornar depois",
   "Encaminhado para outra área",
-  "Venda ou proposta",
+  "Renovação ou recompra",
   "Sem interesse",
   "Não resolvido",
 ] as const;

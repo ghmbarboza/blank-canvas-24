@@ -6,16 +6,16 @@ import { EDITION, hasChannel, type Edition, type EditionChannel } from "@/lib/ed
 export interface NotificationKind {
   id: string;
   label: string;
-  group: "Vendas" | "Atendimento" | "Reuniões e ligações" | "Sistema";
+  group: "Carteira" | "Atendimento" | "Reuniões e ligações" | "Sistema";
 }
 
 export const NOTIFICATION_KINDS: NotificationKind[] = [
-  { id: "lead_new", label: "Lead novo", group: "Vendas" },
-  { id: "lead_hot", label: "Lead esquentou", group: "Vendas" },
-  { id: "contact_assigned", label: "Contato atribuído a você", group: "Vendas" },
-  { id: "proposal_viewed", label: "Proposta aberta pelo cliente", group: "Vendas" },
-  { id: "proposal_accepted", label: "Proposta aceita", group: "Vendas" },
-  { id: "forecast_suggestion", label: "Sugestão de forecast da IA", group: "Vendas" },
+  { id: "lead_new", label: "Contato novo", group: "Carteira" },
+  { id: "lead_hot", label: "Cliente pede atenção", group: "Carteira" },
+  { id: "contact_assigned", label: "Cliente atribuído a você", group: "Carteira" },
+  { id: "proposal_viewed", label: "Proposta aberta pelo cliente", group: "Carteira" },
+  { id: "proposal_accepted", label: "Proposta aceita", group: "Carteira" },
+  { id: "forecast_suggestion", label: "Sugestão de previsão da IA", group: "Carteira" },
   { id: "ticket_assigned", label: "Chamado atribuído a você", group: "Atendimento" },
   {
     id: "sla_warning",
@@ -45,9 +45,17 @@ const KIND_CHANNEL: Record<string, EditionChannel[]> = {
   tracked_term: ["phone", "video"],
 };
 
+/** Avisos de venda (proposta, previsão): só aparecem na edição completa. */
+const SALES_KINDS: ReadonlySet<string> = new Set([
+  "proposal_viewed",
+  "proposal_accepted",
+  "forecast_suggestion",
+]);
+
 /** Tipos de aviso que a tela de preferências oferece nesta edição. */
 export function notificationKindsFor(edition: Edition = EDITION): NotificationKind[] {
   return NOTIFICATION_KINDS.filter((k) => {
+    if (SALES_KINDS.has(k.id) && !edition.allIntegrations) return false;
     const needs = KIND_CHANNEL[k.id];
     return !needs || needs.some((c) => hasChannel(c, edition));
   });

@@ -12,7 +12,7 @@ export const PROVIDER_LABEL: Record<SyncProvider, string> = {
 export const ENTITY_LABEL: Record<SyncEntity, string> = {
   company: "empresas",
   contact: "contatos",
-  deal: "negócios",
+  deal: "cartões da carteira",
 };
 
 export interface CompanyData {

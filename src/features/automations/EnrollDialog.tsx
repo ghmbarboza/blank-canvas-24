@@ -113,7 +113,7 @@ export function EnrollDialog({
           <DialogDescription>
             {preset
               ? dealId
-                ? "O contato do negócio começa a cadência agora. Se ele responder, a cadência pausa sozinha."
+                ? "O cliente deste cartão começa a cadência agora. Se ele responder, a cadência pausa sozinha."
                 : `${contactIds?.length} contato(s) selecionado(s) começam agora.`
               : "Escolha um segmento inteiro ou contatos específicos."}
           </DialogDescription>

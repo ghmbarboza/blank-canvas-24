@@ -58,7 +58,7 @@ export function NewDealDialog({
 
   const effectiveStage = stageId || openStages[0]?.id || "";
   const parsedValue = parseMoneyInput(value);
-  const titleError = touched && !title.trim() ? "Dê um nome ao negócio" : null;
+  const titleError = touched && !title.trim() ? "Dê um nome ao cartão" : null;
 
   function reset() {
     setTitle("");
@@ -82,7 +82,7 @@ export function NewDealDialog({
         source: contact?.source ?? "manual",
         position: topPosition(effectiveStage),
       });
-      toast.success("Negócio criado");
+      toast.success("Cliente colocado na carteira");
       reset();
       onOpenChange(false);
       onCreated?.(id);
@@ -101,9 +101,9 @@ export function NewDealDialog({
     >
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Novo negócio</DialogTitle>
+          <DialogTitle>Novo cliente na carteira</DialogTitle>
           <DialogDescription>
-            Entra no topo da etapa escolhida, com você como dono.
+            Entra no topo da etapa escolhida, com você como responsável.
           </DialogDescription>
         </DialogHeader>
         <form
@@ -120,7 +120,7 @@ export function NewDealDialog({
               id="new-deal-title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Ex.: Plano anual · Clínica Bem Estar"
+              placeholder="Ex.: Clínica Bem Estar · Plano anual"
               aria-invalid={Boolean(titleError)}
               autoFocus
             />
@@ -128,7 +128,7 @@ export function NewDealDialog({
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="grid gap-1.5">
-              <Label htmlFor="new-deal-value">Valor (R$)</Label>
+              <Label htmlFor="new-deal-value">Valor do contrato (R$)</Label>
               <Input
                 id="new-deal-value"
                 inputMode="decimal"
@@ -156,7 +156,7 @@ export function NewDealDialog({
             </div>
           </div>
           <div className="grid gap-1.5">
-            <Label htmlFor="new-deal-contact">Contato (opcional)</Label>
+            <Label htmlFor="new-deal-contact">Cliente (opcional)</Label>
             <ContactPicker
               id="new-deal-contact"
               accountId={accountId}
@@ -170,7 +170,7 @@ export function NewDealDialog({
             </Button>
             <Button type="submit" disabled={create.isPending || !effectiveStage}>
               {create.isPending && <Loader2 className="animate-spin" aria-hidden />}
-              Criar negócio
+              Colocar na carteira
             </Button>
           </DialogFooter>
         </form>

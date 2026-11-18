@@ -5,9 +5,6 @@ import { pageHead } from "@/lib/page-head";
 
 export const Route = createFileRoute("/_app/sdr")({
   head: () =>
-    pageHead(
-      "Pontuação e rodízio",
-      "Nota preditiva do lead, horário ideal e roteamento automático.",
-    ),
+    pageHead("Pontuação e rodízio", "Nota do contato, horário ideal e rodízio automático."),
   component: SdrPage,
 });

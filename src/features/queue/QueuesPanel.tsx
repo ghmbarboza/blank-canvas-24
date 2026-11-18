@@ -116,7 +116,7 @@ export function QueueForm({
             maxLength={80}
             value={d.name}
             onChange={(e) => set("name", e.target.value)}
-            placeholder="Ex.: Suporte, Financeiro, Vendas"
+            placeholder="Ex.: Suporte, Financeiro, Renovação"
           />
         </div>
         <div className="space-y-1.5">
@@ -251,7 +251,7 @@ export function QueuesPanel({ accountId }: { accountId: string }) {
         <EmptyState
           icon={ListOrdered}
           title="Nenhuma fila ainda"
-          description="Crie uma fila para cada tipo de atendimento (ex.: Suporte e Vendas). Sem fila, tudo entra sem habilidade exigida."
+          description="Crie uma fila para cada tipo de atendimento (ex.: Suporte e Renovação). Sem fila, tudo entra sem habilidade exigida."
           action={
             <Button className="rounded-full" onClick={() => setEditing("new")}>
               <Plus className="size-4" /> Criar a primeira fila

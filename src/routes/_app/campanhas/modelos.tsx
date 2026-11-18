@@ -4,6 +4,7 @@ import { TemplatesPage } from "@/features/email/TemplatesPage";
 import { pageHead } from "@/lib/page-head";
 
 export const Route = createFileRoute("/_app/campanhas/modelos")({
-  head: () => pageHead("Modelos de e-mail", "Modelos para campanhas, avisos e e-mail do vendedor."),
+  head: () =>
+    pageHead("Modelos de e-mail", "Modelos para campanhas, avisos e e-mail do atendente."),
   component: TemplatesPage,
 });

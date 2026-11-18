@@ -26,7 +26,7 @@ export interface ReportRow {
 
 export const ENTITY_LABEL: Record<ReportEntity, string> = {
   contacts: "Contatos",
-  deals: "Negócios",
+  deals: "Carteira",
   activities: "Atividades",
 };
 
@@ -37,7 +37,7 @@ export const GROUPS: Record<ReportEntity, { id: string; label: string }[]> = {
     { id: "week", label: "Semana de entrada" },
     { id: "source", label: "Origem" },
     { id: "lifecycle", label: "Fase" },
-    { id: "temperature", label: "Temperatura" },
+    { id: "temperature", label: "Interesse" },
     { id: "owner_user_id", label: "Responsável" },
     { id: "city", label: "Cidade" },
     { id: "company_id", label: "Empresa" },
@@ -48,10 +48,10 @@ export const GROUPS: Record<ReportEntity, { id: string; label: string }[]> = {
     { id: "week", label: "Semana" },
     { id: "status", label: "Situação" },
     { id: "stage_id", label: "Etapa" },
-    { id: "pipeline_id", label: "Funil" },
-    { id: "owner_user_id", label: "Vendedor" },
+    { id: "pipeline_id", label: "Quadro" },
+    { id: "owner_user_id", label: "Responsável" },
     { id: "source", label: "Origem" },
-    { id: "lost_reason", label: "Motivo de perda" },
+    { id: "lost_reason", label: "Motivo da saída" },
   ],
   activities: [
     { id: "none", label: "Total" },
@@ -66,12 +66,12 @@ export const GROUPS: Record<ReportEntity, { id: string; label: string }[]> = {
 export const METRICS: Record<ReportEntity, { id: ReportMetric; label: string }[]> = {
   contacts: [
     { id: "count", label: "Quantidade" },
-    { id: "avg_score", label: "Score médio" },
+    { id: "avg_score", label: "Nota média da IA" },
   ],
   deals: [
     { id: "count", label: "Quantidade" },
     { id: "sum_value", label: "Valor total" },
-    { id: "avg_value", label: "Ticket médio" },
+    { id: "avg_value", label: "Valor médio" },
   ],
   activities: [{ id: "count", label: "Quantidade" }],
 };
@@ -80,7 +80,7 @@ export const DATE_FIELDS: Record<ReportEntity, { id: string; label: string }[]> 
   contacts: [{ id: "created_at", label: "Data de entrada" }],
   deals: [
     { id: "created_at", label: "Criação" },
-    { id: "closed_at", label: "Fechamento" },
+    { id: "closed_at", label: "Encerramento" },
   ],
   activities: [
     { id: "created_at", label: "Criação" },
@@ -90,17 +90,17 @@ export const DATE_FIELDS: Record<ReportEntity, { id: string; label: string }[]> 
 };
 
 export const VALUE_LABEL: Record<string, string> = {
-  open: "Aberto",
-  won: "Ganho",
+  open: "Na carteira",
+  won: "Fidelizado",
   lost: "Perdido",
-  lead: "Lead",
-  opportunity: "Oportunidade",
+  lead: "Contato (ainda não comprou)",
+  opportunity: "Em negociação",
   customer: "Cliente",
   inactive: "Inativo",
-  hot: "Quente",
-  warm: "Morno",
-  cold: "Frio",
-  sem: "Sem temperatura",
+  hot: "Interesse alto",
+  warm: "Interesse médio",
+  cold: "Interesse baixo",
+  sem: "Sem classificação",
   note: "Nota",
   call: "Ligação",
   task: "Tarefa",

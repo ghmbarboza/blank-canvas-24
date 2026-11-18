@@ -25,7 +25,13 @@ export const ROLES: RoleDef[] = [
     label: "Recepção",
     summary: "Recebe todo mundo, entende o que a pessoa quer e passa para o agente certo.",
   },
-  { id: "sdr", label: "SDR", summary: "Qualifica o interessado, aquece e marca a reunião." },
+  // o valor guardado continua "sdr"; na central de pós-venda o papel cuida de recompra e renovação
+  {
+    id: "sdr",
+    label: "Recompra",
+    summary:
+      "Entende o que o cliente quer comprar de novo ou renovar e marca a conversa com a equipe.",
+  },
   {
     id: "sac",
     label: "SAC",
@@ -77,9 +83,9 @@ export const INTERNAL_TOOLS: InternalToolDef[] = [
   {
     slug: "identify_contact",
     label: "Ver ficha do cliente",
-    help: "Consulta nome, estágio, negócios e chamados abertos do cliente.",
+    help: "Consulta nome, etapa na carteira e chamados abertos do cliente.",
     description:
-      "Lê a ficha do cliente desta conversa no CRM: estágio, pontuação, negócios e chamados abertos, último resumo.",
+      "Lê a ficha do cliente desta conversa no CRM: etapa na carteira, pontuação, cartões e chamados abertos, último resumo.",
     parameters: obj({}),
     sideEffect: false,
   },
@@ -110,21 +116,25 @@ export const INTERNAL_TOOLS: InternalToolDef[] = [
   },
   {
     slug: "create_deal",
-    label: "Criar negócio no funil",
-    help: "Coloca o interessado no funil de vendas.",
+    label: "Colocar o cliente na carteira",
+    help: "Abre um cartão na carteira quando o cliente quer comprar de novo ou renovar.",
     description:
-      "Cria um negócio no funil padrão para o cliente desta conversa quando há interesse real de compra.",
-    parameters: obj({ title: str("Nome do negócio"), value: num("Valor estimado em reais") }, [
-      "title",
-    ]),
+      "Cria um cartão na carteira padrão para o cliente desta conversa quando há interesse real em comprar de novo, renovar ou contratar algo a mais.",
+    parameters: obj(
+      {
+        title: str("Nome do cartão (o que o cliente quer)"),
+        value: num("Valor estimado em reais"),
+      },
+      ["title"],
+    ),
     sideEffect: true,
   },
   {
     slug: "score_lead",
-    label: "Pontuar o lead",
-    help: "Atualiza a temperatura e o resumo do lead.",
+    label: "Atualizar o resumo do cliente",
+    help: "Atualiza o resumo e o próximo passo do cliente.",
     description:
-      "Recalcula pontuação, temperatura e próximo passo do lead a partir da conversa. Use depois de qualificar.",
+      "Recalcula pontuação, resumo e próximo passo do cliente a partir da conversa. Use depois de entender o que ele precisa.",
     parameters: obj({}),
     sideEffect: true,
   },
@@ -520,7 +530,7 @@ export const TEMPLATES: AgentTemplate[] = [
     goal: "Entender em poucas mensagens o que a pessoa precisa e passar para o agente certo.",
     instructions: [
       "Cumprimente uma vez, de forma curta.",
-      "Descubra a intenção: compra, suporte, pagamento, agendamento ou pós-venda.",
+      "Descubra a intenção: dúvida de uso, suporte, pagamento, agendamento, recompra ou reclamação.",
       "Assim que souber, passe para o agente do papel certo com um resumo do que a pessoa já disse.",
       "Se ninguém da equipe de IA cobre o assunto, passe para um humano.",
       "Não tente resolver o caso você mesma.",
@@ -531,7 +541,7 @@ export const TEMPLATES: AgentTemplate[] = [
       {
         kind: "custom",
         question: "Oi, queria saber quanto custa o plano de vocês",
-        expected: "Passa para o agente de vendas (SDR) ou responde de forma curta e encaminha.",
+        expected: "Passa para o agente de recompra ou responde de forma curta e encaminha.",
       },
       {
         kind: "custom",
@@ -544,13 +554,13 @@ export const TEMPLATES: AgentTemplate[] = [
   {
     key: "sdr",
     role: "sdr",
-    name: "SDR",
-    persona: "Consultora comercial",
-    goal: "Qualificar o interessado e marcar uma reunião com o time de vendas.",
+    name: "Recompra",
+    persona: "Consultora de clientes",
+    goal: "Entender o que o cliente quer comprar de novo ou renovar e marcar uma conversa com a equipe.",
     instructions: [
-      "Qualifique com perguntas naturais, uma por vez: necessidade, prazo, quem decide e orçamento.",
+      "Entenda com perguntas naturais, uma por vez: o que ele já usa, o que precisa agora e para quando.",
       "Use o catálogo para falar de produto e preço; nunca invente preço ou condição.",
-      "Quando houver interesse real, crie o negócio no funil e ofereça horários para a reunião.",
+      "Quando houver interesse real, coloque o cliente na carteira e ofereça horários para a conversa.",
       "Se a pessoa ainda não quer conversar, ofereça colocar numa cadência de lembretes.",
     ].join("\n"),
     tools: [
@@ -682,7 +692,7 @@ export const COMPOSIO_TOOLKITS: ComposioToolkitDef[] = [
   {
     slug: "gmail",
     name: "Gmail",
-    summary: "O e-mail do vendedor vira conversa e a IA responde pelo próprio Gmail.",
+    summary: "O e-mail do atendente vira conversa e a IA responde pelo próprio Gmail.",
     suggested: [
       { slug: "GMAIL_SEND_EMAIL", label: "Enviar e-mail" },
       { slug: "GMAIL_REPLY_TO_THREAD", label: "Responder e-mail" },

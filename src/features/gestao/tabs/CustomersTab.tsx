@@ -44,13 +44,13 @@ export function CustomersTab({ accountId }: { accountId: string }) {
       <EmptyState
         icon={HeartPulse}
         title="Nenhum cliente ativo ainda"
-        description="Quando um negócio é ganho, o contato vira cliente e entra aqui com a nota de saúde. Você também pode marcar um contato como cliente na ficha dele."
+        description="Todo contato marcado como cliente entra aqui com a nota de saúde e o motivo. Marque um contato como cliente na ficha dele ou importe a sua lista de clientes."
         action={
           <Link
             to="/contatos"
             className="text-[13px] font-medium text-primary underline-offset-4 hover:underline"
           >
-            Ir para contatos
+            Abrir Clientes
           </Link>
         }
       />

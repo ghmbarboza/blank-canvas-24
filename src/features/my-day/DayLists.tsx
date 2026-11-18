@@ -52,7 +52,7 @@ export function TaskPanel({ accountId, tasks, tz }: TasksProps) {
         <ListSkeleton />
       ) : tasks.length === 0 ? (
         <p className="text-[13px] text-muted-foreground">
-          Nada pendente. Bom momento para prospectar ou dar um toque nos negócios parados.
+          Nada pendente. Bom momento para dar um toque em quem está sem acompanhamento.
         </p>
       ) : (
         <ul className="-mx-2 space-y-0.5">
@@ -124,16 +124,16 @@ export function StaleDealsPanel({ accountId, userId, deals, now }: StaleProps) {
   return (
     <section aria-labelledby="meu-dia-parados">
       <h2 id="meu-dia-parados" className="eyebrow">
-        Negócios parados
+        Clientes sem acompanhamento
       </h2>
       <p className="mt-1 mb-3 text-[12px] text-muted-foreground">
-        Sem movimento há mais de 7 dias e sem próximo passo marcado.
+        Cartões da sua carteira sem movimento há mais de 7 dias e sem próximo passo marcado.
       </p>
       {!deals ? (
         <ListSkeleton />
       ) : deals.length === 0 ? (
         <p className="text-[13px] text-muted-foreground">
-          Todos os seus negócios têm próximo passo.
+          Todos os clientes da sua carteira têm próximo passo.
         </p>
       ) : (
         <ul className="space-y-2">
@@ -151,8 +151,8 @@ export function StaleDealsPanel({ accountId, userId, deals, now }: StaleProps) {
                 >
                   <p className="truncate text-[14px] font-medium hover:underline">{s.title}</p>
                   <p className="truncate text-[12px] text-muted-foreground tabular-nums">
-                    {formatMoney(s.value ?? 0, true)} · parado há {daysSince(s.updated_at, now)}{" "}
-                    dias
+                    {(s.value ?? 0) > 0 ? `${formatMoney(s.value ?? 0, true)} · ` : ""}parado há{" "}
+                    {daysSince(s.updated_at, now)} dias
                   </p>
                 </Link>
                 <button
@@ -205,19 +205,20 @@ export function HotLeadsSection({ accountId, leads }: LeadsProps) {
     <section aria-labelledby="meu-dia-leads">
       <div className="flex items-center justify-between gap-2">
         <h2 id="meu-dia-leads" className="font-display text-[22px] font-medium">
-          Leads aquecidos
+          Clientes esperando resposta
         </h2>
         <Bot className="size-4 text-muted-foreground" aria-hidden />
       </div>
       <p className="mt-1 mb-5 text-[13px] text-muted-foreground">
-        Contatos com nota da IA a partir de 60 esperando a sua resposta, do mais quente para o
-        menos.
+        Quem escreveu e ainda está sem a sua resposta. A IA põe na frente quem ela marcou como
+        prioridade.
       </p>
       {!leads ? (
         <ListSkeleton />
       ) : sorted.length === 0 ? (
         <p className="text-[13px] text-muted-foreground">
-          Nenhum lead quente esperando resposta. A IA avisa aqui quando alguém esquentar.
+          Ninguém esperando a sua resposta agora. Quando um cliente escrever e ficar sem retorno,
+          ele aparece aqui.
         </p>
       ) : (
         <ul className="-mx-3 space-y-1">
@@ -240,16 +241,11 @@ export function HotLeadsSection({ accountId, leads }: LeadsProps) {
                   <div className="min-w-0 flex-1">
                     <div className="flex min-w-0 items-center gap-2">
                       <p className="truncate text-[14px] font-medium">{h.name ?? "Sem nome"}</p>
-                      <span
-                        className={cn(
-                          "shrink-0 rounded-full px-2 py-px text-[11px] font-medium tabular-nums",
-                          top
-                            ? "bg-primary text-primary-foreground"
-                            : "border border-border bg-surface-2",
-                        )}
-                      >
-                        nota {h.score ?? "—"}
-                      </span>
+                      {top && (
+                        <span className="shrink-0 rounded-full bg-primary px-2 py-px text-[11px] font-medium text-primary-foreground">
+                          prioridade
+                        </span>
+                      )}
                     </div>
                     <p className="truncate text-[12px] text-muted-foreground">
                       {h.last_message_preview ?? "Sem prévia da mensagem"}

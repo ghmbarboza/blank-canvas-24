@@ -7,7 +7,7 @@ import { useLlmUsage } from "./api";
 import { SettingsCard } from "./SettingsCard";
 
 const PURPOSE_LABEL: Record<string, string> = {
-  lead_classification: "Classificar leads",
+  lead_classification: "Resumir e classificar clientes",
   reply_suggestion: "Sugerir respostas",
 };
 

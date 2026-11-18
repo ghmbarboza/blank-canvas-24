@@ -61,13 +61,13 @@ export const TARGET_LABEL: Record<string, string> = {
   "company.phone": "Empresa: telefone",
   "company.email": "Empresa: e-mail",
   "company.industry": "Empresa: setor",
-  "deal.title": "Negócio: título",
-  "deal.value": "Negócio: valor",
-  "deal.stage": "Negócio: etapa",
-  "deal.pipeline": "Negócio: funil",
-  "deal.status": "Negócio: situação (ganho/perdido)",
-  "deal.expected_close_date": "Negócio: previsão de fechamento",
-  "deal.external_id": "Negócio: código no sistema antigo",
+  "deal.title": "Carteira: nome do cartão",
+  "deal.value": "Carteira: valor do contrato",
+  "deal.stage": "Carteira: etapa da jornada",
+  "deal.pipeline": "Carteira: quadro",
+  "deal.status": "Carteira: situação (na carteira, fidelizado ou perdido)",
+  "deal.expected_close_date": "Carteira: data de renovação",
+  "deal.external_id": "Carteira: código no sistema antigo",
 };
 
 export function targetLabel(t: string, customLabels: Record<string, string> = {}): string {
@@ -547,7 +547,7 @@ export function buildRecords(rows: string[][], mapping: TargetField[]): ImportRe
     const dealTitle = clip(col(row, "deal.title"), 160);
     const rawValue = col(row, "deal.value");
     const value = parseMoney(rawValue);
-    if (rawValue.trim() && value === null) problems.push("Valor do negócio ilegível");
+    if (rawValue.trim() && value === null) problems.push("Valor do contrato ilegível");
     const deal = dealTitle
       ? {
           title: dealTitle,
@@ -561,7 +561,7 @@ export function buildRecords(rows: string[][], mapping: TargetField[]): ImportRe
         }
       : null;
     if (!name && !email && !phone && !company && !deal)
-      problems.push("Linha sem nome, e-mail, telefone, empresa nem negócio");
+      problems.push("Linha sem nome, e-mail, telefone, empresa nem cartão da carteira");
     return {
       line: idx + 2,
       contact: {

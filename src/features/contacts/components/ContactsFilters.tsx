@@ -18,16 +18,7 @@ import {
   isLifecycle,
   sourceLabel,
   type ContactFilters,
-  type TemperatureFilter,
 } from "../types";
-
-const TEMP_CHIPS: Array<{ value: TemperatureFilter; label: string }> = [
-  { value: "all", label: "Toda temperatura" },
-  { value: "hot", label: "Quentes" },
-  { value: "warm", label: "Mornos" },
-  { value: "cold", label: "Frios" },
-  { value: "none", label: "Sem leitura" },
-];
 
 export function FilterChip({
   active,
@@ -90,7 +81,7 @@ export function ContactsFilters({
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Buscar nome, empresa, telefone…"
-            aria-label="Buscar contatos"
+            aria-label="Buscar clientes"
             className="h-9 pr-8 pl-9"
           />
           {search && (
@@ -106,22 +97,6 @@ export function ContactsFilters({
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-x-1 gap-y-2">
-        <div
-          className="-mx-1 flex max-w-full items-center gap-0.5 overflow-x-auto px-1"
-          role="group"
-          aria-label="Temperatura"
-        >
-          {TEMP_CHIPS.map((c) => (
-            <FilterChip
-              key={c.value}
-              active={filters.temperature === c.value}
-              onClick={() => set("temperature", c.value)}
-            >
-              {c.label}
-            </FilterChip>
-          ))}
-        </div>
-        <span className="mx-1 hidden h-4 w-px shrink-0 bg-border sm:block" aria-hidden />
         <FilterChip active={filters.onlyMine} onClick={() => set("onlyMine", !filters.onlyMine)}>
           Só meus
         </FilterChip>
@@ -131,12 +106,12 @@ export function ContactsFilters({
         >
           <SelectTrigger
             className="h-7 w-auto gap-1.5 rounded-full border-transparent bg-transparent px-3 text-[12px] shadow-none hover:bg-surface-2"
-            aria-label="Ciclo"
+            aria-label="Fase"
           >
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todo ciclo</SelectItem>
+            <SelectItem value="all">Toda fase</SelectItem>
             {LIFECYCLES.map((l) => (
               <SelectItem key={l} value={l}>
                 {LIFECYCLE_LABEL[l]}

@@ -53,7 +53,7 @@ const HEALTH_TONE: Record<DealHealth["level"], string> = {
   closed: "bg-surface-2 text-muted-foreground",
 };
 
-// O negócio como sala: saúde, sugestão de forecast, quem participa do lado do cliente, o que a IA viu
+// O cartão como sala: saúde, quem participa do lado do cliente, o que a IA viu
 // e as reuniões e ligações ligadas ao negócio.
 export function DealRoom({ accountId, deal }: { accountId: string; deal: DealRow }) {
   const room = useDealRoom(deal.id);
@@ -67,7 +67,6 @@ export function DealRoom({ accountId, deal }: { accountId: string; deal: DealRow
   const r = room.data;
   return (
     <div className="space-y-4">
-      <SuggestionBanner accountId={accountId} deal={deal} />
       {r && <HealthCard deal={deal} room={r} />}
       <Participants accountId={accountId} dealId={deal.id} />
       {r && <AiSaw room={r} />}
@@ -76,7 +75,8 @@ export function DealRoom({ accountId, deal }: { accountId: string; deal: DealRow
   );
 }
 
-function SuggestionBanner({ accountId, deal }: { accountId: string; deal: DealRow }) {
+// Sugestão de forecast: conceito de venda, fora da composição da Carteira de pós-venda.
+export function SuggestionBanner({ accountId, deal }: { accountId: string; deal: DealRow }) {
   const q = useForecastSuggestion(deal.id);
   const decide = useDecideSuggestion(deal.id);
   const setCategory = useSetForecastCategory(accountId);
@@ -151,13 +151,14 @@ function HealthCard({ deal, room }: { deal: DealRow; room: Room }) {
     overdueActivities: Number(room.overdue_activities ?? 0),
     proposal: room.proposal,
     risks: room.last_minutes?.risks ?? [],
-    temperature: room.contact?.temperature ?? null,
+    // interesse de compra (quente/frio) não entra na saúde de quem já é cliente
+    temperature: null,
     expectedCloseDate: deal.expected_close_date,
   });
   if (h.level === "closed") return null;
   return (
     <section
-      aria-label="Saúde do negócio"
+      aria-label="Saúde deste cliente"
       className="rounded-[24px] border border-border bg-surface p-4"
     >
       <div className="flex items-center gap-3">
@@ -171,7 +172,7 @@ function HealthCard({ deal, room }: { deal: DealRow; room: Room }) {
         </span>
         <div className="min-w-0">
           <p className="eyebrow flex items-center gap-1">
-            <HeartPulse className="size-3.5" aria-hidden /> Saúde do negócio
+            <HeartPulse className="size-3.5" aria-hidden /> Saúde deste cliente
           </p>
           <p className="text-[15px] font-semibold">{HEALTH_LABEL[h.level]}</p>
         </div>
@@ -263,7 +264,7 @@ function Participants({ accountId, dealId }: { accountId: string; dealId: string
                   )
                 }
               >
-                <SelectTrigger className="h-8 w-36 text-[12px]" aria-label="Papel no negócio">
+                <SelectTrigger className="h-8 w-36 text-[12px]" aria-label="Papel desta pessoa">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -276,7 +277,7 @@ function Participants({ accountId, dealId }: { accountId: string; dealId: string
               </Select>
               <button
                 type="button"
-                aria-label={`Tirar ${p.contact?.name ?? "participante"} do negócio`}
+                aria-label={`Tirar ${p.contact?.name ?? "participante"} do cartão`}
                 onClick={() =>
                   remove.mutate(p.id, { onError: (e) => toast.error(errorMessage(e)) })
                 }
@@ -337,7 +338,7 @@ function AiSaw({ room }: { room: Room }) {
         <div className="rounded-2xl bg-primary-soft/50 p-3 text-[13px]">
           {c.ai_intent && (
             <p className="font-medium">
-              Intenção: <span className="font-normal">{c.ai_intent}</span>
+              O que o cliente quer: <span className="font-normal">{c.ai_intent}</span>
             </p>
           )}
           {c.ai_summary && <p className="mt-1 text-muted-foreground">{c.ai_summary}</p>}
@@ -375,7 +376,7 @@ function AiSaw({ room }: { room: Room }) {
                 <li key={n.title}>
                   • {n.title}{" "}
                   <span className="text-subtle">
-                    ({n.owner === "cliente" ? "cliente" : "vendedor"})
+                    ({n.owner === "cliente" ? "cliente" : "equipe"})
                   </span>
                 </li>
               ))}

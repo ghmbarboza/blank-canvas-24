@@ -165,7 +165,7 @@ export function ConnectedChannels({ accountId, isAdmin, onShowQr }: Props) {
             <ChannelCard
               key={c.id}
               channel={c}
-              ownerName={c.owner_user_id ? (names.get(c.owner_user_id) ?? "Vendedor") : null}
+              ownerName={c.owner_user_id ? (names.get(c.owner_user_id) ?? "Atendente") : null}
               canManage={isAdmin}
               busy={busyId === c.id}
               onIntent={onIntent}

@@ -6,7 +6,7 @@ import type { Contact } from "../types";
 import { CreateDealDialog } from "./CreateDealDialog";
 import { ScheduleDialog } from "./ScheduleDialog";
 
-// Sugestão de ação: o próximo passo que a IA leu na conversa e o atalho que o cumpre.
+// Próximo passo: o que a IA leu na conversa e o atalho que o cumpre.
 export function NextStepBlock({ accountId, contact }: { accountId: string; contact: Contact }) {
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [dealOpen, setDealOpen] = useState(false);
@@ -25,11 +25,11 @@ export function NextStepBlock({ accountId, contact }: { accountId: string; conta
         className="flex items-center gap-1.5 text-[11px] font-medium tracking-widest text-subtle uppercase"
       >
         <Bot className="size-3.5 text-foreground" aria-hidden />
-        Sugestão de ação
+        Próximo passo com o cliente
       </h3>
       <p className="mt-2 text-[14px] leading-snug font-medium text-foreground">
         {contact.ai_next_step ||
-          "Combine o próximo contato: agende uma conversa ou abra um negócio."}
+          "Combine o próximo contato: agende uma conversa de acompanhamento."}
       </p>
       <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
         <button
@@ -49,7 +49,7 @@ export function NextStepBlock({ accountId, contact }: { accountId: string; conta
             onClick={() => setDealOpen(true)}
             className="inline-flex items-center gap-1 rounded text-[13px] font-medium text-muted-foreground hover:text-foreground hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
           >
-            <Plus className="size-3.5" aria-hidden /> Criar negócio
+            <Plus className="size-3.5" aria-hidden /> Colocar na carteira
           </button>
         )}
       </div>

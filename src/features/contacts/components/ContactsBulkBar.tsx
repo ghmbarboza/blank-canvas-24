@@ -74,7 +74,7 @@ export function ContactsBulkBar({ accountId, selectedIds, members, onClear }: Pr
   async function reclassify() {
     const ids = selectedIds.slice(0, RECLASSIFY_LIMIT);
     if (count > RECLASSIFY_LIMIT)
-      toast.info(`A IA reclassifica ${RECLASSIFY_LIMIT} por vez. Começando pelos primeiros.`);
+      toast.info(`A IA resume ${RECLASSIFY_LIMIT} por vez. Começando pelos primeiros.`);
     let ok = 0;
     const failures: string[] = [];
     setProgress({ done: 0, total: ids.length });
@@ -89,7 +89,7 @@ export function ContactsBulkBar({ accountId, selectedIds, members, onClear }: Pr
     }
     setProgress(null);
     await invalidate();
-    if (ok) toast.success(`${ok} contatos reclassificados`);
+    if (ok) toast.success(`Resumo atualizado em ${ok} contatos`);
     if (failures.length) toast.error(`${failures.length} sem classificação: ${failures[0]}`);
   }
 
@@ -193,7 +193,7 @@ export function ContactsBulkBar({ accountId, selectedIds, members, onClear }: Pr
         disabled={busy}
       >
         {progress ? <Loader2 className="animate-spin" aria-hidden /> : <Bot aria-hidden />}
-        Reclassificar com IA
+        Atualizar resumo com IA
       </Button>
       {progress && (
         <div className="flex min-w-40 items-center gap-2" role="status" aria-live="polite">

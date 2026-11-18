@@ -30,6 +30,7 @@ export function NexaFace({ className }: { className?: string }) {
 }
 
 type Props = {
+  accountId: string;
   turns: NexaTurn[];
   working: string | null;
   error: string | null;
@@ -39,7 +40,15 @@ type Props = {
   onRetry: () => void;
 };
 
-function OldBlock({ block, reply }: { block: StageBlock; reply: string | undefined }) {
+function OldBlock({
+  block,
+  reply,
+  accountId,
+}: {
+  block: StageBlock;
+  reply: string | undefined;
+  accountId: string;
+}) {
   // formulário já respondido vira uma linha: o que foi enviado está no balão da pessoa
   if (block.kind === "form" && reply)
     return (
@@ -52,6 +61,8 @@ function OldBlock({ block, reply }: { block: StageBlock; reply: string | undefin
       block={block}
       compact
       active={false}
+      live={false}
+      accountId={accountId}
       picked={pickedFrom(reply)}
       onAnswer={() => {}}
     />
@@ -59,6 +70,7 @@ function OldBlock({ block, reply }: { block: StageBlock; reply: string | undefin
 }
 
 function Assistant({
+  accountId,
   turn,
   reply,
   isLast,
@@ -66,6 +78,7 @@ function Assistant({
   onAnswer,
   onOpen,
 }: {
+  accountId: string;
   turn: NexaTurn;
   reply: string | undefined;
   isLast: boolean;
@@ -92,10 +105,11 @@ function Assistant({
                   block={b}
                   compact
                   active={!isBusy}
+                  accountId={accountId}
                   onAnswer={onAnswer}
                 />
               ) : (
-                <OldBlock key={`${turn.id}-${i}`} block={b} reply={reply} />
+                <OldBlock key={`${turn.id}-${i}`} block={b} reply={reply} accountId={accountId} />
               ),
             )}
             <ActionList actions={turn.actions} onOpen={onOpen} />
@@ -106,7 +120,16 @@ function Assistant({
   );
 }
 
-export function Thread({ turns, working, error, isBusy, onAnswer, onOpen, onRetry }: Props) {
+export function Thread({
+  accountId,
+  turns,
+  working,
+  error,
+  isBusy,
+  onAnswer,
+  onOpen,
+  onRetry,
+}: Props) {
   const end = useRef<HTMLDivElement>(null);
   const box = useRef<HTMLDivElement>(null);
   const last = turns.at(-1);
@@ -142,6 +165,7 @@ export function Thread({ turns, working, error, isBusy, onAnswer, onOpen, onRetr
         return (
           <div key={t.id} data-turn={t.id} className="scroll-mt-4">
             <Assistant
+              accountId={accountId}
               turn={t}
               reply={next?.role === "user" ? next.text : undefined}
               isLast={t.id === last?.id}

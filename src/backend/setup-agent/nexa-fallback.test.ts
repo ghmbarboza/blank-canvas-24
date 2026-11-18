@@ -17,7 +17,7 @@ describe("fallback da Nexa", () => {
   it("só desenhou botões: aponta para eles", () => {
     expect(
       fallback([{ type: "block", block: { kind: "steps", title: "Plano", steps: [] } }]),
-    ).toMatch(/opções abaixo/);
+    ).toMatch(/aqui embaixo/);
   });
   it("fez coisas: conta o que fez e o que falhou", () => {
     const r = fallback([

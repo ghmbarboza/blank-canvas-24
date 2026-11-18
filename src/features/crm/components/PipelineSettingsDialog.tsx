@@ -27,7 +27,11 @@ import { STAGE_COLORS, STAGE_COLOR_LABEL, stageBarClass } from "../stageColors";
 import type { Stage } from "../types";
 import { countLabel } from "@/lib/plural";
 
-const KIND_LABEL: Record<string, string> = { open: "Em andamento", won: "Ganho", lost: "Perdido" };
+const KIND_LABEL: Record<string, string> = {
+  open: "Na carteira",
+  won: "Fidelizado",
+  lost: "Perdido",
+};
 
 type Props = {
   accountId: string;
@@ -98,14 +102,14 @@ function Editor({
   const problem = drafts.some((d) => !d.name.trim())
     ? "Toda etapa precisa de nome."
     : !drafts.some((d) => d.kind === "open")
-      ? "O funil precisa de ao menos uma etapa em andamento."
+      ? "A jornada precisa de ao menos uma etapa aberta."
       : null;
 
   async function submit() {
     if (problem) return;
     try {
       await save.mutateAsync({ drafts, removed });
-      toast.success("Funil atualizado");
+      toast.success("Jornada atualizada");
       onDone();
     } catch (err) {
       toast.error(errorMessage(err));
@@ -115,10 +119,10 @@ function Editor({
   return (
     <>
       <DialogHeader>
-        <DialogTitle>Configurar funil</DialogTitle>
+        <DialogTitle>Configurar jornada</DialogTitle>
         <DialogDescription>
-          {pipelineName}. A probabilidade alimenta a previsão ponderada. Só dá para remover etapa
-          vazia.
+          {pipelineName}. A porcentagem é a chance de o cliente continuar com você naquela etapa. Só
+          dá para remover etapa vazia.
         </DialogDescription>
       </DialogHeader>
       <ol className="max-h-[55vh] space-y-2 overflow-y-auto pr-1">
@@ -190,7 +194,7 @@ function Editor({
                     })
                   }
                   className="h-9 w-16 tabular-nums"
-                  aria-label="Probabilidade em porcentagem"
+                  aria-label="Chance de continuar cliente, em porcentagem"
                 />
                 %
               </label>
@@ -214,11 +218,11 @@ function Editor({
                 disabled={count > 0}
                 title={
                   count > 0
-                    ? `Tem ${countLabel(count, "negócio")}. Mova antes de remover.`
+                    ? `Tem ${countLabel(count, "cliente")}. Mova antes de remover.`
                     : "Remover etapa"
                 }
                 aria-label={
-                  count > 0 ? `${d.name} tem negócios e não pode ser removida` : `Remover ${d.name}`
+                  count > 0 ? `${d.name} tem clientes e não pode ser removida` : `Remover ${d.name}`
                 }
               >
                 <Trash2 aria-hidden />
@@ -251,7 +255,7 @@ function Editor({
           disabled={Boolean(problem) || save.isPending}
         >
           {save.isPending && <Loader2 className="animate-spin" aria-hidden />}
-          Salvar funil
+          Salvar jornada
         </Button>
       </DialogFooter>
     </>

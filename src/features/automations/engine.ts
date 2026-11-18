@@ -141,7 +141,7 @@ export const NODE_LABEL: Record<NodeType, string> = {
   voice_call: "Ligação da IA de voz",
   task: "Criar tarefa",
   ticket: "Abrir chamado",
-  move_stage: "Mover no funil",
+  move_stage: "Mover na carteira",
   assign: "Atribuir responsável",
   add_tag: "Adicionar etiqueta",
   remove_tag: "Remover etiqueta",
@@ -274,7 +274,7 @@ export const EXIT_LABEL: Record<ExitReason, string> = {
   meeting: "agendou reunião",
   customer: "virou cliente",
   unsubscribed: "descadastrou",
-  deal_lost: "negócio perdido",
+  deal_lost: "cliente perdido",
 };
 
 // ------------------------------------------------------------------ condição e A/B
@@ -543,7 +543,7 @@ export function planStep(node: AutoNode, ctx: StepContext): StepPlan {
       return go(
         node.next,
         { kind: "move_stage", stage_id: String(c["stage_id"] ?? "") },
-        "Negócio movido",
+        "Cliente movido na carteira",
       );
     case "assign":
       return go(node.next, { kind: "assign", config: c }, "Responsável atribuído");

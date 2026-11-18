@@ -92,7 +92,7 @@ export function SegmentTemplatePicker({
             <li>
               <Building2 className="mr-1 inline size-3.5" aria-hidden />
               {sel.model.pipelines
-                .map((p) => `funil "${p.name}" (${p.stages.length} etapas)`)
+                .map((p) => `jornada "${p.name}" (${p.stages.length} etapas)`)
                 .join(" e ")}
             </li>
             <li>

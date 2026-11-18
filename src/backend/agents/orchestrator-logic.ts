@@ -229,7 +229,8 @@ export function buildSystemPrompt(p: PromptInput): string {
       ? p.products
           .map(
             (x) =>
-              `- ${x.name}: R$ ${Number(x.price).toFixed(2).replace(".", ",")} ${BILLING[x.billing] ?? ""}${x.description ? ` — ${x.description.slice(0, 160)}` : ""}`,
+              // preço 0 = item sem preço no catálogo (importado de site que não mostra valor)
+              `- ${x.name}: ${Number(x.price) > 0 ? `R$ ${Number(x.price).toFixed(2).replace(".", ",")} ${BILLING[x.billing] ?? ""}` : "preço sob consulta (não diga valor; ofereça chamar alguém da equipe)"}${x.description ? ` — ${x.description.slice(0, 160)}` : ""}`,
           )
           .join("\n")
       : "(sem catálogo)",

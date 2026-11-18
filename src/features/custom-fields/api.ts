@@ -10,7 +10,7 @@ export type FieldType = CustomField["type"];
 export const ENTITY_LABEL: Record<FieldEntity, string> = {
   contact: "Contatos",
   company: "Empresas",
-  deal: "Negócios",
+  deal: "Carteira",
   ticket: "Chamados",
 };
 

@@ -29,7 +29,8 @@ export function CallCenterSetupStep({
         <h3 className="font-display text-[18px] font-medium">Monte a equipe de atendimento</h3>
         <p className="text-[13px] text-muted-foreground">
           Ligue “Atende na fila” para quem atende e diga o que cada pessoa sabe fazer (ex.: suporte,
-          cobrança, vendas). A fila manda cada atendimento para quem tem a habilidade e está livre.
+          cobrança, renovação). A fila manda cada atendimento para quem tem a habilidade e está
+          livre.
         </p>
       </div>
       <TeamPanel accountId={accountId} />

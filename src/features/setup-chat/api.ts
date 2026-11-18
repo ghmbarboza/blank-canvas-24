@@ -90,6 +90,12 @@ export function refreshAfterTurn(qc: QueryClient, accountId: string) {
     ["integrations", accountId],
     ["channels", accountId],
     ["setup"],
+    // o que a assistente muda pela conversa: catálogo, atendente, regras e clientes
+    ["products", accountId],
+    ["agents", accountId],
+    ["automations", accountId],
+    ["posvenda"],
+    ["contacts", accountId],
   ])
     void qc.invalidateQueries({ queryKey: key as readonly unknown[] });
 }

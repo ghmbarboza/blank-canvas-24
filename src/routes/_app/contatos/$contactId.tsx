@@ -4,7 +4,7 @@ import { ContactDetailPage } from "@/features/contacts/components/detail/Contact
 import { pageHead } from "@/lib/page-head";
 
 export const Route = createFileRoute("/_app/contatos/$contactId")({
-  head: () => pageHead("Detalhes do contato", "Histórico e informações de um contato na Central de CS."),
+  head: () => pageHead("Ficha do cliente", "Saúde, histórico e conversas de um cliente."),
   component: ContactPage,
 });
 

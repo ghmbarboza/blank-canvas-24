@@ -23,7 +23,7 @@ export function decideCharge(p: ChargeInput): ChargeDecision {
       ok: false,
       status: 403,
       code: "forbidden",
-      message: "Só o responsável pelo negócio ou um gestor pode emitir cobrança",
+      message: "Só o responsável pelo cliente na carteira ou um gestor pode emitir cobrança",
     };
   const dealValue = Number(p.deal.value ?? 0);
   const raw = p.amount === undefined || p.amount === null ? dealValue : Number(p.amount);
@@ -35,14 +35,14 @@ export function decideCharge(p: ChargeInput): ChargeDecision {
       ok: false,
       status: 422,
       code: "amount_above_deal",
-      message: "O valor da cobrança não pode passar do valor do negócio",
+      message: "O valor da cobrança não pode passar do valor do cartão na carteira",
     };
   if (!(dealValue > 0) && !isManager)
     return {
       ok: false,
       status: 422,
       code: "deal_without_value",
-      message: "Preencha o valor do negócio antes de cobrar (ou peça a um gestor)",
+      message: "Preencha o valor do cartão na carteira antes de cobrar (ou peça a um gestor)",
     };
   return { ok: true, amount };
 }

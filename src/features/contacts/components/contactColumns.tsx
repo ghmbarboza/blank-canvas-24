@@ -6,12 +6,12 @@ import {
 } from "@tanstack/react-table";
 
 import { ContactAvatar } from "@/components/common/ContactAvatar";
-import { TempChip } from "@/components/common/TempChip";
 import { Checkbox } from "@/components/ui/checkbox";
 import { formatRelative } from "@/lib/format";
 
-import { isPlatformSource, type ContactRow, type TeamMember } from "../types";
-import { AiScore, ChannelBadges } from "./ChannelBadges";
+import { HealthChip, type CustomerHealth } from "../customer-health";
+import { isPlatformSource, lifecycleLabel, type ContactRow, type TeamMember } from "../types";
+import { ChannelBadges } from "./ChannelBadges";
 import { OwnerAvatar } from "./OwnerAvatar";
 
 // Ordenação é feita no servidor (paginação por faixa), então só o recurso de estado é registrado.
@@ -22,6 +22,7 @@ const helper = createColumnHelper<typeof contactTableFeatures, ContactRow>();
 export function buildContactColumns(
   members: Map<string, TeamMember>,
   channels: Map<string, string[]>,
+  health: Map<string, CustomerHealth>,
   onOpen: (id: string) => void,
 ) {
   return helper.columns([
@@ -51,7 +52,7 @@ export function buildContactColumns(
     }),
     helper.accessor("name", {
       id: "name",
-      header: "Contato",
+      header: "Cliente",
       cell: ({ row }) => {
         const c = row.original;
         return (
@@ -87,21 +88,16 @@ export function buildContactColumns(
       ),
     }),
     helper.display({
-      id: "temperature",
-      header: "Temperatura",
-      cell: ({ row }) =>
-        row.original.temperature ? (
-          <TempChip level={row.original.temperature} />
+      id: "health",
+      header: "Saúde",
+      cell: ({ row }) => {
+        const h = health.get(row.original.id);
+        return h ? (
+          <HealthChip level={h.result.level} score={h.result.score} />
         ) : (
-          <span className="text-[12px] text-subtle">Sem leitura</span>
-        ),
-    }),
-    helper.accessor("score", {
-      id: "score",
-      header: "Nota IA",
-      cell: ({ row }) => (
-        <AiScore score={row.original.score} temperature={row.original.temperature} />
-      ),
+          <span className="text-[12px] text-subtle">{lifecycleLabel(row.original.lifecycle)}</span>
+        );
+      },
     }),
     helper.accessor("owner_user_id", {
       id: "owner_user_id",

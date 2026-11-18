@@ -33,7 +33,7 @@ export type GestaoTab = (typeof GESTAO_TABS)[number];
 const META: Record<GestaoTab, { label: string; icon: LucideIcon; managerOnly: boolean }> = {
   escala: { label: "Escala", icon: CalendarClock, managerOnly: true },
   indicadores: { label: "Indicadores", icon: BarChart3, managerOnly: true },
-  clientes: { label: "Saúde dos clientes", icon: HeartPulse, managerOnly: false },
+  clientes: { label: "Clientes", icon: HeartPulse, managerOnly: false },
   importar: { label: "Importar", icon: FileSpreadsheet, managerOnly: true },
   crm: { label: "Outro CRM", icon: RefreshCw, managerOnly: true },
   modelos: { label: "Modelo do segmento", icon: LayoutTemplate, managerOnly: true },
@@ -61,8 +61,8 @@ export function GestaoPage({
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <PageHeader
-        title="Gestão"
-        description="Escala, indicadores, saúde da carteira e o que você já usa"
+        title="Saúde da carteira"
+        description="Quem está bem, quem está em risco e como a equipe dá conta do atendimento"
       />
       <nav
         aria-label="Gestão"

@@ -43,7 +43,7 @@ export function ImportTab({ accountId }: { accountId: string }) {
                   <p className="text-[12px] text-muted-foreground">
                     {formatDateTime(b.created_at)} · {STATUS[b.status] ?? b.status} ·{" "}
                     {formatNumber(r.contactsCreated ?? 0)} contatos,{" "}
-                    {countLabel(r.dealsCreated, "negócio")}
+                    {countLabel(r.dealsCreated, "cartão", "cartões")}
                     {r.errors?.length ? ` · ${r.errors.length} com erro` : ""}
                   </p>
                   {b.error && <p className="text-[12px] text-danger">{b.error}</p>}
