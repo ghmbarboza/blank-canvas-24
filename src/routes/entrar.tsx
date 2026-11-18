@@ -84,6 +84,16 @@ function SignIn() {
   }, []);
   const viaInvite = typeof redirect === "string" && redirect.startsWith("/convite/");
   const canSignUp = viaInvite || (signupMode !== null && signupMode !== "invite_only");
+  // Cópia nova, ainda sem dono: quem chega não tem conta para "entrar". A tela abre direto na
+  // criação da conta dona, com o Google na frente (um clique, sem e-mail de confirmação).
+  const firstOwner = signupMode === "first_owner" && !viaInvite;
+  const [autoSwitched, setAutoSwitched] = useState(false);
+  useEffect(() => {
+    if (firstOwner && !autoSwitched && mode === "signin") {
+      setAutoSwitched(true);
+      setMode("signup");
+    }
+  }, [firstOwner, autoSwitched, mode]);
 
   function switchMode(next: "signin" | "signup" | "forgot") {
     setErrors({});
@@ -195,14 +205,18 @@ function SignIn() {
             {mode === "signin"
               ? "Entrar na sua conta."
               : mode === "signup"
-                ? "Criar sua conta."
+                ? firstOwner
+                  ? "Crie a conta dona desta central."
+                  : "Criar sua conta."
                 : "Recuperar a senha."}
           </h1>
           <p className="mt-1.5 text-[13px] text-muted-foreground">
             {mode === "signin"
               ? "Bom te ver de novo."
               : mode === "signup"
-                ? "Leva menos de um minuto. Depois você conecta os canais."
+                ? firstOwner
+                  ? "Esta cópia ainda não tem dono. A primeira conta criada aqui vira a administradora. O jeito mais rápido é o Google: um clique e você já está dentro."
+                  : "Leva menos de um minuto. Depois você conecta os canais."
                 : "Informe o e-mail da sua conta. Enviamos um link para criar uma senha nova."}
           </p>
           {confirmationEmail ? (
@@ -236,7 +250,29 @@ function SignIn() {
           ) : (
             <>
               {providers ? <AuthSetupNotice providers={providers} /> : null}
-              <form onSubmit={handleSubmit} className="mt-8 space-y-4" noValidate>
+              {firstOwner && mode === "signup" && providers?.google !== false ? (
+                <div className="mt-8">
+                  <Button
+                    className="w-full"
+                    size="lg"
+                    disabled={pending || loading}
+                    onClick={() => socialSignIn("google")}
+                  >
+                    <BrandIcon id="google" size={16} />
+                    Criar minha conta com o Google
+                  </Button>
+                  <p className="mt-6 flex items-center gap-3 text-[11px] tracking-[0.14em] text-muted-foreground uppercase">
+                    <span className="h-px flex-1 bg-border" aria-hidden />
+                    ou com e-mail e senha
+                    <span className="h-px flex-1 bg-border" aria-hidden />
+                  </p>
+                </div>
+              ) : null}
+              <form
+                onSubmit={handleSubmit}
+                className={firstOwner && mode === "signup" ? "mt-5 space-y-4" : "mt-8 space-y-4"}
+                noValidate
+              >
                 {errors.form ? (
                   <p
                     role="alert"
@@ -309,7 +345,9 @@ function SignIn() {
                   {mode === "signin" ? "Entrar" : mode === "signup" ? "Criar conta" : "Enviar link"}
                 </Button>
               </form>
-              {mode !== "forgot" && providers?.google !== false ? (
+              {mode !== "forgot" &&
+              providers?.google !== false &&
+              !(firstOwner && mode === "signup") ? (
                 <div className="mt-5 space-y-3">
                   <Button
                     variant="outline"
