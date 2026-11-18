@@ -1,5 +1,6 @@
 // Modelos da IA embutida (Lovable AI Gateway), num lugar só. Parte pura, sem rede.
-// Cada tarefa usa o modelo certo para ela: o forte responde o cliente, o rápido classifica,
+// Edição de pós-venda: todas as tarefas usam o modelo rápido do gateway (resposta em segundos).
+// A conta pode trocar por tarefa em Ajustes. Antes: o forte respondia o cliente, o rápido classificava,
 // o de voz fala sem silêncio na linha, e o de embedding alimenta a base de conhecimento (RAG).
 // Lista conferida em GET https://ai.gateway.lovable.dev/v1/models (04/11/2026).
 
@@ -14,13 +15,13 @@ export const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1";
 export type AiTier = "reply" | "deep" | "fast" | "voice";
 
 export const GATEWAY_MODELS: Record<AiTier, string> = {
-  reply: "anthropic/claude-opus-5-5",
-  deep: "anthropic/claude-opus-5-5",
-  fast: "anthropic/claude-haiku-4-5",
-  voice: "anthropic/claude-haiku-4-5",
+  reply: "google/gemini-3.8-flash",
+  deep: "google/gemini-3.8-flash",
+  fast: "google/gemini-3.8-flash",
+  voice: "google/gemini-3.8-flash",
 };
 
-/** Recuo quando o Claude do gateway falha (fora do ar, modelo indisponível): Gemini atual. */
+/** Recuo quando o modelo escolhido pela conta falha (fora do ar, indisponível). */
 export const GATEWAY_FALLBACK_MODEL = "google/gemini-3.8-flash";
 
 /** Embedding da base de conhecimento. 1536 dimensões = a coluna vector(1536). */

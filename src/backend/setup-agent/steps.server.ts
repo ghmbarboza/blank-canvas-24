@@ -177,24 +177,22 @@ export async function createPostSaleAgent(caller: Caller, body: Record<string, u
   }
   if (!agent) throw new HttpError(500, "Não consegui criar o atendente", "agent_create");
   await enableAiOnWhatsApp(caller.accountId);
+  // Liga na hora: criou, já atende. Sem conferência antes (a edição de pós-venda tirou a trava).
+  if (agent.status !== "active") await turnOn(agent.id);
   return agentStepState(caller);
 }
 
-/**
- * Passo 4, "Ligar no WhatsApp": roda as perguntas de teste e liga sozinho se passar com 90% ou
- * mais (a trava é do banco). Se as perguntas ainda não foram escritas, escreve agora.
- */
+/** Liga o atendente (status active). A trava de avaliação saiu na migration 20261118150000. */
+async function turnOn(agentId: string) {
+  const { error } = await admin().from("ai_agents").update({ status: "active" }).eq("id", agentId);
+  if (error) throw new HttpError(500, error.message, "agent_activate");
+}
+
+/** Passo 4, "Ligar o atendente": liga na hora, sem conferência antes. */
 export async function activatePostSaleAgent(caller: Caller) {
   const agent = await findPostSale(caller.accountId);
   if (!agent) throw new HttpError(404, "Crie o atendente antes de ligar", "no_agent");
-  if (agent.status === "active") return agentStepState(caller);
-  const ev = await import("@/backend/agents/eval.server");
-  let est = await ev.estimate(caller.accountId, agent.id);
-  if (!est.cases) {
-    await ev.generateSuite(caller.accountId, agent.id, caller.userId);
-    est = await ev.estimate(caller.accountId, agent.id);
-  }
   await enableAiOnWhatsApp(caller.accountId);
-  await ev.startRun(caller.accountId, agent.id, caller.userId, true);
+  if (agent.status !== "active") await turnOn(agent.id);
   return agentStepState(caller);
 }

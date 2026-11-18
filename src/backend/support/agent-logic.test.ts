@@ -55,7 +55,7 @@ describe("trava do agente de IA", () => {
     ).toBe("faltou: pix");
   });
   it("mescla configuração com o padrão", () => {
-    expect(agentSettings({ enabled: true }).debounce_seconds).toBe(8);
+    expect(agentSettings({ enabled: true }).debounce_seconds).toBe(2);
     expect(agentSettings(null).enabled).toBe(false);
   });
 });

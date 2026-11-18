@@ -362,7 +362,7 @@ export const DEFAULT_SETTINGS: AgentSettingsV2 = {
   booking_slug: "",
   max_replies_per_conversation: 12,
   business_hours_only: false,
-  debounce_seconds: 8,
+  debounce_seconds: 2,
   human_sla_minutes: 15,
   form_fields: [],
   survey: "off",
@@ -381,7 +381,7 @@ export function agentSettingsV2(raw: unknown): AgentSettingsV2 {
     booking_slug: typeof r["booking_slug"] === "string" ? (r["booking_slug"] as string) : "",
     max_replies_per_conversation: int("max_replies_per_conversation", 1, 100, 12),
     business_hours_only: r["business_hours_only"] === true,
-    debounce_seconds: int("debounce_seconds", 5, 300, 8),
+    debounce_seconds: int("debounce_seconds", 1, 300, 2),
     human_sla_minutes: int("human_sla_minutes", 1, 24 * 60, 15),
     form_fields: fields
       .filter((f): f is Record<string, unknown> => !!f && typeof f === "object")

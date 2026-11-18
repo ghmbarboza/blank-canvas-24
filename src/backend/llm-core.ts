@@ -18,7 +18,7 @@ export interface JsonRequest {
 export const DEFAULT_MODEL: Record<ProviderId, string> = {
   anthropic: "claude-haiku-5-5",
   openai: "gpt-5.4-mini",
-  lovable: "anthropic/claude-haiku-4-5",
+  lovable: "google/gemini-3.8-flash",
 };
 
 /** Claude que recusa ferramenta forçada (400): Opus 5.5, Sonnet 5.5, Fable 5.1. */

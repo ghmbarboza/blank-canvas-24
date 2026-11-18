@@ -20,7 +20,7 @@ export const DEFAULT_AGENT: AgentSettings = {
   rules: "",
   handoff_message:
     "Vou chamar alguém da equipe para te ajudar com isso. Já já te respondem por aqui.",
-  debounce_seconds: 8,
+  debounce_seconds: 2,
   max_replies_per_conversation: 12,
   business_hours_only: false,
   scheduling_enabled: false,

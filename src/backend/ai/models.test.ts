@@ -4,16 +4,16 @@ import { gatewayChatUrl, gatewayModel, isGatewayClaude, shouldFallback } from ".
 
 describe("modelos da IA embutida", () => {
   it("cada tarefa tem o seu modelo; Opus 5.5 responde o cliente", () => {
-    expect(gatewayModel("reply", null)).toBe("anthropic/claude-opus-5-5");
-    expect(gatewayModel("fast", null)).toBe("anthropic/claude-haiku-4-5");
-    expect(gatewayModel("voice", {})).toBe("anthropic/claude-haiku-4-5");
+    expect(gatewayModel("reply", null)).toBe("google/gemini-3.8-flash");
+    expect(gatewayModel("fast", null)).toBe("google/gemini-3.8-flash");
+    expect(gatewayModel("voice", {})).toBe("google/gemini-3.8-flash");
   });
   it("a conta troca o modelo, mas só por um id válido do gateway", () => {
-    expect(gatewayModel("reply", { included_models: { reply: "google/gemini-3.8-flash" } })).toBe(
-      "google/gemini-3.8-flash",
-    );
+    expect(
+      gatewayModel("reply", { included_models: { reply: "anthropic/claude-haiku-4-5" } }),
+    ).toBe("anthropic/claude-haiku-4-5");
     expect(gatewayModel("reply", { included_models: { reply: "qualquer coisa; drop" } })).toBe(
-      "anthropic/claude-opus-5-5",
+      "google/gemini-3.8-flash",
     );
   });
   it("Claude vai para /messages e o resto para /chat/completions", () => {

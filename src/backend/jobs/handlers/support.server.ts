@@ -6,7 +6,7 @@ import { registerJob } from "../registry.server";
 
 // 8 s: o job ainda adia enquanto o cliente manda mensagens seguidas (janela de 8 s), então
 // rajadas viram uma resposta só sem a espera longa de antes (era 20 s).
-const DEFAULT_DEBOUNCE = 8;
+const DEFAULT_DEBOUNCE = 2;
 // a resposta fora do horário espera a IA (debounce de ~8 s + resposta) para não falar por cima dela
 const AWAY_DELAY_MS = 45_000;
 

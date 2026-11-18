@@ -129,87 +129,39 @@ function Activation({
   state,
   pending,
   onActivate,
-  onGo,
 }: {
   state: AgentStepState;
   pending: boolean;
   onActivate: () => void;
   onGo: (to: string) => void;
 }) {
-  const run = state.run;
-  const evaluating = isEvaluating(state);
-  const active = state.agent?.status === "active";
-  if (active)
+  if (state.agent?.status === "active")
     return (
       <StepDone>
         {state.agent?.name} está ligado
         {state.whatsappOn
-          ? " e responde no WhatsApp."
-          : ". Conecte o WhatsApp para ele responder lá."}
+          ? " e responde na hora quem escrever no WhatsApp conectado."
+          : ". Conecte o WhatsApp (passo 2) para ele responder lá."}
       </StepDone>
     );
-  const failed = run && run.status === "done" && (run.passRate ?? 0) < 0.9;
   return (
     <section className="space-y-3 rounded-2xl border border-border p-4" aria-live="polite">
       <h3 className="flex items-center gap-2 text-[14px] font-semibold">
         <Power className="size-4" aria-hidden /> Ligar no WhatsApp
       </h3>
-      {evaluating ? (
-        <>
-          <p className="text-[13px] text-muted-foreground">
-            O Vínculo está fazendo {run?.total ? `${run.total} perguntas` : "perguntas"} de teste ao
-            atendente, como se fosse um cliente, e conferindo cada resposta
-            {run?.total ? ` (${run.passed} certas até agora)` : ""}. Leva alguns minutos e você não
-            precisa esperar aqui: siga para o próximo passo. Se ele acertar 9 em cada 10, liga
-            sozinho.
-          </p>
-          <Progress
-            value={run?.total ? Math.min(95, (run.passed / run.total) * 100 + 5) : 8}
-            className="h-1.5"
-            aria-label="Andamento da conferência"
-          />
-        </>
-      ) : (
-        <p className="text-[13px] text-muted-foreground">
-          O atendente já funciona no teste aqui em cima. Para ele responder os clientes no
-          WhatsApp, clique em ligar: o Vínculo faz perguntas de teste a ele e, se acertar 9 em cada
-          10, liga sozinho em alguns minutos. Depois de ligado, ele responde toda mensagem que
-          chegar no número conectado.
-        </p>
-      )}
-      {failed ? (
-        <StepError>
-          Ele acertou {run.passed} de {run.total} e precisa de 90%. Coloque mais conteúdo na base de
-          conhecimento (passo 3) e tente de novo, ou veja o que ele errou.
-        </StepError>
-      ) : null}
-      {run?.status === "error" ? (
-        <StepError>
-          A conferência parou no meio{run.error ? ` (${run.error})` : ""}. Clique em ligar de novo.
-        </StepError>
-      ) : null}
-      {!evaluating ? (
-        <div className="flex flex-wrap gap-2">
-          <Button onClick={onActivate} disabled={pending} className="h-11">
-            {pending ? <Loader2 className="animate-spin" aria-hidden /> : <Power aria-hidden />}
-            {pending
-              ? "Preparando as perguntas de teste…"
-              : failed
-                ? "Tentar ligar de novo"
-                : "Ligar o atendente"}
-          </Button>
-          {failed ? (
-            <Button variant="outline" className="h-11" onClick={() => onGo("/equipe-ia")}>
-              Ver o que ele errou
-            </Button>
-          ) : null}
-        </div>
-      ) : null}
+      <p className="text-[13px] text-muted-foreground">
+        O atendente está desligado. Ligado, ele responde na hora toda mensagem que chegar no número
+        conectado.
+      </p>
+      <Button onClick={onActivate} disabled={pending} className="h-11">
+        {pending ? <Loader2 className="animate-spin" aria-hidden /> : <Power aria-hidden />}
+        Ligar o atendente
+      </Button>
     </section>
   );
 }
 
-/** Passo 4: criar o atendente de pós-venda em um clique, testar na hora e ligar no WhatsApp. */
+/** Passo 4: criar o atendente de pós-venda em um clique (já nasce ligado) e testar na hora. */
 export function AgentStep({
   accountId,
   onNext,
@@ -254,7 +206,7 @@ export function AgentStep({
     create.mutate(
       { name: name.trim(), greeting: greeting.trim() },
       {
-        onSuccess: () => toast.success("Atendente criado. Teste aqui embaixo."),
+        onSuccess: () => toast.success("Atendente criado e ligado. Teste aqui embaixo."),
         onError: (err) => setError(`Não consegui criar o atendente: ${errorMessage(err)}`),
       },
     );
@@ -315,7 +267,7 @@ export function AgentStep({
             ? "ligado"
             : agent.status === "paused"
               ? "pausado"
-              : "criado, ainda desligado"}
+              : "desligado"}
         </span>
         <Button variant="ghost" size="sm" className="ml-auto" onClick={() => onGo("/equipe-ia")}>
           Ajustar na Equipe de IA
@@ -331,8 +283,7 @@ export function AgentStep({
           activate.mutate(
             {},
             {
-              onError: (err) =>
-                toast.error(`Não consegui começar a conferência: ${errorMessage(err)}`),
+              onError: (err) => toast.error(`Não consegui ligar o atendente: ${errorMessage(err)}`),
             },
           )
         }
