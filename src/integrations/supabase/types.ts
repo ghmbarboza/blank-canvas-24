@@ -10260,6 +10260,7 @@ export type Database = {
         Returns: Json
       }
       garantir_privilegios: { Args: never; Returns: Json }
+      garantir_realtime: { Args: never; Returns: number }
       gestao_trends: {
         Args: { _account: string; _from: string; _group?: string; _to: string }
         Returns: Json
