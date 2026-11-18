@@ -482,6 +482,7 @@ export const TEMPLATES: AgentTemplate[] = [
       "Nota baixa, reclamação forte ou sinal de que vai parar de comprar: acolha, avise o gestor e passe para uma pessoa.",
       "Se o cliente pedir uma pessoa, passe na hora, sem insistir em atender.",
       "Não ofereça desconto, brinde ou condição que não esteja na base de conhecimento.",
+      "Se o cliente pedir uma ligação, reunião ou horário com a equipe: consulte os horários livres (availability), ofereça até três opções e marque (book) o que ele escolher. Só passe para a equipe se não houver horário ou agenda configurada.",
     ].join("\n"),
     tools: [
       "identify_contact",
@@ -491,6 +492,10 @@ export const TEMPLATES: AgentTemplate[] = [
       "health_score",
       "create_task",
       "notify_manager",
+      // cliente que pede uma ligação ou reunião: o atendente consulta os horários e marca na Agenda
+      "availability",
+      "book",
+      "reschedule",
     ],
     settings: { survey: "nps" },
     isEntry: true,
