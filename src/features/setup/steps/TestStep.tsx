@@ -26,8 +26,8 @@ export function TestStep({ onGo, detail }: StepProps & { detail: RoteiroDetail |
             1
           </span>
           <span>
-            Pegue <strong>outro celular</strong> (o seu pessoal, por exemplo) e mande um
-            &quot;Oi&quot; para o WhatsApp da empresa que você conectou
+            De <strong>outro número</strong> (o seu celular pessoal ou o de um colega), mande um
+            &quot;Oi&quot; para o WhatsApp que você conectou no passo 2
             {detail?.whatsapp && /\d{6,}/.test(detail.whatsapp) ? ` (${detail.whatsapp})` : ""}.
           </span>
         </li>
@@ -61,8 +61,9 @@ export function TestStep({ onGo, detail }: StepProps & { detail: RoteiroDetail |
           </p>
         ) : connected ? (
           <p className="mt-3 text-[13px] text-muted-foreground">
-            Nada chegou ainda. Confira se mandou para o número certo e se o celular da empresa está
-            com internet. Mensagem enviada do próprio número conectado não conta.
+            Nada chegou ainda. A mensagem precisa sair de um número diferente do que está
+            conectado: mandar do próprio número conectado não aparece aqui. Confira também se o
+            celular conectado está com internet.
           </p>
         ) : null}
       </div>

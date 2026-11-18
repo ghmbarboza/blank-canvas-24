@@ -157,9 +157,11 @@ function Activation({
       {evaluating ? (
         <>
           <p className="text-[13px] text-muted-foreground">
-            Conferindo as respostas dele em perguntas de teste
-            {run?.total ? ` (${run.passed} certas de ${run.total} até agora)` : ""}. Leva alguns
-            minutos; pode seguir para o próximo passo que ele liga sozinho se passar.
+            O Vínculo está fazendo {run?.total ? `${run.total} perguntas` : "perguntas"} de teste ao
+            atendente, como se fosse um cliente, e conferindo cada resposta
+            {run?.total ? ` (${run.passed} certas até agora)` : ""}. Leva alguns minutos e você não
+            precisa esperar aqui: siga para o próximo passo. Se ele acertar 9 em cada 10, liga
+            sozinho.
           </p>
           <Progress
             value={run?.total ? Math.min(95, (run.passed / run.total) * 100 + 5) : 8}
@@ -169,8 +171,10 @@ function Activation({
         </>
       ) : (
         <p className="text-[13px] text-muted-foreground">
-          Antes de atender cliente de verdade, ele responde a perguntas de teste. Se acertar 90% ou
-          mais, liga sozinho.
+          O atendente já funciona no teste aqui em cima. Para ele responder os clientes no
+          WhatsApp, clique em ligar: o Vínculo faz perguntas de teste a ele e, se acertar 9 em cada
+          10, liga sozinho em alguns minutos. Depois de ligado, ele responde toda mensagem que
+          chegar no número conectado.
         </p>
       )}
       {failed ? (

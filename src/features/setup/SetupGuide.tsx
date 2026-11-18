@@ -41,7 +41,7 @@ const CTA: Record<string, string> = {
   empresa: "Preencher",
   canal: "Conectar",
   conhecimento: "Subir conteúdo",
-  agente: "Criar atendente",
+  agente: "Criar e testar",
   regras: "Escolher regras",
   teste: "Testar",
 };

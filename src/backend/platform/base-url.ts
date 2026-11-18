@@ -5,13 +5,17 @@
 // R2 (05/11): trocar um endereço já gravado é só do DONO, e o destino tem de provar que é deste projeto.
 import { isPrivateHost } from "../net-address";
 
-/** Ref do projeto Supabase a partir da URL (https://<ref>.supabase.co). */
+/**
+ * Identificador do projeto a partir da URL do banco. Dois formatos: https://<ref>.supabase.co
+ * (antigo) e https://c--<uuid>-prod.lovable.cloud (Lovable Cloud novo, com hífens). Sem aceitar o
+ * segundo, o app nunca prova que o endereço é dele, não grava o endereço e o agendador não roda.
+ */
 export function projectRef(supabaseUrl: string | undefined | null): string | null {
   if (!supabaseUrl) return null;
   try {
     const host = new URL(supabaseUrl).hostname.toLowerCase();
     const ref = host.split(".")[0] ?? "";
-    return /^[a-z0-9]{10,40}$/.test(ref) ? ref : null;
+    return /^[a-z0-9][a-z0-9-]{8,78}[a-z0-9]$/.test(ref) ? ref : null;
   } catch {
     return null;
   }

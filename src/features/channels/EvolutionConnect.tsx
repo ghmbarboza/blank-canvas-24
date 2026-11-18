@@ -232,6 +232,10 @@ export function EvolutionConnect({ accountId, onConnected, className }: Props) {
           <p className="mt-3 text-[12px] text-muted-foreground">
             O celular precisa estar com internet. Esta tela muda sozinha quando conectar.
           </p>
+          <p className="mt-2 text-[12px] text-muted-foreground">
+            Use o WhatsApp da empresa, não o seu pessoal: toda conversa desse número entra na
+            central e o atendente de IA, quando ligado, responde a todas.
+          </p>
           <Button
             type="button"
             variant="ghost"

@@ -68,7 +68,7 @@ export const ROTEIRO: RoteiroStep[] = [
   {
     id: "canal",
     title: "Conectar o WhatsApp",
-    summary: "Leia um QR Code com o celular da empresa e o número entra na central.",
+    summary: "Leia um QR Code com o celular da empresa (não o seu pessoal) e o número entra na central.",
     required: true,
     later: false,
     goal: "conectar o WhatsApp da empresa. O caminho principal é o QR Code pela Evolution: mostre o botão com abrir_passo canal; na tela a pessoa cola o endereço do servidor e a chave, clica em Conectar e lê o QR Code no celular (WhatsApp › Dispositivos conectados › Conectar dispositivo). Quem não tem servidor contrata um provedor de Evolution API (a Cloudfy é um exemplo), que manda o endereço e a chave por e-mail; não diga preço. Não peça a chave da Evolution na conversa: ela é colada na tela e vai direto para o cofre. Se a tela mostrar erro, explique: endereço precisa começar com https://; chave recusada é a chave global errada; servidor fora do ar é com o provedor; QR Code vencido é só gerar outro. Caminho secundário, só se a pessoa pedir o número oficial da Meta: conectar_zernio e depois link_whatsapp (precisa de conta na Zernio).",
@@ -86,7 +86,7 @@ export const ROTEIRO: RoteiroStep[] = [
   {
     id: "agente",
     title: "Seu atendente de IA",
-    summary: "Crie o atendente de pós-venda, teste na hora e ligue no WhatsApp.",
+    summary: "Crie o atendente de pós-venda e teste as respostas dele aqui na tela.",
     required: false,
     later: false,
     goal: "criar e ligar o atendente de pós-venda. Pela tela é um clique (abrir_passo agente): cria a partir do modelo de pós-venda, já no WhatsApp, e tem uma caixa de teste que responde com a base da empresa. Pela conversa: criar_agente (descreva um atendente de pós-venda) e, com o sim da pessoa, avaliar_agente, que roda as perguntas de teste e liga sozinho se passar com 90% ou mais. Nunca diga que está ligado antes de estar.",
@@ -104,7 +104,7 @@ export const ROTEIRO: RoteiroStep[] = [
   {
     id: "teste",
     title: "Teste no seu número",
-    summary: "Mande uma mensagem do seu celular e veja chegar na Caixa de entrada.",
+    summary: "Mande um Oi de outro número e veja a conversa chegar na Caixa de entrada.",
     required: false,
     later: false,
     goal: 'ver funcionando: a pessoa manda uma mensagem do próprio celular (de outro número) para o WhatsApp que conectou, abre a Caixa de entrada (abrir_tela /inbox, rótulo "Abrir a Caixa de entrada"), vê a mensagem chegar e a resposta sair (do atendente de IA ou dela mesma). O passo só fica pronto quando o banco mostra mensagem recebida e resposta enviada: diga o que já aconteceu e o que falta.',
@@ -142,7 +142,8 @@ export function isDone(id: StepId, s: SetupSnapshot, _facts: Fact[] = []): boole
   if (id === "canal") return s.channels.some((c) => c.platform === "whatsapp");
   if (id === "conhecimento") return s.documents > 0;
   if (id === "agente")
-    return s.agents.some((a) => a.status === "active" && a.role !== "supervisor");
+    // criado já conta: ligar depende da conferência, que roda em segundo plano e não prende a fila
+    return s.agents.some((a) => a.role !== "supervisor");
   if (id === "regras") return s.rulesOn > 0;
   if (id === "teste") return s.firstWin.received && s.firstWin.replied;
   if (id === "email") return connected(s, "resend") || connected(s, "ses");

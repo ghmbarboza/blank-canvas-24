@@ -80,11 +80,11 @@ describe("isDone de cada passo", () => {
     expect(isDone("conhecimento", { ...live, documents: 1 })).toBe(true);
   });
 
-  it("agente: só conta atendente ligado (passou na avaliação); supervisor não conta", () => {
+  it("agente: conta atendente criado, mesmo ainda desligado; supervisor não conta", () => {
     const draft = { ...live, agents: [{ name: "Pós-venda", status: "draft", role: "post_sale" }] };
     const sup = { ...live, agents: [{ name: "Supervisor", status: "active", role: "supervisor" }] };
     const on = { ...live, agents: [{ name: "Pós-venda", status: "active", role: "post_sale" }] };
-    expect(isDone("agente", draft)).toBe(false);
+    expect(isDone("agente", draft)).toBe(true);
     expect(isDone("agente", sup)).toBe(false);
     expect(isDone("agente", on)).toBe(true);
   });

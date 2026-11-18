@@ -5,6 +5,10 @@ import { originServesProject, projectRef, shouldReclaimBase } from "./base-url";
 describe("endereço do app no remix (S1)", () => {
   it("lê o ref do projeto da URL do Supabase", () => {
     expect(projectRef("https://imxzoctbafmtgwtttcsq.supabase.co")).toBe("imxzoctbafmtgwtttcsq");
+    // Lovable Cloud novo: o identificador tem hífens
+    expect(projectRef("https://c--3ebbfa87-45e9-4df6-b4d2-ee8f66892da4-prod.lovable.cloud")).toBe(
+      "c--3ebbfa87-45e9-4df6-b4d2-ee8f66892da4-prod",
+    );
     expect(projectRef("nada")).toBeNull();
     expect(projectRef(undefined)).toBeNull();
   });
