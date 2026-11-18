@@ -225,7 +225,7 @@ export function VoiceCampaignsPage() {
                   <div className="mt-4">
                     <div className="h-2 overflow-hidden rounded-full bg-surface-2">
                       <div
-                        className="h-full rounded-full bg-[#0A1F3B] transition-[width] duration-500"
+                        className="h-full rounded-full bg-[#001F35] transition-[width] duration-500"
                         style={{ width: `${pct}%` }}
                       />
                     </div>

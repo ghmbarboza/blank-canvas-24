@@ -5,6 +5,9 @@ import { pageHead } from "@/lib/page-head";
 
 export const Route = createFileRoute("/_app/pergunte")({
   head: () =>
-    pageHead("Pergunte ao Nexus", "Perguntas sobre a operação respondidas com os seus relatórios."),
+    pageHead(
+      "Pergunte ao Vínculo",
+      "Perguntas sobre a operação respondidas com os seus relatórios.",
+    ),
   component: AskNexusPage,
 });

@@ -6,6 +6,7 @@
 // Textos de agente seguem o feed-the-LLM: dizem quem é, o objetivo, o que consultar e os limites.
 // Não são roteiro nem árvore de decisão; o modelo decide com o contexto do CRM.
 import type { AutoNode, Graph, Trigger } from "@/features/automations/engine";
+import { POS_VENDA_PIPELINE, POS_VENDA_STAGES } from "@/features/posvenda/journey";
 
 export type SegmentKey =
   "clinica" | "imobiliaria" | "varejo" | "saas_b2b" | "stand_automovel" | "escola";
@@ -178,7 +179,11 @@ const COMMON_CRITERIA: QaCriterion[] = [
 const AGENT_LIMITS =
   "Use o histórico do cliente em todos os canais e os dados do CRM antes de responder. Nunca invente preço, prazo ou condição: se não está na base, diga que vai confirmar e passe para uma pessoa. Se perguntarem se é robô, responda com honestidade e siga ajudando.";
 
-export const SEGMENT_TEMPLATES: SegmentTemplate[] = [
+// Os funis de VENDA de cada ramo (abaixo, em "pipelines") ficam guardados como referência, mas não
+// são mais aplicados: no Vínculo todo ramo usa a jornada de pós-venda (features/posvenda/journey).
+// Como apply_segment_template acha funil e etapa pelo nome, aplicar um ramo numa conta nova não
+// cria nada por cima do funil "Pós-venda" que ela já tem; numa conta antiga, cria a jornada.
+const SALES_SEGMENTS: SegmentTemplate[] = [
   {
     key: "clinica",
     name: "Clínica e consultório",
@@ -753,6 +758,15 @@ export const SEGMENT_TEMPLATES: SegmentTemplate[] = [
     },
   },
 ];
+
+const POS_VENDA_PIPELINES: SegmentModel["pipelines"] = [
+  { name: POS_VENDA_PIPELINE, stages: POS_VENDA_STAGES.map((st) => ({ ...st })) },
+];
+
+export const SEGMENT_TEMPLATES: SegmentTemplate[] = SALES_SEGMENTS.map((t) => ({
+  ...t,
+  model: { ...t.model, pipelines: POS_VENDA_PIPELINES },
+}));
 
 export function segmentTemplate(key: string): SegmentTemplate | undefined {
   return SEGMENT_TEMPLATES.find((t) => t.key === key);

@@ -14,7 +14,7 @@ export async function vapidKeys(): Promise<VapidKeys | null> {
   cached = {
     publicKey: v.public,
     privateKey: v.private,
-    subject: process.env["VAPID_SUBJECT"] ?? "mailto:suporte@viverdeia.ai",
+    subject: process.env["VAPID_SUBJECT"] ?? "mailto:contato@example.com",
   };
   return cached;
 }

@@ -76,7 +76,7 @@ async function ensurePostCallHook(
         body: JSON.stringify({
           settings: {
             auth_type: "hmac",
-            name: "Nexus One · pós-chamada",
+            name: "Vínculo · pós-chamada",
             webhook_url: `${baseUrl}/api/public/voice/postcall?a=${accountId}`,
           },
         }),
@@ -121,7 +121,7 @@ export async function teamPersona(accountId: string, voiceAgentId: string, voice
   };
 }
 
-// Ferramentas da equipe que não precisam de resposta: a voz segue falando enquanto o Nexus grava.
+// Ferramentas da equipe que não precisam de resposta: a voz segue falando enquanto o Vínculo grava.
 const ASYNC_TOOLS = new Set([
   "save_fields",
   "flag",
@@ -416,7 +416,7 @@ export async function outboundCall(
         .single()
     : { data: null };
   if (!p?.elevenlabs_phone_id) throw new Error("Número de saída não registrado na ElevenLabs");
-  // A telefonia do Nexus é só a Zadarma: a ElevenLabs liga pelo tronco SIP dela.
+  // A telefonia do Vínculo é só a Zadarma: a ElevenLabs liga pelo tronco SIP dela.
   if (p.provider !== "zadarma")
     throw new Error(
       "Este número não é da Zadarma. Vincule um número da Zadarma em Ligações › Números",

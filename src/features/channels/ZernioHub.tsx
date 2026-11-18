@@ -7,6 +7,7 @@ import { useState } from "react";
 import { ArrowUp, ExternalLink, Loader2, RefreshCw, TriangleAlert } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { OPEN_OFFICIAL_EVENT } from "./constants";
 
 import { BrandTile } from "@/components/brand/BrandIcon";
 import { Badge } from "@/components/ui/badge";
@@ -205,18 +206,19 @@ function NotReady() {
           Falta só a chave da Zernio para ver tudo aqui
         </p>
         <p className="mt-0.5 text-[13px] text-muted-foreground">
-          Salve a chave no passo 1 do WhatsApp Oficial, acima. Na hora, o Nexus confere o que já
-          está conectado e mostra um botão para cada rede que falta.
+          Salve a chave em "Quero usar o número oficial da Meta", acima. Na hora, a central confere
+          o que já está conectado e mostra um botão para cada rede que falta.
         </p>
       </div>
       <Button
         variant="outline"
         size="sm"
-        onClick={() =>
+        onClick={() => {
+          window.dispatchEvent(new Event(OPEN_OFFICIAL_EVENT));
           document
             .getElementById("whatsapp-oficial")
-            ?.scrollIntoView({ behavior: "smooth", block: "start" })
-        }
+            ?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }}
       >
         <ArrowUp aria-hidden />
         Ir para a chave

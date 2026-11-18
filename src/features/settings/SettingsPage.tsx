@@ -63,13 +63,13 @@ const GROUPS: Group[] = [
   {
     id: "empresa",
     label: "Empresa",
-    description: "Quem é a sua empresa, como o Nexus aparece para a equipe e o que vocês vendem.",
+    description: "Quem é a sua empresa, como o Vínculo aparece para a equipe e o que vocês vendem.",
   },
   {
     id: "equipe",
     label: "Equipe",
     description:
-      "Quem entra no Nexus, o que cada pessoa pode fazer e o roteiro que os vendedores seguem.",
+      "Quem entra no Vínculo, o que cada pessoa pode fazer e o roteiro que os vendedores seguem.",
   },
   {
     id: "canais",

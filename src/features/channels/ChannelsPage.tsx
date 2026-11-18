@@ -5,8 +5,8 @@ import { toast } from "sonner";
 
 import { useAccount, useAccountId } from "@/lib/account";
 import { errorMessage } from "@/lib/functions";
-import { channelAction, channelsKey, type CreateEvolutionResult, type QrPayload } from "./api";
-import { LegacyWhatsApp, WhatsAppHero } from "./AddWhatsApp";
+import { channelsKey, type QrPayload } from "./api";
+import { LegacyWhatsApp, OfficialWhatsApp, WhatsAppQrCard } from "./AddWhatsApp";
 import { ConnectedChannels } from "./ConnectedChannels";
 import { IntegrationsSection } from "./IntegrationsSection";
 import { ZernioHub } from "./ZernioHub";
@@ -91,12 +91,12 @@ export function ChannelsPage({ returnedFromConnect, zernioReturn, onReturnHandle
   const accountId = useAccountId();
   const { isAdmin } = useAccount();
   const [qr, setQr] = useState<{ channelId: string; initial?: QrPayload } | null>(null);
+  // quem chega por um link para #whatsapp-oficial já encontra o bloco aberto
+  const [openOfficial] = useState(
+    () => typeof window !== "undefined" && window.location.hash === "#whatsapp-oficial",
+  );
   useZernioReturn(accountId, returnedFromConnect, isAdmin, onReturnHandled);
   useZernioHostedReturn(accountId, zernioReturn, isAdmin, onReturnHandled);
-
-  function onEvolutionCreated(res: CreateEvolutionResult) {
-    setQr({ channelId: res.channelId, initial: { qr: res.qr, pairingCode: res.pairingCode } });
-  }
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -110,8 +110,8 @@ export function ChannelsPage({ returnedFromConnect, zernioReturn, onReturnHandle
               Canais de atendimento
             </h1>
             <p className="mt-3 text-[15px] leading-relaxed text-muted-foreground sm:text-[17px]">
-              Conecte os lugares onde seus clientes falam com você. Todas as conversas chegam numa
-              caixa só, e ninguém da equipe perde uma venda.
+              Conecte o WhatsApp da empresa e os outros lugares onde seus clientes falam com você.
+              Todas as conversas chegam numa caixa só.
             </p>
           </div>
 
@@ -123,14 +123,20 @@ export function ChannelsPage({ returnedFromConnect, zernioReturn, onReturnHandle
 
           {isAdmin ? (
             <>
+              <div id="whatsapp-qr" className="scroll-mt-6">
+                <WhatsAppQrCard accountId={accountId} />
+              </div>
               <div id="whatsapp-oficial" className="scroll-mt-6">
-                <WhatsAppHero accountId={accountId} />
+                <OfficialWhatsApp
+                  accountId={accountId}
+                  defaultOpen={returnedFromConnect || zernioReturn !== null || openOfficial}
+                />
               </div>
               <ZernioHub accountId={accountId} />
               <div id="leads-de-anuncios">
                 <ZernioLeadsCard accountId={accountId} withConnect={false} />
               </div>
-              <LegacyWhatsApp accountId={accountId} onEvolutionCreated={onEvolutionCreated} />
+              <LegacyWhatsApp accountId={accountId} />
             </>
           ) : (
             <div className="flex items-center gap-3 rounded-xl border border-border bg-surface p-4 text-[13px] text-muted-foreground">

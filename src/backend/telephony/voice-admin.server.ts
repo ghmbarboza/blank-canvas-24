@@ -296,7 +296,7 @@ export async function callContact(caller: Caller, body: Record<string, unknown>)
 }
 
 /**
- * Número da Zadarma que já está na ElevenLabs (tronco SIP registrado por lá): vincula ao Nexus
+ * Número da Zadarma que já está na ElevenLabs (tronco SIP registrado por lá): vincula ao Vínculo
  * e ao agente de voz, sem cadastrar tronco de novo.
  */
 export async function linkNumber(caller: Caller, body: Record<string, unknown>) {

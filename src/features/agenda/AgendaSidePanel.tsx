@@ -229,7 +229,7 @@ function NextMeetingCard({
 }
 
 const LOCATION: Record<string, { label: string; icon: LucideIcon }> = {
-  nexus_meet: { label: "Sala Nexus", icon: Video },
+  nexus_meet: { label: "Sala Vínculo", icon: Video },
   phone: { label: "Ligação", icon: Phone },
   in_person: { label: "Presencial", icon: MapPin },
 };

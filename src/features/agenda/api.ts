@@ -309,7 +309,7 @@ export interface EventMeeting {
   briefing: unknown;
 }
 
-// Sala Nexus ligada ao evento (se houver) e o briefing que a IA prepara antes da reunião.
+// Sala Vínculo ligada ao evento (se houver) e o briefing que a IA prepara antes da reunião.
 export function useEventMeeting(eventId: string | null) {
   const accountId = useAccountId();
   return useQuery({

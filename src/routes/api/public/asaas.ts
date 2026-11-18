@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-// Webhook do Asaas (no Asaas: Integrações › Webhooks, token = o da integração no Nexus).
+// Webhook do Asaas (no Asaas: Integrações › Webhooks, token = o da integração no Vínculo).
 export const Route = createFileRoute("/api/public/asaas")({
   server: {
     handlers: {

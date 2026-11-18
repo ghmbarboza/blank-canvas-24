@@ -23,7 +23,7 @@ function ChartTooltip({ active, payload, label }: TooltipProps<number, string>) 
   const row = payload[0]?.payload as DailyRow | undefined;
   if (!row) return null;
   return (
-    <div className="min-w-44 rounded-xl border border-white/10 bg-[#02162A] p-3 text-white shadow-pop">
+    <div className="min-w-44 rounded-xl border border-white/10 bg-[#001626] p-3 text-white shadow-pop">
       <p className="text-[11px] text-white/60 first-letter:uppercase">
         {format(parseISO(label), "EEEE, d 'de' MMM", { locale: ptBR })}
       </p>
@@ -101,7 +101,7 @@ export function VolumeChart({ daily, className }: { daily: DailyRow[]; className
                 tickLine={false}
                 axisLine={false}
                 minTickGap={28}
-                tick={{ fill: "var(--subtle-fg)", fontSize: 11, fontFamily: "Geist Mono" }}
+                tick={{ fill: "var(--subtle-fg)", fontSize: 11, fontFamily: "JetBrains Mono" }}
                 tickFormatter={(d: string) => format(parseISO(d), "d MMM", { locale: ptBR })}
               />
               <YAxis
@@ -109,7 +109,7 @@ export function VolumeChart({ daily, className }: { daily: DailyRow[]; className
                 axisLine={false}
                 width={44}
                 allowDecimals={false}
-                tick={{ fill: "var(--subtle-fg)", fontSize: 11, fontFamily: "Geist Mono" }}
+                tick={{ fill: "var(--subtle-fg)", fontSize: 11, fontFamily: "JetBrains Mono" }}
               />
               <Tooltip
                 content={<ChartTooltip />}

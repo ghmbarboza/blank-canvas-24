@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 
 const page = (title: string, text: string) =>
   `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title>
-<style>body{margin:0;font-family:Geist,system-ui,sans-serif;background:#f7f8fa;color:#0a1f3b;display:grid;place-items:center;min-height:100vh}
-main{max-width:420px;padding:40px 32px;background:#fff;border-radius:24px;box-shadow:0 10px 30px rgba(10,31,59,.08);text-align:center}
+<style>body{margin:0;font-family:Manrope,system-ui,sans-serif;background:#f7f8fa;color:#001f35;display:grid;place-items:center;min-height:100vh}
+main{max-width:420px;padding:40px 32px;background:#fff;border-radius:24px;box-shadow:0 10px 30px rgba(0, 31, 53,.08);text-align:center}
 h1{font-size:22px;margin:0 0 8px}p{color:#5b6779;font-size:14px;line-height:1.5;margin:0}</style></head>
 <body><main><h1>${title}</h1><p>${text}</p></main></body></html>`;
 

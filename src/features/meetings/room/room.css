@@ -1,13 +1,13 @@
-/* Sala Nexus: tema do LiveKit com a paleta VIA (navy + cinzas, coral só para encerrar). */
+/* Sala Vínculo: tema do LiveKit com a paleta da marca (navy + cinzas, coral só para encerrar). */
 .nexus-room {
   --lk-bg: #071629;
-  --lk-bg2: #0a1f3b;
+  --lk-bg2: #001f35;
   --lk-bg3: #12294a;
   --lk-bg4: #1b3459;
   --lk-bg5: #26406a;
   --lk-fg: #f4f6fa;
   --lk-accent-bg: #f4f6fa;
-  --lk-accent-fg: #0a1f3b;
+  --lk-accent-fg: #001f35;
   --lk-accent2: #e3e8f0;
   --lk-accent3: #d2dae6;
   --lk-accent4: #c1cbda;
@@ -17,7 +17,7 @@
   --lk-danger4: #d98c8c;
   --lk-border-radius: 1rem;
   --lk-border-color: rgba(255, 255, 255, 0.08);
-  --lk-font-family: "Geist", system-ui, sans-serif;
+  --lk-font-family: "Manrope", system-ui, sans-serif;
   font-family: var(--lk-font-family);
 }
 .nexus-room .lk-participant-tile {

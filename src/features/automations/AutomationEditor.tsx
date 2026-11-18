@@ -434,6 +434,8 @@ function defaultConfig(type: NodeType): Record<string, unknown> {
       return { category: "marketing", text: "", template_language: "pt_BR" };
     case "task":
       return { type: "call", due_in_minutes: 60, title: "" };
+    case "ticket":
+      return { subject: "", priority: "high" };
     case "ai_toggle":
       return { enabled: false };
     default:

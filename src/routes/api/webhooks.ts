@@ -1,3 +1,4 @@
+import { BRAND } from "@/lib/brand";
 import { createFileRoute } from "@tanstack/react-router";
 
 // Webhooks de saída: criar endpoint (o segredo aparece uma única vez), rotacionar e mandar um ping.
@@ -96,7 +97,7 @@ export const Route = createFileRoute("/api/webhooks")({
             const payload = JSON.stringify({
               type: "ping",
               created_at: new Date().toISOString(),
-              data: { message: "Teste do Nexus One" },
+              data: { message: `Teste do ${BRAND.name}` },
             });
             const ts = Math.floor(Date.now() / 1000);
             try {
@@ -107,8 +108,8 @@ export const Route = createFileRoute("/api/webhooks")({
                   method: "POST",
                   headers: {
                     "content-type": "application/json",
-                    "x-nexus-timestamp": String(ts),
-                    "x-nexus-signature": `sha256=${signPayload((secret as string) ?? "", ts, payload)}`,
+                    "x-vinculo-timestamp": String(ts),
+                    "x-vinculo-signature": `sha256=${signPayload((secret as string) ?? "", ts, payload)}`,
                   },
                   body: payload,
                   signal: AbortSignal.timeout(8_000),

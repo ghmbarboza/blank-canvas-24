@@ -73,7 +73,7 @@ export function parseGoogleLead(body: unknown): ParsedGoogleLead | null {
   };
 }
 
-// column_id padrão do Google → campo do contato no Nexus (FormField.map).
+// column_id padrão do Google → campo do contato no Vínculo (FormField.map).
 const STANDARD: Record<string, string> = {
   full_name: "name",
   email: "email",
@@ -85,7 +85,7 @@ const STANDARD: Record<string, string> = {
   city: "city",
 };
 
-/** Valores do lead nas chaves do formulário do Nexus (por chave igual ou pelo campo do contato). */
+/** Valores do lead nas chaves do formulário do Vínculo (por chave igual ou pelo campo do contato). */
 export function mapGoogleLeadToForm(
   columns: Record<string, string>,
   fields: readonly { key: string; map: string | null }[],

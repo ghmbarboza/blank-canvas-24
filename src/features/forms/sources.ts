@@ -9,7 +9,7 @@ export const SOURCE_LABEL: Record<string, string> = {
 };
 
 export function formEmbedCode(origin: string, accountId: string, formId: string): string {
-  return `<div data-nexus-form="${formId}"></div>\n<script src="${origin}/api/public/widget.js" data-account="${accountId}" async></script>`;
+  return `<div data-vinculo-form="${formId}"></div>\n<script src="${origin}/api/public/widget.js" data-account="${accountId}" async></script>`;
 }
 
 export function ownerModeLabel(mode: string | undefined): string {

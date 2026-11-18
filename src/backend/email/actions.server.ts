@@ -1,3 +1,4 @@
+import { BRAND } from "@/lib/brand";
 // Ações autenticadas do módulo de e-mail (chamadas por /api/email).
 import {
   HttpError,
@@ -453,14 +454,14 @@ export async function sendInvite(caller: Caller, inviteId: string | undefined) {
     seller: "vendedor",
     owner: "dono",
   };
-  const html = `<!doctype html><html lang="pt-BR"><body style="margin:0;background:#f4f6fa;font-family:Geist,-apple-system,Segoe UI,sans-serif"><table role="presentation" width="100%" style="padding:32px 12px"><tr><td align="center"><table role="presentation" width="560" style="max-width:560px;background:#fff;border-radius:24px;padding:32px"><tr><td style="color:#0A1F3B"><h1 style="font-size:22px;margin:0 0 12px">Você foi convidado para ${escapeHtml(sender.brand)}</h1><p style="font-size:15px;line-height:1.6;color:#334155;margin:0 0 24px">${escapeHtml(me)} chamou você para entrar no Nexus One como ${ROLE[inv.role] ?? inv.role}. Use este e-mail (${escapeHtml(inv.email)}) para criar sua senha.</p><a href="${link}" style="display:inline-block;background:#0A1F3B;color:#fff;text-decoration:none;font-weight:600;padding:12px 24px;border-radius:999px">Aceitar convite</a><p style="font-size:12px;color:#94a3b8;margin:24px 0 0">O link vale até ${new Date(inv.expires_at).toLocaleDateString("pt-BR")}. Se não esperava este convite, ignore.</p></td></tr></table></td></tr></table></body></html>`;
+  const html = `<!doctype html><html lang="pt-BR"><body style="margin:0;background:#f4f6fa;font-family:Manrope,-apple-system,Segoe UI,sans-serif"><table role="presentation" width="100%" style="padding:32px 12px"><tr><td align="center"><table role="presentation" width="560" style="max-width:560px;background:#fff;border-radius:24px;padding:32px"><tr><td style="color:#001F35"><h1 style="font-size:22px;margin:0 0 12px">Você foi convidado para ${escapeHtml(sender.brand)}</h1><p style="font-size:15px;line-height:1.6;color:#334155;margin:0 0 24px">${escapeHtml(me)} chamou você para entrar no Vínculo como ${ROLE[inv.role] ?? inv.role}. Use este e-mail (${escapeHtml(inv.email)}) para criar sua senha.</p><a href="${link}" style="display:inline-block;background:#B9915B;color:#001F35;font-weight:700;text-decoration:none;font-weight:600;padding:12px 24px;border-radius:10px">Aceitar convite</a><p style="font-size:12px;color:#94a3b8;margin:24px 0 0">O link vale até ${new Date(inv.expires_at).toLocaleDateString("pt-BR")}. Se não esperava este convite, ignore.</p></td></tr></table></td></tr></table></body></html>`;
   const r = await sendEmail(
     {
       accountId: caller.accountId,
       kind: "transactional",
       category: "transactional",
       to: inv.email,
-      subject: `Convite para ${sender.brand} no Nexus One`,
+      subject: `Convite para ${sender.brand} no ${BRAND.name}`,
       html,
       userId: caller.userId,
     },

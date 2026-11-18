@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-// SMS pela Zadarma (a telefonia do Nexus é só a Zadarma, decisão de 04/11/2026).
+// SMS pela Zadarma (a telefonia do Vínculo é só a Zadarma, decisão de 04/11/2026).
 // action "connect" (admin): cria ou atualiza o canal SMS da conta com o remetente liberado.
 // sem action (membro): responde uma conversa SMS pela Caixa de entrada.
 export const Route = createFileRoute("/api/sms")({
@@ -53,7 +53,7 @@ export const Route = createFileRoute("/api/sms")({
                   : "A sua Zadarma não liberou nenhum remetente de SMS para este número. Confira o número em my.zadarma.com › Números.",
                 "sender_not_allowed",
               );
-            // o número é único no Nexus inteiro: nunca toma o canal de outra conta
+            // o número é único no Vínculo inteiro: nunca toma o canal de outra conta
             const { data: existing } = await db
               .from("channels")
               .select("id, account_id")

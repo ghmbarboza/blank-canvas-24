@@ -1,6 +1,6 @@
 // Agenda pela Zernio: as caixas Google e Microsoft conectadas na Central da Zernio (OAuth feito
 // pela própria Zernio) bloqueiam os horários ocupados de quem atende. A caixa é ligada à pessoa
-// pelo e-mail: o mesmo e-mail do login no Nexus e da conta Google/Microsoft conectada.
+// pelo e-mail: o mesmo e-mail do login no Vínculo e da conta Google/Microsoft conectada.
 import { admin } from "@/backend/http.server";
 import { listAccounts, zernio, zernioKey } from "@/backend/providers/zernio-client.server";
 import { WORKSPACE_PLATFORMS } from "@/features/channels/zernio-catalog";
@@ -60,7 +60,7 @@ async function emailsOf(userIds: string[]): Promise<{ id: string; email: string 
 
 /**
  * Ocupado de cada pessoa pelas agendas Google/Microsoft da Zernio. Sem chave, sem caixa ou com a
- * Zernio fora do ar, devolve vazio: o agendamento segue com a agenda do próprio Nexus.
+ * Zernio fora do ar, devolve vazio: o agendamento segue com a agenda do próprio Vínculo.
  */
 export async function zernioBusy(
   accountId: string,

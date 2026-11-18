@@ -52,6 +52,15 @@ serve(async (req) => {
           const res = await fetch(`${config.base_url}/instance/fetchInstances`, {
             headers: { apikey: key ?? "" },
             redirect: "error", // um 302 levaria a apikey para outro lugar (R8)
+            // servidor fora do ar não pode deixar a tela girando: desiste em 12 s
+            signal: AbortSignal.timeout(12_000),
+          }).catch((err) => {
+            const timedOut = (err as Error)?.name === "TimeoutError";
+            throw new Error(
+              timedOut
+                ? "O servidor Evolution não respondeu (tempo esgotado)"
+                : `Sem conexão com o servidor Evolution: ${(err as Error)?.message ?? err}`,
+            );
           });
           if (!res.ok) throw new Error(`Evolution respondeu ${res.status}`);
         }
@@ -316,7 +325,7 @@ async function evolutionConfig(accountId: string) {
   const baseUrl = (data?.config as { base_url?: string } | null)?.base_url;
   const apiKey = await getSecret("integration", accountId, "evolution_api_key");
   if (!baseUrl || !apiKey)
-    throw new HttpError(412, "Configure o servidor Evolution em Integrações");
+    throw new HttpError(412, "Configure o servidor Evolution: informe o endereço e a chave");
   return { baseUrl, apiKey };
 }
 

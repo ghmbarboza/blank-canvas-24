@@ -32,8 +32,8 @@ const TIP_TONE: Record<string, string> = {
   objection: "border-l-[#B85C5C]",
   closing: "border-l-[#1F8A5B]",
   compliance: "border-l-[#B85C5C]",
-  pace: "border-l-[#0A1F3B]",
-  question: "border-l-[#0A1F3B]",
+  pace: "border-l-[#001F35]",
+  question: "border-l-[#001F35]",
   info: "border-l-border-strong",
 };
 
@@ -71,9 +71,9 @@ export function Softphone({ available }: { available: boolean }) {
         onClick={() => sp.setOpen(!sp.open)}
         aria-label={sp.open ? "Fechar telefone" : "Abrir telefone"}
         className={cn(
-          "fixed right-5 bottom-5 z-40 grid size-14 place-items-center rounded-full shadow-[0_12px_32px_rgba(10,31,59,0.35)] transition-transform hover:scale-105",
+          "fixed right-5 bottom-5 z-40 grid size-14 place-items-center rounded-full shadow-[0_12px_32px_rgba(0, 31, 53,0.35)] transition-transform hover:scale-105",
           inConversation && !call && !sp.open && "max-sm:hidden",
-          call ? "bg-[#1F8A5B] text-white" : "bg-[#0A1F3B] text-white",
+          call ? "bg-[#1F8A5B] text-white" : "bg-[#001F35] text-white",
         )}
       >
         {call ? <PhoneCall className="size-6 animate-pulse" /> : <Phone className="size-6" />}
@@ -82,9 +82,9 @@ export function Softphone({ available }: { available: boolean }) {
       {sp.open && (
         <section
           aria-label="Telefone"
-          className="fixed right-5 bottom-24 z-40 flex max-h-[min(720px,calc(100dvh-120px))] w-[min(380px,calc(100vw-40px))] flex-col overflow-hidden rounded-[28px] border border-border bg-surface shadow-[0_24px_60px_rgba(10,31,59,0.28)]"
+          className="fixed right-5 bottom-24 z-40 flex max-h-[min(720px,calc(100dvh-120px))] w-[min(380px,calc(100vw-40px))] flex-col overflow-hidden rounded-[28px] border border-border bg-surface shadow-[0_24px_60px_rgba(0, 31, 53,0.28)]"
         >
-          <header className="relative overflow-hidden bg-[#0A1F3B] px-5 py-4 text-white">
+          <header className="relative overflow-hidden bg-[#001F35] px-5 py-4 text-white">
             <div
               className="hero-orb pointer-events-none absolute -top-16 -right-10 size-40 rounded-full bg-white/10 blur-2xl"
               aria-hidden

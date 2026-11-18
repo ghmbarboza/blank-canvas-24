@@ -1,67 +1,56 @@
-import { ChannelIcon } from "@/components/brand/ChannelIcon";
-import { PLATFORM_LABEL } from "@/components/brand/platform-label";
+import { Wordmark } from "@/components/layout/Logo";
+import { BRAND } from "@/lib/brand";
 
-const SHOWCASE = ["whatsapp", "instagram", "facebook", "tiktok", "telegram", "x"];
+const PROOF = [
+  {
+    title: "Atendimento com IA",
+    text: "responde no WhatsApp na hora e passa para a equipe quando precisa",
+  },
+  {
+    title: "Pesquisa de satisfação",
+    text: "pergunta depois de cada entrega e mostra quem está em risco",
+  },
+  {
+    title: "Recompra",
+    text: "avisa o momento certo de voltar a falar com cada cliente",
+  },
+];
 
-// Palco do produto nas telas de acesso (AuthShell do DS): entrar, criar senha nova.
+// Palco do produto nas telas de acesso: painel azul-marinho, destaque dourado, título forte.
 export function AuthStage() {
   return (
     <section className="relative hidden overflow-hidden bg-[var(--via-navy)] text-white lg:flex lg:flex-col lg:justify-between lg:p-12">
-      {/* Atmosfera navy do DS: gradiente profundo + luz radial no canto. */}
+      {/* Atmosfera: navy profundo com uma luz dourada discreta no canto. */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(720px 420px at 0% 0%, rgba(42,74,110,0.55), transparent 65%), linear-gradient(180deg, #0A1F3B 0%, #02162A 70%, #010B1A 100%)",
+            "radial-gradient(680px 420px at 100% 0%, rgba(185,145,91,0.20), transparent 62%), linear-gradient(180deg, #001F35 0%, #001626 70%, #000D18 100%)",
         }}
         aria-hidden
       />
-      <div className="relative flex items-center gap-3">
-        <img
-          src="/brand/via-monogram-white.png"
-          alt="Viver de IA"
-          width={434}
-          height={239}
-          className="w-12"
-        />
-        <span className="h-6 w-px bg-white/25" aria-hidden />
-        <span className="text-[15px] font-semibold tracking-tight">Nexus One</span>
+      <div className="relative">
+        <Wordmark onDark />
       </div>
-      <div className="relative max-w-lg">
-        <p className="text-[11px] font-medium tracking-[0.18em] text-white/60 uppercase">
-          Atendimento e vendas · Viver de IA
+      <div className="relative max-w-xl">
+        <p className="text-[11px] font-semibold tracking-[0.18em] text-[var(--gold)] uppercase">
+          {BRAND.tagline}
         </p>
-        <p className="mt-4 font-display text-5xl leading-[1.04] font-medium text-balance">
-          Todas as conversas num só lugar.{" "}
-          <span className="text-white/55">A IA diz quem está pronto para comprar.</span>
+        <p className="mt-5 font-display text-[3.25rem] leading-[1.04] font-extrabold text-balance">
+          Quem já comprou <span className="text-[var(--gold)]">volta a comprar.</span>
         </p>
-        <div className="mt-8 flex flex-wrap gap-2">
-          {SHOWCASE.map((p) => (
-            <span
-              key={p}
-              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.08] px-3 py-1.5 text-[11px] font-medium text-white/90 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-md"
-            >
-              <span className="grid size-4 place-items-center rounded-full bg-white">
-                <ChannelIcon platform={p} size={11} className="text-[var(--via-navy)]" />
-              </span>
-              {PLATFORM_LABEL[p] ?? p}
-            </span>
-          ))}
-        </div>
+        <span className="mt-7 block h-[3px] w-16 rounded-full bg-[var(--gold)]" aria-hidden />
+        <p className="mt-7 max-w-lg text-[17px] leading-relaxed text-white/75">
+          {BRAND.description}
+        </p>
       </div>
-      <ul className="relative grid gap-4 border-t border-white/15 pt-6 text-[14px] sm:grid-cols-3">
-        <li>
-          <p className="font-medium">Uma caixa só</p>
-          <p className="text-white/60">WhatsApp, Instagram e o chat do site no mesmo lugar</p>
-        </li>
-        <li>
-          <p className="font-medium">Origem de cada lead</p>
-          <p className="text-white/60">qual anúncio ou campanha trouxe cada conversa</p>
-        </li>
-        <li>
-          <p className="font-medium">IA que avisa</p>
-          <p className="text-white/60">quem está pronto para comprar e o próximo passo</p>
-        </li>
+      <ul className="relative grid gap-5 border-t border-white/15 pt-6 text-[14px] sm:grid-cols-3">
+        {PROOF.map((p) => (
+          <li key={p.title}>
+            <p className="font-bold text-white">{p.title}</p>
+            <p className="mt-1 leading-snug text-white/65">{p.text}</p>
+          </li>
+        ))}
       </ul>
     </section>
   );

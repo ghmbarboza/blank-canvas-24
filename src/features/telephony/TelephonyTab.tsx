@@ -126,7 +126,7 @@ function ConnectionCard({
       description="Ligações humanas e da IA saem pela conta Zadarma da sua empresa. Cada empresa usa a própria conta: nunca a de outra."
     >
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-2xl bg-[#0A1F3B] p-5 text-white">
+        <div className="rounded-2xl bg-[#001F35] p-5 text-white">
           <p className="text-[11px] tracking-[0.16em] text-white/60 uppercase">Saldo</p>
           {balance.isPending ? (
             <Loader2 className="mt-3 size-5 animate-spin" />
@@ -386,7 +386,7 @@ function NumbersCard({
               <DialogTitle>Registrar número na ElevenLabs</DialogTitle>
               <DialogDescription>
                 A senha SIP da Zadarma vai direto para a ElevenLabs (tronco de saída). Ela não fica
-                guardada no Nexus.
+                guardada no Vínculo.
               </DialogDescription>
             </DialogHeader>
             <Input

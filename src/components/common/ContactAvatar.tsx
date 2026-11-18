@@ -13,12 +13,12 @@ type Props = {
   className?: string;
 };
 
-// Tons estáveis por nome dentro da rampa navy do DS da VIA (sem cor quente, roxo ou neon).
+// Tons estáveis por nome dentro da rampa navy do DS (sem cor quente, roxo ou neon).
 const TONES = [
-  "bg-[#E3E8EF] text-[#0A1F3B] dark:bg-[#26344F] dark:text-[#E0E7F1]",
+  "bg-[#E3E8EF] text-[#001F35] dark:bg-[#26344F] dark:text-[#E0E7F1]",
   "bg-[#EEF2F7] text-[#335379] dark:bg-[#1C2840] dark:text-[#A8BAD4]",
   "bg-[#F0F2F5] text-[#344054] dark:bg-[#1B273F] dark:text-[#D0D5DD]",
-  "bg-[#DDE4EE] text-[#1E3A5F] dark:bg-[#22304A] dark:text-[#C5D1E2]",
+  "bg-[#DDE4EE] text-[#12384f] dark:bg-[#22304A] dark:text-[#C5D1E2]",
   "bg-[#E4E7EC] text-[#475467] dark:bg-[#24324D] dark:text-[#AEB8C6]",
 ];
 

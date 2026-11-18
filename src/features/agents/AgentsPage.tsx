@@ -70,9 +70,9 @@ export function AgentsPage() {
             </Button>
             {askOn && (
               <Button asChild variant="ghost" size="sm" className="max-sm:hidden">
-                <Link to="/pergunte" aria-label="Pergunte ao Nexus">
+                <Link to="/pergunte" aria-label="Pergunte ao Vínculo">
                   <MessageSquareText aria-hidden />{" "}
-                  <span className="hidden md:inline">Pergunte ao Nexus</span>
+                  <span className="hidden md:inline">Pergunte ao Vínculo</span>
                 </Link>
               </Button>
             )}

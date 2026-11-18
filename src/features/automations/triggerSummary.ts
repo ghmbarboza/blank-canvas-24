@@ -4,6 +4,8 @@ export const EVENT_LABEL: Record<string, string> = {
   "contact.created": "Contato criado",
   "contact.became_hot": "Contato esquentou",
   "contact.lifecycle_changed": "Contato mudou de fase",
+  "customer.new": "Virou cliente",
+  "nps.answered": "Respondeu a pesquisa de satisfação",
   "deal.created": "Negócio criado",
   "deal.stage_changed": "Negócio mudou de etapa",
   "deal.won": "Negócio ganho",
@@ -34,6 +36,8 @@ export function triggerSummary(t: Trigger): string {
       return "Quando entra num segmento";
     case "no_reply":
       return `Sem resposta há ${t.hours ?? 24} h`;
+    case "inactive":
+      return `Cliente sem conversa há ${t.days ?? 30} dia(s)`;
     case "date":
       return `${t.days_before ?? 0} dia(s) antes de ${t.field?.replace(/^custom\./, "") ?? "uma data"}`;
     default:

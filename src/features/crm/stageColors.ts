@@ -11,7 +11,7 @@ export const STAGE_COLORS = [
 ] as const;
 export type StageColor = (typeof STAGE_COLORS)[number];
 
-// As chaves ficam (já estão gravadas no banco); os valores seguem a paleta restrita do DS da VIA:
+// As chaves ficam (já estão gravadas no banco); os valores seguem a paleta restrita do DS:
 // rampa navy → azul-aço → cinza, verde só para ganho e coral só para perda.
 const BAR: Record<StageColor, string> = {
   slate: "bg-[#D0D5DD] dark:bg-[#475467]",

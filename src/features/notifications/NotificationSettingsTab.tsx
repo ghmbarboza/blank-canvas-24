@@ -33,10 +33,10 @@ const CHANNELS: { id: keyof Channels; label: string }[] = [
 
 const PUSH_TEXT = {
   unsupported:
-    "Este navegador não aceita avisos. No iPhone, adicione o Nexus à tela inicial primeiro.",
+    "Este navegador não aceita avisos. No iPhone, adicione o Vínculo à tela inicial primeiro.",
   denied:
     "Os avisos estão bloqueados neste navegador. Libere nas configurações do site e volte aqui.",
-  off: "Receba avisos mesmo com o Nexus fechado ou em outra aba.",
+  off: "Receba avisos mesmo com o Vínculo fechado ou em outra aba.",
   on: "Este navegador está recebendo avisos.",
 } as const;
 
@@ -58,7 +58,7 @@ export function NotificationSettingsTab() {
         description="Vale só para este navegador. Ligue em cada computador ou celular que você usa."
       >
         <div className="flex flex-wrap items-center gap-3 rounded-[20px] border border-border bg-surface-2 p-4">
-          <span className="grid size-10 place-items-center rounded-full bg-[#0A1F3B] text-white">
+          <span className="grid size-10 place-items-center rounded-full bg-[#001F35] text-white">
             <MonitorSmartphone className="size-4" aria-hidden />
           </span>
           <p className="min-w-0 flex-1 text-[13px] text-muted-foreground">{PUSH_TEXT[state]}</p>

@@ -117,7 +117,7 @@ export function FormBuilder({ formId }: { formId: string }) {
   };
   const origin = typeof window !== "undefined" ? window.location.origin : "";
   const link = `${origin}/f/${draft.id}`;
-  const embed = `<div data-nexus-form="${draft.id}"></div>\n<script src="${origin}/api/public/widget.js" data-account="${accountId}" async></script>`;
+  const embed = `<div data-vinculo-form="${draft.id}"></div>\n<script src="${origin}/api/public/widget.js" data-account="${accountId}" async></script>`;
   const mapOptions = [
     { value: "__none", label: "Só guardar na resposta" },
     ...Object.entries(MAP_LABEL).map(([k, v]) => ({ value: k, label: v })),
@@ -263,7 +263,7 @@ export function FormBuilder({ formId }: { formId: string }) {
                     id="fb-color"
                     type="color"
                     className="h-10 w-24 p-1"
-                    value={draft.theme.accent ?? "#0A1F3B"}
+                    value={draft.theme.accent ?? "#001F35"}
                     onChange={(e) => upd({ theme: { ...draft.theme, accent: e.target.value } })}
                     disabled={ro}
                   />
@@ -655,7 +655,7 @@ export function FormBuilder({ formId }: { formId: string }) {
               </Button>
             </div>
             <Label className="text-[12px]">Embutir no seu site</Label>
-            <pre className="mt-1 mb-2 overflow-x-auto rounded-xl bg-[#0A1F3B] p-3 font-mono text-[10px] text-white/90">
+            <pre className="mt-1 mb-2 overflow-x-auto rounded-xl bg-[#001F35] p-3 font-mono text-[10px] text-white/90">
               {embed}
             </pre>
             <Button size="sm" variant="outline" onClick={() => copyText(embed)}>

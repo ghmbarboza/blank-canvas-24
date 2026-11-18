@@ -123,9 +123,9 @@ export async function deliverWebhooks(
           method: "POST",
           headers: {
             "content-type": "application/json",
-            "user-agent": "NexusOne-Webhooks/1.0",
-            "x-nexus-timestamp": String(ts),
-            "x-nexus-signature": `sha256=${signPayload((secret as string | null) ?? "", ts, body)}`,
+            "user-agent": "Vinculo-Webhooks/1.0",
+            "x-vinculo-timestamp": String(ts),
+            "x-vinculo-signature": `sha256=${signPayload((secret as string | null) ?? "", ts, body)}`,
           },
           body,
           signal: AbortSignal.timeout(8_000),

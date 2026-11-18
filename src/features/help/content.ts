@@ -1,4 +1,4 @@
-// Central de ajuda de quem opera o Nexus One (dono, gestor, atendente, vendedor).
+// Central de ajuda de quem opera o Vínculo (dono, gestor, atendente, vendedor).
 // Não confundir com /ajuda/$slug, que é a central pública que o cliente final da empresa vê.
 // Texto conferido contra as telas desta versão: ao mudar um caminho de tela, ajuste aqui.
 import type { LinkProps } from "@tanstack/react-router";
@@ -31,7 +31,7 @@ export const faq: FaqItem[] = [
   {
     pergunta: "Como ligo a agenda do Google ou do Outlook?",
     resposta:
-      "Pela mesma chave da Zernio, sem criar app no Google Cloud nem no Azure. Em Canais, na Central Tudo pela Zernio, abra Agenda e e-mail e clique em Conectar no Google ou na Microsoft: o login é feito na página da própria Zernio. Use o mesmo e-mail com que a pessoa entra no Nexus: é por ele que os compromissos dela ficam ocupados nos links de agendamento.",
+      "Pela mesma chave da Zernio, sem criar app no Google Cloud nem no Azure. Em Canais, na Central Tudo pela Zernio, abra Agenda e e-mail e clique em Conectar no Google ou na Microsoft: o login é feito na página da própria Zernio. Use o mesmo e-mail com que a pessoa entra no Vínculo: é por ele que os compromissos dela ficam ocupados nos links de agendamento.",
   },
   {
     pergunta: "Como conecto o WhatsApp da empresa?",
@@ -39,9 +39,9 @@ export const faq: FaqItem[] = [
       "Pelo WhatsApp Oficial pela Zernio, em Canais: número oficial da Meta, vários atendentes no mesmo número sem o celular ligado e modelos aprovados para falar com o cliente depois das 24 h. É a mesma chave da Zernio que liga Instagram, Messenger, anúncios e agenda. Para casos especiais, Canais guarda outras formas de conectar num bloco avançado, fechado por padrão.",
   },
   {
-    pergunta: "Meu número já está em outra ferramenta. Posso usar no Nexus?",
+    pergunta: "Meu número já está em outra ferramenta. Posso usar no Vínculo?",
     resposta:
-      "Um número oficial fica ligado a uma ferramenta de atendimento por vez. Para trazer para o Nexus, desconecte da outra ferramenta antes ou use um segundo número para testar sem derrubar o atendimento atual. Se o número está só no app WhatsApp Business do celular, a conexão oficial pela Zernio pode manter o app funcionando junto (a Meta mostra um QR para ler no app) ou levar o número só para o Nexus: a tela pergunta qual dos dois você quer.",
+      "Um número oficial fica ligado a uma ferramenta de atendimento por vez. Para trazer para o Vínculo, desconecte da outra ferramenta antes ou use um segundo número para testar sem derrubar o atendimento atual. Se o número está só no app WhatsApp Business do celular, a conexão oficial pela Zernio pode manter o app funcionando junto (a Meta mostra um QR para ler no app) ou levar o número só para o Vínculo: a tela pergunta qual dos dois você quer.",
   },
   {
     pergunta: "O convite não chegou por e-mail. E agora?",
@@ -51,7 +51,7 @@ export const faq: FaqItem[] = [
   {
     pergunta: "Onde coloco as chaves das integrações?",
     resposta:
-      "Só pelas telas do Nexus. A chave da Zernio (WhatsApp, redes, anúncios e agenda) fica em Canais, no passo 1 do WhatsApp Oficial. As outras (IA própria, e-mail, telefonia, reuniões e pagamentos) ficam em Ajustes › Integrações. A chave vai direto para o cofre da conta e não aparece de novo na tela. Nunca peça para guardar chave pelo chat do Lovable nem em Secrets do projeto: o Nexus não lê chave de lá.",
+      "Só pelas telas do Vínculo. A chave da Zernio (WhatsApp, redes, anúncios e agenda) fica em Canais, no passo 1 do WhatsApp Oficial. As outras (IA própria, e-mail, telefonia, reuniões e pagamentos) ficam em Ajustes › Integrações. A chave vai direto para o cofre da conta e não aparece de novo na tela. Nunca peça para guardar chave pelo chat do Lovable nem em Secrets do projeto: o Vínculo não lê chave de lá.",
   },
   {
     pergunta: "Por que a IA não respondeu uma conversa?",
@@ -71,12 +71,12 @@ export const faq: FaqItem[] = [
   {
     pergunta: "Pulei a configuração inicial. Como volto?",
     resposta:
-      "O botão Configurar no menu lateral (dono e administrador) mostra quantas configurações faltam e reabre a Nexa no passo pendente. Para começar do zero, use Ajustes › Recursos extras › Refazer configuração inicial: a Nexa volta ao primeiro passo, oferece de novo o que você tinha pulado e nada do que já foi salvo é apagado.",
+      "O botão Configurar no menu lateral (dono e administrador) mostra quantas configurações faltam e reabre a Vi no passo pendente. Para começar do zero, use Ajustes › Recursos extras › Refazer configuração inicial: a Vi volta ao primeiro passo, oferece de novo o que você tinha pulado e nada do que já foi salvo é apagado.",
   },
   {
     pergunta: "Acabei de fazer o remix. Quem é o dono?",
     resposta:
-      "A primeira pessoa que se cadastra num Nexus novo vira dona da central e cai direto na configuração com a Nexa. Quem chega depois entra só por convite, enviado pelo dono ou por um administrador em Ajustes › Pessoas e acessos.",
+      "A primeira pessoa que se cadastra num Vínculo novo vira dona da central e cai direto na configuração com a Vi. Quem chega depois entra só por convite, enviado pelo dono ou por um administrador em Ajustes › Pessoas e acessos.",
   },
   {
     pergunta: "Qual a diferença entre os papéis?",
@@ -84,19 +84,19 @@ export const faq: FaqItem[] = [
       "Dono: acesso total. Administrador: tudo do gestor, mais canais, integrações e equipe. Gestor: vê tudo e edita o funil. Atendente: vê os canais compartilhados. Vendedor: vê só os próprios canais, contatos e negócios.",
   },
   {
-    pergunta: "Posso usar uma API de WhatsApp não oficial?",
+    pergunta: "Posso conectar o WhatsApp por QR Code?",
     resposta:
-      "Não: APIs não oficiais de WhatsApp não têm conector no Nexus. O caminho é o WhatsApp Oficial pela Zernio, em Canais. Se o seu número está numa dessas APIs hoje, desconecte de lá antes de conectar pela Zernio.",
+      "Pode. Em Canais, a primeira opção conecta o WhatsApp por QR Code usando um servidor de Evolution API: você cola o endereço e a chave do servidor e lê o código com o celular. É o caminho mais rápido para começar. Para volume alto de mensagens, prefira o número oficial da Meta, que fica logo abaixo na mesma tela.",
   },
   {
-    pergunta: "O Nexus já tem IA própria ou preciso contratar?",
+    pergunta: "O Vínculo já tem IA própria ou preciso contratar?",
     resposta:
-      "Já tem. O agente de IA do Nexus responde no WhatsApp, no chat do site e nas redes usando a IA inclusa do Lovable, sem chave nenhuma. Se quiser usar a sua conta da OpenAI ou da Anthropic, cadastre a chave em Ajustes › Integrações.",
+      "Já tem. O agente de IA do Vínculo responde no WhatsApp, no chat do site e nas redes usando a IA inclusa do Lovable, sem chave nenhuma. Se quiser usar a sua conta da OpenAI ou da Anthropic, cadastre a chave em Ajustes › Integrações.",
   },
   {
     pergunta: "A tradução automática do navegador atrapalha?",
     resposta:
-      "Pode atrapalhar: ao colar uma chave com a tradução ligada, o navegador às vezes troca letras e a chave para de funcionar. Mantenha a página em português original (recuse a tradução) nas telas de Integrações e Canais. Os campos de chave do Nexus já pedem ao navegador para não traduzir.",
+      "Pode atrapalhar: ao colar uma chave com a tradução ligada, o navegador às vezes troca letras e a chave para de funcionar. Mantenha a página em português original (recuse a tradução) nas telas de Integrações e Canais. Os campos de chave do Vínculo já pedem ao navegador para não traduzir.",
   },
   {
     pergunta: "Algumas telas do menu não aparecem. Por quê?",
@@ -112,10 +112,10 @@ export const guias: HelpGuide[] = [
     resumo: "O caminho recomendado: número oficial, sem celular ligado, vários atendentes.",
     passos: [
       "Crie a conta em zernio.com e copie a chave de API.",
-      "No Nexus, abra Canais e, em WhatsApp Oficial, salve a chave da Zernio. A tela confirma com Chave salva e testada.",
+      "No Vínculo, abra Canais e, em WhatsApp Oficial, salve a chave da Zernio. A tela confirma com Chave salva e testada.",
       "Clique em Conectar com o Facebook: abre a página segura da Meta para você confirmar o número da empresa.",
-      "Escolha se o número continua no app WhatsApp Business junto com o Nexus ou se passa a funcionar só aqui.",
-      "Ao voltar para o Nexus, o canal é registrado sozinho e as mensagens novas chegam na Caixa de entrada.",
+      "Escolha se o número continua no app WhatsApp Business junto com o Vínculo ou se passa a funcionar só aqui.",
+      "Ao voltar para o Vínculo, o canal é registrado sozinho e as mensagens novas chegam na Caixa de entrada.",
     ],
     link: { to: "/canais", label: "Abrir Canais" },
   },
@@ -126,7 +126,7 @@ export const guias: HelpGuide[] = [
     passos: [
       "Salve a chave da Zernio em Canais (é a mesma do WhatsApp Oficial).",
       "Na Central Tudo pela Zernio, em Mensagens ou Redes sociais, clique em Conectar na rede que você quer.",
-      "Autorize a conta na página da rede. Ao voltar, o Nexus busca a conta conectada.",
+      "Autorize a conta na página da rede. Ao voltar, o Vínculo busca a conta conectada.",
       "As mensagens diretas novas passam a chegar na Caixa de entrada. LinkedIn, Threads e YouTube trazem só comentários.",
     ],
     link: { to: "/canais", label: "Abrir Canais" },
@@ -138,7 +138,7 @@ export const guias: HelpGuide[] = [
     passos: [
       "Salve a chave da Zernio em Canais (é a mesma do WhatsApp Oficial).",
       "Na Central Tudo pela Zernio, em Agenda e e-mail, clique em Conectar no Google Agenda e Gmail ou no Outlook e Microsoft 365.",
-      "Entre com o mesmo e-mail que a pessoa usa no Nexus e autorize a agenda e o e-mail na página da Zernio.",
+      "Entre com o mesmo e-mail que a pessoa usa no Vínculo e autorize a agenda e o e-mail na página da Zernio.",
       "Ao voltar, a caixa aparece como conectada. Repita para cada pessoa da equipe que recebe agendamentos.",
       "Abra um link de agendamento: os horários marcados na agenda dela já aparecem como ocupados.",
     ],
@@ -150,8 +150,8 @@ export const guias: HelpGuide[] = [
     resumo: "Um modelo aprovado para quem aceitou receber, disparado agora ou agendado.",
     passos: [
       "Conecte o WhatsApp Oficial pela Zernio em Canais. Campanha só sai por número oficial.",
-      "No painel da Zernio, crie o modelo de mensagem do número e envie para aprovação. Só os modelos aprovados aparecem no Nexus. Dica: termine com Responda SAIR para não receber mais.",
-      "No Nexus, abra Campanhas de WhatsApp no menu (gestores) e clique em Nova campanha.",
+      "No painel da Zernio, crie o modelo de mensagem do número e envie para aprovação. Só os modelos aprovados aparecem no Vínculo. Dica: termine com Responda SAIR para não receber mais.",
+      "No Vínculo, abra Campanhas de WhatsApp no menu (gestores) e clique em Nova campanha.",
       "Dê um nome, escolha o número e o Modelo aprovado. Se o modelo tiver variáveis, preencha cada uma ({nome} usa o primeiro nome do contato).",
       "Em Para quem, digite as etiquetas do público (vazio = todos). A tela mostra quantos podem receber: só quem tem consentimento de marketing e não pediu para sair. Clique em Salvar rascunho.",
       "Na lista, clique em Disparar. Escolha dia e hora e clique em Agendar, ou deixe vazio e clique em Disparar agora. O envio sai em lotes de 30 por minuto e o horário silencioso adia para a manhã.",
@@ -195,7 +195,7 @@ export const guias: HelpGuide[] = [
       "Abra Equipe de IA no menu (gestores). Se ainda não há agente, monte a equipe a partir de um modelo.",
       "Em Configurar, ajuste o jeito de falar, as regras e quando passar para uma pessoa.",
       "Use o Simulador para conversar com o agente como se fosse um cliente antes de ligar no atendimento.",
-      "Para ajustar conversando, use o botão Nexa no menu lateral.",
+      "Para ajustar conversando, use o botão Vi no menu lateral.",
       "Acompanhe em Equipe de IA quantas conversas a IA está atendendo e quantas passou para a equipe.",
     ],
     link: { to: "/equipe-ia", label: "Abrir Equipe de IA" },

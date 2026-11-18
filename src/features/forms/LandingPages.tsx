@@ -563,7 +563,7 @@ export function LandingBuilder({ pageId }: { pageId: string }) {
                 <Input
                   type="color"
                   className="h-9 w-24 p-1"
-                  value={draft.theme.accent ?? "#0A1F3B"}
+                  value={draft.theme.accent ?? "#001F35"}
                   onChange={(e) => upd({ theme: { ...draft.theme, accent: e.target.value } })}
                   disabled={ro}
                 />
@@ -658,7 +658,7 @@ export function LandingBuilder({ pageId }: { pageId: string }) {
                     }
                   : null
               }
-              accent={draft.theme.accent ?? "#0A1F3B"}
+              accent={draft.theme.accent ?? "#001F35"}
               preview
             />
           </div>

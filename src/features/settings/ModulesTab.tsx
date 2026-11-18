@@ -9,12 +9,13 @@ import { Switch } from "@/components/ui/switch";
 import { useSetup } from "@/features/setup/SetupWizard";
 import { EXTRA_MODULES, enabledModules, type ModuleId } from "@/components/layout/modules";
 import { ACCOUNT_QUERY_KEY, useAccount } from "@/lib/account";
+import { BRAND } from "@/lib/brand";
 import { errorMessage } from "@/lib/functions";
 
 import { patchAccountSettings } from "./api";
 import { SettingsCard } from "./SettingsCard";
 
-// O menu começa só com a central (atender, vender, origem dos leads). O resto liga aqui.
+// O menu começa com o pós-venda (atender, clientes, regras). O resto liga aqui.
 export function ModulesTab() {
   const { current, isAdmin } = useAccount();
   const accountId = current!.accountId;
@@ -40,7 +41,7 @@ export function ModulesTab() {
     <div className="flex flex-col gap-5">
       <SettingsCard
         title="Recursos extras"
-        description="A central vem com o essencial: atender, vender e saber de onde veio cada lead. Ligue aqui o que a sua operação usa; desligar só tira do menu, nada é apagado."
+        description="A central vem pronta para o pós-venda: atender, cuidar da carteira e ligar as regras. Ligue aqui o que mais a sua operação usa; desligar só tira do menu, nada é apagado."
         {...(isAdmin
           ? {}
           : { readOnlyNote: "Só o administrador da conta liga ou desliga recursos." })}
@@ -73,7 +74,7 @@ export function ModulesTab() {
   );
 }
 
-/** "Refazer configuração inicial" (revisão de 27/10, P1-4): reabre a Nexa do primeiro passo. */
+/** "Refazer configuração inicial" (revisão de 27/10, P1-4): reabre a guia do primeiro passo. */
 function RestartSetupCard() {
   const { restartNexa } = useSetup();
   const [busy, setBusy] = useState(false);
@@ -90,11 +91,11 @@ function RestartSetupCard() {
   return (
     <SettingsCard
       title="Refazer configuração inicial"
-      description="A Nexa volta ao primeiro passo: pergunta de novo o que vocês vão usar e oferece o que foi pulado. Nada do que já está salvo é apagado (empresa, canais, agentes e conhecimento continuam)."
+      description={`A ${BRAND.assistant} volta ao primeiro passo: pergunta de novo o que vocês vão usar e oferece o que foi pulado. Nada do que já está salvo é apagado (empresa, canais, agentes e conhecimento continuam).`}
     >
       <Button variant="outline" onClick={() => void restart()} disabled={busy}>
         <RotateCcw className="size-4" aria-hidden />
-        {busy ? "Abrindo a Nexa…" : "Refazer configuração inicial"}
+        {busy ? `Abrindo a ${BRAND.assistant}…` : "Refazer configuração inicial"}
       </Button>
     </SettingsCard>
   );

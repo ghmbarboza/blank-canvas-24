@@ -101,7 +101,7 @@ export function ProposalPublicPage({ token, print = false }: { token: string; pr
       <style>{`@media print { @page { margin: 14mm; } .no-print { display: none !important; } .print-proposal { background: #fff !important; } .print-break { break-inside: avoid; } }`}</style>
       <header
         className={cn(
-          "relative overflow-hidden bg-[#0A1F3B] text-white",
+          "relative overflow-hidden bg-[#001F35] text-white",
           print ? "px-8 py-8" : "px-5 pt-10 pb-24 sm:px-10",
         )}
       >
@@ -274,8 +274,8 @@ export function ProposalPublicPage({ token, print = false }: { token: string; pr
       </main>
       {!print && (
         <footer className="no-print pb-10 text-center text-[11px] text-subtle">
-          Proposta enviada por {seller.name} pelo Nexus One · aceite eletrônico com registro de
-          data, IP e navegador
+          Proposta enviada por {seller.name} pelo Vínculo · aceite eletrônico com registro de data,
+          IP e navegador
         </footer>
       )}
     </div>
@@ -374,7 +374,7 @@ function ActionPanel({
     const payments = data.payments;
     return (
       <div className="space-y-4">
-        <div className={cn(card, "bg-[#0A1F3B] text-white")}>
+        <div className={cn(card, "bg-[#001F35] text-white")}>
           <CheckCircle2 className="size-7 text-white" />
           <p className="mt-3 font-display text-[20px] font-semibold">Proposta aceita</p>
           <p className="mt-1 text-[13px] text-white/70">

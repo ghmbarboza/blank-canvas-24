@@ -20,7 +20,7 @@ import { describe, expect, test } from "vitest";
  * **Não é um erro que aparece.** O `upsert` devolve `{ error }`: quem não
  * confere grava nada e segue em frente.
  *
- * No Nexus (28/10): as 3 gravações em `supervisor_flags` (índice parcial
+ * No Vínculo (28/10): as 3 gravações em `supervisor_flags` (índice parcial
  * `supervisor_flags_open_uq ... where status = 'open'`) falhavam assim desde
  * que a tabela nasceu. O supervisor de IA nunca gravou uma marcação: 0 linhas.
  *

@@ -6,7 +6,7 @@ import { pageHead } from "@/lib/page-head";
 
 export const Route = createFileRoute("/_app/central-de-ajuda/$slug")({
   head: ({ params }) =>
-    pageHead(guideBySlug(params.slug)?.titulo ?? "Guia", "Guia passo a passo do Nexus."),
+    pageHead(guideBySlug(params.slug)?.titulo ?? "Guia", "Guia passo a passo do Vínculo."),
   component: GuideRoute,
 });
 

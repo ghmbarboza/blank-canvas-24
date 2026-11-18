@@ -34,6 +34,7 @@ import { useIntegrations } from "@/features/integrations/api";
 import { SetupPendingPill, SetupRailButton } from "@/features/setup/SetupEntry";
 import { PresenceButton } from "@/features/queue/PresenceButton";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { BRAND } from "@/lib/brand";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -211,7 +212,7 @@ function AccountSwitcher({ expanded }: { expanded: boolean }) {
                   {current.accountName}
                 </span>
                 <span className="block text-[10px] font-medium tracking-[0.14em] text-subtle uppercase">
-                  Viver de IA
+                  {BRAND.name}
                 </span>
               </span>
               <ChevronsUpDown className="size-4 shrink-0 text-subtle" aria-hidden />
@@ -528,7 +529,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               type="button"
               aria-label="Fechar menu"
               onClick={() => setDrawer(false)}
-              className="fixed inset-0 z-40 bg-[#0A1F3B]/40 backdrop-blur-[2px]"
+              className="fixed inset-0 z-40 bg-[#001F35]/40 backdrop-blur-[2px]"
             />
           )}
           <main className="flex min-w-0 flex-1 flex-col overflow-hidden">

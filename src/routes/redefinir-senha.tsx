@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/redefinir-senha")({
-  head: () => pageHead("Criar senha nova", "Crie uma senha nova para entrar no Nexus One."),
+  head: () => pageHead("Criar senha nova", "Crie uma senha nova para entrar no Vínculo."),
   component: ResetPassword,
 });
 

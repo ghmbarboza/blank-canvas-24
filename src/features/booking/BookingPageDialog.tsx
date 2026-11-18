@@ -458,7 +458,7 @@ export function BookingPageDialog({
                   <SelectContent>
                     {(meetOn !== false || f.location === "nexus_meet") && (
                       <SelectItem value="nexus_meet">
-                        Sala Nexus (vídeo, transcrição e coach)
+                        Sala Vínculo (vídeo, transcrição e coach)
                       </SelectItem>
                     )}
                     <SelectItem value="phone">Ligação</SelectItem>

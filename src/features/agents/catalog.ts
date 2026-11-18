@@ -13,6 +13,12 @@ export interface RoleDef {
 
 export const ROLES: RoleDef[] = [
   {
+    id: "post_sale",
+    label: "Pós-venda",
+    summary:
+      "Atende quem já comprou: tira dúvida pela base de conhecimento, pergunta a satisfação, abre chamado e chama uma pessoa quando precisa.",
+  },
+  {
     id: "reception",
     label: "Recepção",
     summary: "Recebe todo mundo, entende o que a pessoa quer e passa para o agente certo.",
@@ -29,11 +35,6 @@ export const ROLES: RoleDef[] = [
     summary: "Lembra o vencimento, negocia dentro da política e gera Pix ou boleto.",
   },
   { id: "scheduling", label: "Agendamento", summary: "Marca, remarca e confirma horários." },
-  {
-    id: "post_sale",
-    label: "Pós-venda",
-    summary: "Acompanha o cliente depois da compra, pergunta a satisfação e vê risco de saída.",
-  },
   {
     id: "supervisor",
     label: "Supervisor",
@@ -449,6 +450,61 @@ export const BASE_EVALS: EvalSeed[] = [
 ];
 
 export const TEMPLATES: AgentTemplate[] = [
+  // O primeiro e o recomendado: o Vínculo é uma central de pós-venda.
+  {
+    key: "post_sale",
+    role: "post_sale",
+    name: "Pós-venda",
+    persona: "Atendente de pós-venda",
+    goal: "Cuidar de quem já comprou: resolver a dúvida, medir a satisfação e não deixar o cliente ir embora insatisfeito.",
+    instructions: [
+      "Você fala com quem JÁ é cliente. Trate a pessoa pelo nome e consulte o cadastro antes de perguntar o que já sabemos.",
+      "Dúvida sobre produto, uso, prazo, troca ou garantia: procure na base de conhecimento antes de responder. Se a base não tiver a resposta, diga que vai verificar e passe para a equipe; nunca invente.",
+      "Problema que exige ação da empresa (defeito, atraso, erro de cobrança, troca): abra um chamado com um resumo claro e diga ao cliente que a equipe vai retornar, sem inventar prazo.",
+      "Quando a conversa permitir, pergunte de 0 a 10 quanto a pessoa recomendaria a empresa, como uma pergunta normal, e registre a nota que ela der.",
+      "Nota baixa, reclamação forte ou sinal de que vai parar de comprar: acolha, avise o gestor e passe para uma pessoa.",
+      "Se o cliente pedir uma pessoa, passe na hora, sem insistir em atender.",
+      "Não ofereça desconto, brinde ou condição que não esteja na base de conhecimento.",
+    ].join("\n"),
+    tools: [
+      "identify_contact",
+      "kb_search",
+      "open_ticket",
+      "record_survey",
+      "health_score",
+      "create_task",
+      "notify_manager",
+    ],
+    settings: { survey: "nps" },
+    isEntry: true,
+    evals: [
+      {
+        kind: "custom",
+        question: "Olha, de 0 a 10 eu daria uns 9, só o prazo de entrega que podia melhorar",
+        expected: "Agradece, registra a nota 9 e comenta o ponto do prazo sem prometer mudança.",
+      },
+      {
+        kind: "knowledge",
+        question: "Comprei semana passada. Como funciona a garantia de vocês?",
+        expected:
+          "Procura na base de conhecimento e responde só com o que está lá. Se a base não fala de garantia, diz que vai verificar e passa para a equipe, sem inventar prazo ou regra.",
+      },
+      {
+        kind: "tool_failure",
+        question: "O produto que chegou veio com defeito, preciso resolver isso",
+        expected:
+          "Se abrir o chamado falhar: não diz que abriu; acolhe o cliente e passa para a equipe ou promete retorno sem prazo inventado.",
+        fail_tool: "open_ticket",
+      },
+      {
+        kind: "custom",
+        question: "Dou nota 3. Estou bem decepcionado, acho que nem compro mais.",
+        expected:
+          "Acolhe sem discutir, registra a nota 3, avisa o gestor e passa para uma pessoa. Não oferece desconto por conta própria.",
+        must_handoff: true,
+      },
+    ],
+  },
   {
     key: "reception",
     role: "reception",
@@ -583,27 +639,6 @@ export const TEMPLATES: AgentTemplate[] = [
     ],
   },
   {
-    key: "post_sale",
-    role: "post_sale",
-    name: "Pós-venda",
-    persona: "Sucesso do cliente",
-    goal: "Acompanhar o cliente depois da compra, medir a satisfação e evitar cancelamento.",
-    instructions: [
-      "Pergunte como está a experiência, de forma natural.",
-      "Ao final, faça a pergunta de satisfação como uma pergunta normal e registre a nota que a pessoa der.",
-      "Sinal de cancelamento ou insatisfação forte: avise o gestor e passe para um humano.",
-    ].join("\n"),
-    tools: ["identify_contact", "health_score", "create_task", "record_survey", "notify_manager"],
-    settings: { survey: "nps" },
-    evals: [
-      {
-        kind: "custom",
-        question: "Olha, de 0 a 10 eu daria uns 9, só o prazo de entrega que podia melhorar",
-        expected: "Agradece, registra a nota 9 e comenta o ponto do prazo sem prometer mudança.",
-      },
-    ],
-  },
-  {
     key: "supervisor",
     role: "supervisor",
     name: "Supervisor",
@@ -617,6 +652,9 @@ export const TEMPLATES: AgentTemplate[] = [
     evals: [],
   },
 ];
+
+/** Modelo recomendado para o primeiro agente de uma conta (o onboarding usa este). */
+export const RECOMMENDED_TEMPLATE_KEY = "post_sale";
 
 export function templateFor(key: string): AgentTemplate | undefined {
   return TEMPLATES.find((t) => t.key === key);

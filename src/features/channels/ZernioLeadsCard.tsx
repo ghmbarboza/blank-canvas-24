@@ -33,8 +33,8 @@ export function ZernioLeadsCard({
       </div>
       <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
         A mesma conta da Zernio do WhatsApp traz os leads dos formulários de anúncio. Sem app da
-        Meta, sem token e sem webhook: cada lead cai no formulário “Leads de anúncios”, que o Nexus
-        cria sozinho.
+        Meta, sem token e sem webhook: cada lead cai no formulário “Leads de anúncios”, que a
+        central cria sozinha.
       </p>
       <ol className="mt-3 grid gap-1.5 text-[13px] leading-relaxed">
         <li>

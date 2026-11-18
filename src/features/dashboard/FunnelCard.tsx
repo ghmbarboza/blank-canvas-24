@@ -54,7 +54,7 @@ export function FunnelCard({ stages, className }: { stages: FunnelStage[]; class
                       style={{ width: `${width}%`, background: RAMP[Math.min(i, RAMP.length - 1)] }}
                     >
                       <span
-                        className={`text-[13px] font-semibold tabular-nums ${dark ? "text-white dark:text-[#0A1F3B]" : "text-[#0A1F3B]"}`}
+                        className={`text-[13px] font-semibold tabular-nums ${dark ? "text-white dark:text-[#001F35]" : "text-[#001F35]"}`}
                       >
                         {formatNumber(s.count)}
                       </span>

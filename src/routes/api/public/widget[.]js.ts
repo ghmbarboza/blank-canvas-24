@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 // Script de embed do site do cliente: rastreia visitas (sem cookie de terceiros), mostra o chat
-// flutuante e renderiza formulários em <div data-nexus-form="ID">. Um <script> só:
+// flutuante e renderiza formulários em <div data-vinculo-form="ID">. Um <script> só:
 // <script src="https://APP/api/public/widget.js" data-account="CONTA" data-chat="CANAL" async></script>
 const WIDGET = String.raw`(function(){
   var s=document.currentScript; if(!s) return;
@@ -20,8 +20,8 @@ const WIDGET = String.raw`(function(){
   // ---------- formulários
   // Cloudflare Turnstile (opcional, quando a conta configurou): script carregado uma vez por página
   var tsP=null;function loadTs(){if(window.turnstile)return Promise.resolve(window.turnstile);if(tsP)return tsP;tsP=new Promise(function(ok,ko){var sc=document.createElement("script");sc.src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";sc.async=true;sc.onload=function(){window.turnstile?ok(window.turnstile):ko(new Error("turnstile"))};sc.onerror=function(){tsP=null;ko(new Error("turnstile"))};document.head.appendChild(sc)});return tsP}
-  document.querySelectorAll("[data-nexus-form]").forEach(function(box){
-    var id=box.getAttribute("data-nexus-form"), started=Date.now();
+  document.querySelectorAll("[data-vinculo-form]").forEach(function(box){
+    var id=box.getAttribute("data-vinculo-form"), started=Date.now();
     fetch(base+"/api/public/form?id="+id).then(function(r){return r.json()}).then(function(f){
       if(!f||!f.fields)return;
       var form=el("form",{style:"display:grid;gap:12px;font-family:inherit"});
@@ -45,12 +45,12 @@ const WIDGET = String.raw`(function(){
       if(f.turnstile_site_key){var tsBox=el("div",{style:"min-height:65px"});form.appendChild(tsBox);loadTs().then(function(ts){tsId=ts.render(tsBox,{sitekey:f.turnstile_site_key,language:"pt-br",callback:function(t){tsToken=t},"expired-callback":function(){tsToken=null},"error-callback":function(){tsToken=null}})}).catch(function(){})}
       function tsReset(){if(tsId!==null&&window.turnstile){tsToken=null;window.turnstile.reset(tsId)}}
       var msg=el("p",{style:"margin:0;font-size:13px"});
-      var btn=el("button",{type:"submit",style:"padding:12px;border:0;border-radius:999px;background:"+safeColor(f.theme&&f.theme.accent,"#0A1F3B")+";color:#fff;font:inherit;font-weight:600;cursor:pointer"},[f.submit_label||"Enviar"]);
+      var btn=el("button",{type:"submit",style:"padding:12px;border:0;border-radius:999px;background:"+safeColor(f.theme&&f.theme.accent,"#001F35")+";color:#fff;font:inherit;font-weight:600;cursor:pointer"},[f.submit_label||"Enviar"]);
       form.appendChild(btn);form.appendChild(msg);
       form.addEventListener("submit",function(ev){ev.preventDefault();if(f.turnstile_site_key&&!tsToken){msg.textContent="Aguarde a verificação anti-robô terminar e tente de novo.";return}btn.disabled=true;msg.textContent="Enviando…";
         var values={};new FormData(form).forEach(function(v,k){if(k!=="nx_hp")values[k]=v});
         post("/api/public/forms/submit",{formId:id,values:values,consent:consent?consent.checked:false,utm:U,referrer:document.referrer,pageUrl:location.href,visitorId:visitor,hp:hp.value,startedAt:started,turnstileToken:tsToken})
-          .then(function(r){var sc=r.schedule&&/^https?:\/\//.test(r.schedule.url)?r.schedule:null;if(r.redirect&&!sc&&/^https?:\/\//.test(r.redirect)){location.href=r.redirect;return}form.innerHTML="";form.appendChild(el("p",{style:"font-size:16px"},[r.message||"Recebido!"]));if(sc)form.appendChild(el("a",{href:sc.url,target:"_top",style:"display:inline-block;padding:12px 22px;border-radius:999px;background:"+safeColor(f.theme&&f.theme.accent,"#0A1F3B")+";color:#fff;font-weight:600;text-decoration:none"},[sc.label]))})
+          .then(function(r){var sc=r.schedule&&/^https?:\/\//.test(r.schedule.url)?r.schedule:null;if(r.redirect&&!sc&&/^https?:\/\//.test(r.redirect)){location.href=r.redirect;return}form.innerHTML="";form.appendChild(el("p",{style:"font-size:16px"},[r.message||"Recebido!"]));if(sc)form.appendChild(el("a",{href:sc.url,target:"_top",style:"display:inline-block;padding:12px 22px;border-radius:999px;background:"+safeColor(f.theme&&f.theme.accent,"#001F35")+";color:#fff;font-weight:600;text-decoration:none"},[sc.label]))})
           .catch(function(e){msg.textContent=e.message;btn.disabled=false;tsReset()});
       });
       box.innerHTML="";box.appendChild(form);
@@ -62,9 +62,9 @@ const WIDGET = String.raw`(function(){
   if(!chat)return;
   fetch(base+"/api/public/webchat?channel="+chat).then(function(r){return r.json()}).then(function(cfg){
     if(!cfg||!cfg.name)return;
-    var color=safeColor(cfg.color,"#0A1F3B"), key="nx_chat_"+chat, token=null, last=null, timer=null, activeAt=Date.now(), isOpen=false, pending=null;
+    var color=safeColor(cfg.color,"#001F35"), key="nx_chat_"+chat, token=null, last=null, timer=null, activeAt=Date.now(), isOpen=false, pending=null;
     try{token=localStorage.getItem(key)}catch(e){}
-    var panel=el("div",{role:"dialog","aria-label":cfg.name,style:"position:fixed;right:20px;bottom:92px;width:340px;max-width:calc(100vw - 40px);height:460px;max-height:70vh;background:#fff;border-radius:20px;box-shadow:0 20px 50px rgba(10,31,59,.25);display:none;flex-direction:column;overflow:hidden;z-index:2147483000;font-family:system-ui,sans-serif"});
+    var panel=el("div",{role:"dialog","aria-label":cfg.name,style:"position:fixed;right:20px;bottom:92px;width:340px;max-width:calc(100vw - 40px);height:460px;max-height:70vh;background:#fff;border-radius:20px;box-shadow:0 20px 50px rgba(0, 31, 53,.25);display:none;flex-direction:column;overflow:hidden;z-index:2147483000;font-family:system-ui,sans-serif"});
     var head=el("div",{style:"background:"+color+";color:#fff;padding:14px 16px;font-weight:600"},[cfg.name]);
     var list=el("div",{"aria-live":"polite",style:"flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;background:#f7f8fa"});
     var foot=el("form",{style:"display:flex;gap:8px;padding:10px;border-top:1px solid #e5e9f0"});
@@ -72,7 +72,7 @@ const WIDGET = String.raw`(function(){
     foot.appendChild(input);foot.appendChild(el("button",{type:"submit",style:"border:0;border-radius:999px;background:"+color+";color:#fff;padding:0 14px;cursor:pointer"},["Enviar"]));
     panel.appendChild(head);panel.appendChild(list);panel.appendChild(foot);
     var fieldCss="padding:9px 12px;border:1px solid #d5dbe4;border-radius:10px;font:inherit;font-size:14px";
-    function bubble(m){var mine=m.from==="visitor";list.appendChild(el("div",{style:"max-width:80%;padding:8px 12px;border-radius:14px;font-size:14px;line-height:1.4;white-space:pre-wrap;"+(mine?"align-self:flex-end;background:"+color+";color:#fff":"align-self:flex-start;background:#fff;color:#0a1f3b;border:1px solid #e5e9f0")},[m.body||""]));list.scrollTop=list.scrollHeight}
+    function bubble(m){var mine=m.from==="visitor";list.appendChild(el("div",{style:"max-width:80%;padding:8px 12px;border-radius:14px;font-size:14px;line-height:1.4;white-space:pre-wrap;"+(mine?"align-self:flex-end;background:"+color+";color:#fff":"align-self:flex-start;background:#fff;color:#001f35;border:1px solid #e5e9f0")},[m.body||""]));list.scrollTop=list.scrollHeight}
     bubble({from:"agent",body:cfg.greeting});
     var typingOn=false, typingEl=el("div",{"aria-live":"polite",style:"align-self:flex-start;padding:6px 12px;border-radius:14px;font-size:13px;color:#667085;background:#fff;border:1px solid #e5e9f0;display:none"},["digitando…"]);
     list.appendChild(typingEl);
@@ -88,14 +88,14 @@ const WIDGET = String.raw`(function(){
       var nm=el("input",{placeholder:"Seu nome","aria-label":"Seu nome",required:"",style:fieldCss});
       var em=el("input",{type:"email",placeholder:"Seu e-mail (para responder se você sair)","aria-label":"Seu e-mail",style:fieldCss});
       var go=el("button",{type:"submit",style:"padding:10px;border:0;border-radius:999px;background:"+color+";color:#fff;font:inherit;font-weight:600;cursor:pointer"},["Começar conversa"]);
-      var card=el("form",{style:"align-self:stretch;display:grid;gap:8px;padding:12px;border-radius:14px;background:#fff;border:1px solid #e5e9f0"},[el("p",{style:"margin:0;font-size:13px;color:#0a1f3b"},["Antes de começar, como podemos te chamar?"]),nm,em,go]);
+      var card=el("form",{style:"align-self:stretch;display:grid;gap:8px;padding:12px;border-radius:14px;background:#fff;border:1px solid #e5e9f0"},[el("p",{style:"margin:0;font-size:13px;color:#001f35"},["Antes de começar, como podemos te chamar?"]),nm,em,go]);
       card.addEventListener("submit",function(ev){ev.preventDefault();go.disabled=true;start(nm.value.trim(),em.value.trim()).then(function(t){card.remove();resolve(t)}).catch(function(e){go.disabled=false;reject(e)})});
       list.appendChild(card);list.scrollTop=list.scrollHeight;setTimeout(function(){nm.focus()},50);
     })}
     function ensure(){if(token)return Promise.resolve(token);if(pending)return pending;pending=(cfg.ask_email?askIntro():start("","")).then(function(t){pending=null;return t},function(e){pending=null;throw e});return pending}
     foot.addEventListener("submit",function(ev){ev.preventDefault();var t=input.value.trim();if(!t)return;input.value="";activeAt=Date.now();
       ensure().then(function(tk){return post("/api/public/webchat",{action:"send",token:tk,text:t})}).then(function(r){bubble({from:"visitor",body:t});last=r.message.created_at;schedule()}).catch(function(e){input.value=t;bubble({from:"agent",body:"Não deu para enviar: "+e.message})})});
-    var btn=el("button",{"aria-label":"Abrir chat","aria-expanded":"false",style:"position:fixed;right:20px;bottom:20px;width:60px;height:60px;border-radius:999px;border:0;background:"+color+";color:#fff;box-shadow:0 10px 30px rgba(10,31,59,.3);cursor:pointer;z-index:2147483000;display:grid;place-items:center"},[chatIcon(),dot]);
+    var btn=el("button",{"aria-label":"Abrir chat","aria-expanded":"false",style:"position:fixed;right:20px;bottom:20px;width:60px;height:60px;border-radius:999px;border:0;background:"+color+";color:#fff;box-shadow:0 10px 30px rgba(0, 31, 53,.3);cursor:pointer;z-index:2147483000;display:grid;place-items:center"},[chatIcon(),dot]);
     btn.addEventListener("click",function(){isOpen=panel.style.display!=="flex";panel.style.display=isOpen?"flex":"none";btn.setAttribute("aria-expanded",String(isOpen));btn.setAttribute("aria-label",isOpen?"Fechar chat":"Abrir chat");if(isOpen){dot.style.display="none";activeAt=Date.now();poll();setTimeout(function(){input.focus()},50)}else schedule()});
     document.body.appendChild(panel);document.body.appendChild(btn);
     if(token)poll();

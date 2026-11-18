@@ -42,8 +42,8 @@ export function contactUpsert(c: FlowContact) {
       email: c.email,
       telefone: c.phone,
       company: c.company,
-      source: "nexus",
-      tags: ["nexus", ...(c.origin ? [c.origin] : [])],
+      source: "vinculo",
+      tags: ["vinculo", ...(c.origin ? [c.origin] : [])],
     },
   };
 }
@@ -61,7 +61,7 @@ export function saleNote(
     action: "note.create",
     data: {
       contact: { name: c.name, email: c.email, telefone: c.phone },
-      title: `${what} no Nexus: ${deal.title}${valor}`,
+      title: `${what} no Vínculo: ${deal.title}${valor}`,
       body: deal.status === "lost" && deal.reason ? `Motivo: ${deal.reason}` : null,
     },
   };

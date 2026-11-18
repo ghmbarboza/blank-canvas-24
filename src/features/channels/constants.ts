@@ -160,5 +160,10 @@ export const SOCIAL_NETWORKS: SocialNetwork[] = [
 ];
 
 // Polling do QR: a cada 3 s, por no máximo 3 min.
+/** Evento da página de Canais que abre o bloco "Quero usar o número oficial da Meta". */
+export const OPEN_OFFICIAL_EVENT = "vinculo:abrir-whatsapp-oficial";
+
 export const QR_POLL_MS = 3000;
 export const QR_POLL_MAX_MS = 3 * 60 * 1000;
+/** De quanto em quanto tempo a tela busca o QR Code atual (o do WhatsApp gira). */
+export const QR_REFRESH_MS = 25_000;

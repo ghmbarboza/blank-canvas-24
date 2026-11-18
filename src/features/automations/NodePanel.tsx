@@ -255,6 +255,19 @@ export function NodePanel({
         </>
       );
       break;
+    case "ticket":
+      body = (
+        <>
+          {text("subject", "Assunto do chamado", "Ex.: Nota baixa de {{nome}}")}
+          {text("description", "O que a equipe precisa saber", "Ex.: Ligar e entender o motivo", 3)}
+          {select("priority", "Prioridade", [
+            { value: "normal", label: "Normal" },
+            { value: "high", label: "Alta" },
+            { value: "urgent", label: "Urgente" },
+          ])}
+        </>
+      );
+      break;
     case "move_stage":
       body = (
         <div className="grid gap-1.5">

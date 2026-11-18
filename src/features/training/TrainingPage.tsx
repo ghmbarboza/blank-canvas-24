@@ -309,7 +309,7 @@ function SessionView({
 function Result({ session, onBack }: { session: Session; onBack: () => void }) {
   return (
     <div className="space-y-4 border-t border-border bg-surface p-5">
-      <div className="flex flex-wrap items-center gap-4 rounded-[24px] bg-[#0A1F3B] p-5 text-white">
+      <div className="flex flex-wrap items-center gap-4 rounded-[24px] bg-[#001F35] p-5 text-white">
         <span className="grid size-16 place-items-center rounded-full border-4 border-white/20 font-display text-[22px] font-semibold tabular-nums">
           {session.score ?? "—"}
         </span>

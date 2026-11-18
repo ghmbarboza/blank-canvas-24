@@ -21,7 +21,7 @@ export const Route = createFileRoute("/api/public/webchat")({
               color:
                 typeof cfg["color"] === "string" && /^#[0-9a-f]{6}$/i.test(cfg["color"] as string)
                   ? cfg["color"]
-                  : "#0A1F3B",
+                  : "#001F35",
               ask_email: cfg["ask_email"] !== false,
               account_id: ch.account_id,
             },

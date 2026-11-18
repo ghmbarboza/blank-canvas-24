@@ -1,7 +1,20 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
 import { describe, expect, it } from "vitest";
 
 import { EXTRA_MODULES } from "./modules";
-import { CONFIG_GROUP, HELP_ITEM, HOME, NAV, navGroupsFor, navItemsFor } from "./nav";
+import { POS_VENDA_DEFAULT_MODULES } from "@/features/posvenda/journey";
+
+import {
+  CONFIG_GROUP,
+  HELP_ITEM,
+  HOME,
+  NAV,
+  groupLabelFor,
+  navGroupsFor,
+  navItemsFor,
+} from "./nav";
 
 const routes = (manager: boolean, modules?: Set<string>) =>
   navGroupsFor(manager, modules).flatMap((g) => g.items.map((i) => i.to));
@@ -18,24 +31,59 @@ describe("menu da central", () => {
     expect(routes(true)[0]).toBe("/painel");
   });
 
-  it("núcleo de quem atende: atender, vender e qualidade, nada de gestor", () => {
+  it("núcleo de quem atende: atender, clientes e qualidade, nada de gestor", () => {
     expect(routes(false)).toEqual([
       "/painel",
-      "/fila",
       "/inbox",
-      "/ligacoes",
+      "/fila",
       "/atendimento",
+      "/ligacoes",
       "/reunioes",
-      "/crm",
       "/contatos",
+      "/crm",
       "/agenda",
       "/qualidade",
     ]);
   });
 
-  it("gestor vê de onde vêm os leads logo no menu", () => {
-    expect(routes(true)).toContain("/origem");
-    expect(routes(false)).not.toContain("/origem");
+  it("gestor tem as Regras de pós-venda no menu, sem ligar nada", () => {
+    expect(routes(true)).toContain("/pos-venda");
+    expect(routes(false)).not.toContain("/pos-venda");
+  });
+
+  it("o que é de venda fica fora do menu até ligar a Captação de leads", () => {
+    const sales = ["/origem", "/formularios", "/sdr", "/metas", "/treino"];
+    for (const to of sales) expect(routes(true), to).not.toContain(to);
+    expect(navItemsFor(true).map((i) => i.to)).not.toContain("/sdr");
+    expect(routes(true, new Set(["captacao"]))).toEqual(
+      expect.arrayContaining(["/origem", "/formularios", "/sdr"]),
+    );
+  });
+
+  it("conta nova (meu_dia, automacoes, gestao): menu de pós-venda completo", () => {
+    const groups = navGroupsFor(true, new Set(POS_VENDA_DEFAULT_MODULES));
+    expect(groups.map((g) => g.label)).toEqual([
+      "Início",
+      "Atender",
+      "Clientes",
+      "Pós-venda",
+      "Resultados",
+      "Equipe",
+    ]);
+    const byLabel = Object.fromEntries(groups.map((g) => [g.label, g.items.map((i) => i.to)]));
+    expect(byLabel["Clientes"]).toEqual(["/contatos", "/crm", "/gestao", "/agenda"]);
+    expect(byLabel["Pós-venda"]).toEqual(["/pos-venda", "/automacoes", "/campanhas/whatsapp"]);
+    for (const g of groups) expect(g.items.length, g.label).toBeLessThanOrEqual(5);
+  });
+
+  it("cada item do menu aponta para uma rota que existe", () => {
+    const tree = readFileSync(join(process.cwd(), "src/routeTree.gen.ts"), "utf8");
+    for (const i of NAV) expect(tree, String(i.to)).toContain(`'${String(i.to)}'`);
+  });
+
+  it("nenhum texto do menu fala o nome do produto antigo", () => {
+    for (const i of NAV) expect(i.label).not.toMatch(/nexus|nexa/i);
+    expect(groupLabelFor("/rota-que-nao-existe")).toBe("Vínculo");
   });
 
   it("extras ficam fora até o gestor ligar; ligados, aparecem", () => {

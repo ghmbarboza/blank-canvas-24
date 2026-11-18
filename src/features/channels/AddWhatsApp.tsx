@@ -1,6 +1,5 @@
-import { useState, type ReactNode } from "react";
-import { Link } from "@tanstack/react-router";
-import { Check, ChevronDown, Loader2, Smartphone, Star } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
+import { Check, ChevronDown, Loader2, QrCode, Smartphone } from "lucide-react";
 import { toast } from "sonner";
 
 import { BrandIcon, BrandTile } from "@/components/brand/BrandIcon";
@@ -12,7 +11,8 @@ import { Switch } from "@/components/ui/switch";
 import { errorMessage } from "@/lib/functions";
 import { cn } from "@/lib/utils";
 import { isConnected, useIntegrations, type CreateEvolutionResult } from "./api";
-import { EvolutionCreateDialog } from "./EvolutionCreateDialog";
+import { OPEN_OFFICIAL_EVENT } from "./constants";
+import { EvolutionConnect } from "./EvolutionConnect";
 import { ZernioKeyForm } from "./IntegrationForms";
 import { MetaConnectDialog } from "./MetaConnectDialog";
 import { ZadarmaSmsDialog } from "./ZadarmaSmsDialog";
@@ -59,7 +59,7 @@ function Step({
   );
 }
 
-// Cartão herói do WhatsApp Oficial: o caminho recomendado, em dois passos (chave da Zernio e Meta).
+// WhatsApp Oficial da Meta (pela Zernio): caminho secundário, em dois passos (chave e Meta).
 export function WhatsAppHero({
   accountId,
   compact = false,
@@ -89,8 +89,8 @@ export function WhatsAppHero({
       )}
     >
       <div className="flex flex-col justify-center">
-        <span className="inline-flex items-center gap-1.5 self-start rounded-full bg-primary px-2.5 py-1 text-[11px] font-medium text-primary-foreground">
-          <Star className="size-3 fill-current" aria-hidden /> recomendado para empresas
+        <span className="inline-flex items-center gap-1.5 self-start rounded-full border border-border px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
+          número oficial da Meta
         </span>
         <h2
           id="wa-hero"
@@ -102,8 +102,8 @@ export function WhatsAppHero({
           <ChannelIcon platform="whatsapp" size={30} /> WhatsApp Oficial
         </h2>
         <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
-          A conexão mais segura e estável. Ideal quando vários vendedores usam o mesmo número ao
-          mesmo tempo, sem depender do celular ligado.
+          Para quem prefere o número oficial da Meta: funciona sem o celular ligado e aceita vários
+          atendentes no mesmo número. Precisa de uma conta na Zernio.
         </p>
         <ul className="mt-6 space-y-3 text-[14px]">
           {PROS.map((p) => (
@@ -224,23 +224,88 @@ function LegacyOption({
   );
 }
 
-// Outras formas de conectar (Meta direta, QR e SMS), fechadas por padrão. O caminho principal do
-// WhatsApp é o Oficial pela Zernio (decisão do dono, 04/11); estas ficam para casos especiais.
-export function LegacyWhatsApp({
+// WhatsApp por QR Code: o caminho principal. Endereço e chave do servidor, QR Code na mesma tela
+// e "Conectado" sozinho quando o celular lê.
+export function WhatsAppQrCard({
   accountId,
-  onEvolutionCreated,
+  onConnected,
 }: {
   accountId: string;
-  onEvolutionCreated: (result: CreateEvolutionResult) => void;
+  onConnected?: () => void;
 }) {
+  return (
+    <article
+      aria-labelledby="wa-qr"
+      className="rounded-[28px] border border-foreground/80 bg-surface p-5 sm:p-8"
+    >
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,22rem)_1fr] lg:gap-10">
+        <div>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary px-2.5 py-1 text-[11px] font-medium text-primary-foreground">
+            <QrCode className="size-3" aria-hidden /> o jeito mais rápido
+          </span>
+          <h2
+            id="wa-qr"
+            className="mt-4 flex items-center gap-3 font-display text-[26px] leading-tight font-semibold sm:text-[30px]"
+          >
+            <ChannelIcon platform="whatsapp" size={28} /> WhatsApp por QR Code
+          </h2>
+          <p className="mt-3 text-[15px] leading-relaxed text-muted-foreground">
+            Conecte o número que a empresa já usa: cole o endereço e a chave do servidor, leia o
+            código com o celular e pronto.
+          </p>
+          <p className="mt-3 text-[12px] text-subtle">
+            Use para conversar com quem já é cliente. Disparo em massa para desconhecidos pode fazer
+            o WhatsApp bloquear o número.
+          </p>
+        </div>
+        <EvolutionConnect accountId={accountId} {...(onConnected ? { onConnected } : {})} />
+      </div>
+    </article>
+  );
+}
+
+// "Quero usar o número oficial da Meta": o caminho pela Zernio continua aqui, fechado por padrão.
+export function OfficialWhatsApp({
+  accountId,
+  compact = false,
+  defaultOpen = false,
+}: {
+  accountId: string;
+  compact?: boolean;
+  defaultOpen?: boolean;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  // links de outras partes da página (chave da Zernio, campanhas) abrem o bloco
+  useEffect(() => {
+    const show = () => setOpen(true);
+    window.addEventListener(OPEN_OFFICIAL_EVENT, show);
+    return () => window.removeEventListener(OPEN_OFFICIAL_EVENT, show);
+  }, []);
+  return (
+    <Collapsible open={open} onOpenChange={setOpen}>
+      <CollapsibleTrigger className="inline-flex min-h-9 items-center gap-1.5 rounded-md text-[13px] font-medium text-foreground underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
+        Quero usar o número oficial da Meta
+        <ChevronDown
+          className={cn("size-3.5 transition-transform", open && "rotate-180")}
+          aria-hidden
+        />
+      </CollapsibleTrigger>
+      <CollapsibleContent className="mt-3">
+        <WhatsAppHero accountId={accountId} compact={compact} />
+      </CollapsibleContent>
+    </Collapsible>
+  );
+}
+
+// Outras formas de conectar (app próprio na Meta e SMS), fechadas por padrão: casos especiais.
+export function LegacyWhatsApp({ accountId }: { accountId: string }) {
   const [metaOpen, setMetaOpen] = useState(false);
-  const [evoOpen, setEvoOpen] = useState(false);
   const [smsOpen, setSmsOpen] = useState(false);
   const [open, setOpen] = useState(false);
 
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
-      <CollapsibleTrigger className="inline-flex items-center gap-1 rounded-md text-[13px] font-medium text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
+      <CollapsibleTrigger className="inline-flex min-h-9 items-center gap-1 rounded-md text-[13px] font-medium text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
         Outras formas de conectar (avançado)
         <ChevronDown
           className={cn("size-3.5 transition-transform", open && "rotate-180")}
@@ -248,9 +313,6 @@ export function LegacyWhatsApp({
         />
       </CollapsibleTrigger>
       <CollapsibleContent className="mt-3 grid gap-2">
-        <p className="text-[12px] text-subtle">
-          Para casos especiais. Para o WhatsApp da empresa, use o WhatsApp Oficial acima.
-        </p>
         <LegacyOption
           title="WhatsApp com o app próprio na Meta"
           note="Para quem já tem um app criado na Meta e quer usar o dele."
@@ -259,54 +321,33 @@ export function LegacyWhatsApp({
           onClick={() => setMetaOpen(true)}
         />
         <LegacyOption
-          title="WhatsApp por QR Code"
-          note="Não é oficial: mensagens em massa podem bloquear o número."
-          cta="Conectar por QR"
-          brand="whatsapp"
-          onClick={() => setEvoOpen(true)}
-        />
-        <LegacyOption
           title="SMS pela Zadarma"
-          note="Com o número virtual da Zadarma, a mesma da telefonia. Os SMS entram na Caixa de entrada."
+          note="Com o número virtual da Zadarma. Os SMS entram na Caixa de entrada."
           cta="Conectar SMS"
           brand="zadarma"
           onClick={() => setSmsOpen(true)}
         />
-        <p className="text-[12px] text-subtle">
-          APIs não oficiais de WhatsApp não têm conector no Nexus.{" "}
-          <Link
-            to="/central-de-ajuda"
-            hash="duvidas"
-            className="font-medium text-foreground underline-offset-4 hover:underline"
-          >
-            Já uso este número em outra ferramenta
-          </Link>
-        </p>
       </CollapsibleContent>
       <MetaConnectDialog accountId={accountId} open={metaOpen} onOpenChange={setMetaOpen} />
       <ZadarmaSmsDialog accountId={accountId} open={smsOpen} onOpenChange={setSmsOpen} />
-      <EvolutionCreateDialog
-        accountId={accountId}
-        open={evoOpen}
-        onOpenChange={setEvoOpen}
-        onCreated={onEvolutionCreated}
-      />
     </Collapsible>
   );
 }
 
-// Bloco completo (herói + outras formas), usado no assistente de configuração.
+// Bloco completo para telas estreitas: QR Code na frente, número oficial como segunda opção.
 export function AddWhatsApp({
   accountId,
-  onEvolutionCreated,
+  onConnected,
 }: {
   accountId: string;
-  onEvolutionCreated: (result: CreateEvolutionResult) => void;
+  /** legado: a conexão por QR agora acontece dentro do próprio bloco */
+  onEvolutionCreated?: (result: CreateEvolutionResult) => void;
+  onConnected?: () => void;
 }) {
   return (
     <div className="space-y-4">
-      <WhatsAppHero accountId={accountId} compact />
-      <LegacyWhatsApp accountId={accountId} onEvolutionCreated={onEvolutionCreated} />
+      <EvolutionConnect accountId={accountId} {...(onConnected ? { onConnected } : {})} />
+      <OfficialWhatsApp accountId={accountId} compact />
     </div>
   );
 }

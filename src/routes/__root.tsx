@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { BRAND, brandTitle } from "@/lib/brand";
 import { AuthProvider } from "@/lib/auth-provider";
 import { AccountProvider } from "@/lib/account-provider";
 import { ThemeProvider } from "@/lib/theme-provider";
@@ -84,26 +85,28 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Nexus One · Atendimento e vendas em todos os canais" },
+      { title: brandTitle() },
       {
         name: "description",
-        content:
-          "Caixa única de WhatsApp, Instagram, Messenger, TikTok e Telegram, com CRM, agenda e IA que classifica cada lead.",
+        content: BRAND.description,
       },
-      { property: "og:title", content: "Nexus One" },
+      { property: "og:title", content: brandTitle() },
+      { property: "og:description", content: BRAND.description },
+      { property: "og:site_name", content: BRAND.name },
       { property: "og:type", content: "website" },
-      { name: "theme-color", content: "#0A1F3B" },
+      { name: "theme-color", content: BRAND.themeColor },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400..800&family=JetBrains+Mono:wght@400;500&display=swap",
       },
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/brand/via-icon.png", type: "image/png" },
-      { rel: "apple-touch-icon", href: "/brand/via-icon.png" },
+      { rel: "icon", href: "/brand/vinculo-icon.svg", type: "image/svg+xml" },
+      { rel: "icon", href: "/brand/vinculo-icon-512.png", type: "image/png", sizes: "512x512" },
+      { rel: "apple-touch-icon", href: "/brand/vinculo-icon-180.png", sizes: "180x180" },
     ],
   }),
   shellComponent: RootShell,

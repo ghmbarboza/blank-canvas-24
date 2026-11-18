@@ -273,7 +273,7 @@ export function SegmentBuilder({
             >
               <Plus /> Adicionar regra
             </Button>
-            <div className="flex items-center justify-between rounded-2xl bg-[#0A1F3B] px-4 py-3 text-white">
+            <div className="flex items-center justify-between rounded-2xl bg-[#001F35] px-4 py-3 text-white">
               <span className="inline-flex items-center gap-2 text-[13px] text-white/70">
                 <Users className="size-4" /> Entram neste segmento agora
               </span>

@@ -48,11 +48,11 @@ describe("central de ajuda do operador", () => {
       expect(guideBySlug(slug)).toBeDefined();
   });
 
-  it("WhatsApp só pela Zernio: sem jargão de servidor e sem caminho direto como principal", () => {
+  it("WhatsApp: QR Code é o caminho da edição de pós-venda, sem jargão de servidor", () => {
     const all = JSON.stringify({ faq, guias });
-    // a marca da API não oficial não é citada (nem aqui, para o inventário de marcas)
+    // a ajuda explica a conexão por QR Code, mas sem variável de ambiente nem marcas de terceiros
     expect(all).not.toMatch(
-      new RegExp(["AUTHENTICATION_API_KEY", "Evolution", "Z" + "-API", "três jeitos"].join("|")),
+      new RegExp(["AUTHENTICATION_API_KEY", "Z" + "-API", "três jeitos"].join("|")),
     );
     expect(temas.find((t) => t.id === "whatsapp")?.guias[0]).toBe("whatsapp-oficial-zernio");
     expect(guideBySlug("whatsapp-meta-direta")).toBeUndefined();

@@ -12,7 +12,7 @@ describe("endereço do app no remix (S1)", () => {
   it("remix com o endereço do original: troca pela origem do dono", () => {
     expect(shouldReclaimBase({ ...base, storedProject: "originalabcdefgh" })).toBe(true);
   });
-  it("endereço gravado fora do ar ou que não é um Nexus: troca", () => {
+  it("endereço gravado fora do ar ou que não é um Vínculo: troca", () => {
     expect(shouldReclaimBase({ ...base, storedProject: null })).toBe(true);
   });
   it("segundo domínio do mesmo projeto: não troca (o dono escolhe na tela)", () => {

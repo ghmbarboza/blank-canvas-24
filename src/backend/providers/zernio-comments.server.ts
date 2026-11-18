@@ -1,5 +1,5 @@
 // Automações de Instagram/Facebook na Zernio da conta: lista, cria, liga/desliga, apaga e pede à
-// IA o rascunho da DM. A Zernio executa (webhook + leitura a cada 10 min); o Nexus só configura,
+// IA o rascunho da DM. A Zernio executa (webhook + leitura a cada 10 min); o Vínculo só configura,
 // e a conversa que nasce da DM entra na Caixa de entrada pelo mesmo webhook das mensagens.
 import { HttpError, admin } from "@/backend/http.server";
 
@@ -113,7 +113,7 @@ function automationId(v: unknown): string {
   return id;
 }
 
-/** Só mexe em automação de uma conta conectada neste Nexus (a chave da Zernio pode ter outras). */
+/** Só mexe em automação de uma conta conectada neste Vínculo (a chave da Zernio pode ter outras). */
 async function assertMine(accountId: string, id: string) {
   const list = await listSocialAutomations(accountId);
   if (!list.automations.some((a) => a.id === id))

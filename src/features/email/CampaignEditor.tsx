@@ -242,7 +242,7 @@ export function CampaignEditor({ campaignId }: { campaignId: string }) {
               </p>
             )}
             {segmentId && (
-              <div className="flex items-center justify-between rounded-[24px] bg-[#0A1F3B] px-5 py-4 text-white">
+              <div className="flex items-center justify-between rounded-[24px] bg-[#001F35] px-5 py-4 text-white">
                 <span className="inline-flex items-center gap-2 text-[13px] text-white/70">
                   <Users className="size-4" /> Contatos com e-mail no segmento
                 </span>

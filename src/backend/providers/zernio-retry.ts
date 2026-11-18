@@ -3,7 +3,7 @@
 // de esperar (servidor frio) e o runtime corta a requisição, o aviso fica "received" para sempre e a
 // mensagem do cliente some da Caixa. A rotina zernio.events_retry pega esses avisos e processa de novo.
 
-/** Conta do Nexus gravada na chave de dedupe do aviso (`<conta>:<id do evento>`). */
+/** Conta do Vínculo gravada na chave de dedupe do aviso (`<conta>:<id do evento>`). */
 export function accountOfDedupe(externalId: string | null | undefined): string | null {
   const m = /^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}):/i.exec(
     externalId ?? "",

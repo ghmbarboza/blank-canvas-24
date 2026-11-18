@@ -345,7 +345,7 @@ export async function handleComposioWebhook(
     return { status: 400, message: "corpo inválido" };
   }
   const ev = parseTriggerEvent(body);
-  // Assinado, mas sem conta do Nexus para conferir: não diz nada além de "não reconhecido".
+  // Assinado, mas sem conta do Vínculo para conferir: não diz nada além de "não reconhecido".
   const accountId = ev ? accountFromComposioUser(ev.userId) : null;
   if (!ev || !accountId) return { status: 401, message: "assinatura inválida" };
   const s = await secret(accountId, COMPOSIO_WEBHOOK_SECRET);

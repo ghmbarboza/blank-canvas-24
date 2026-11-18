@@ -20,9 +20,17 @@ describe("modelos por segmento", () => {
 
   for (const t of SEGMENT_TEMPLATES) {
     describe(t.name, () => {
-      it("funis com etapa de ganho e de perda, nomes únicos e cores válidas", () => {
+      it("usa a jornada de pós-venda (não recria funil de vendas), com nomes únicos e cores válidas", () => {
+        expect(t.model.pipelines.map((p) => p.name)).toEqual(["Pós-venda"]);
         for (const p of t.model.pipelines) {
-          expect(p.stages.some((s) => s.kind === "won")).toBe(true);
+          expect(p.stages.map((s) => s.name)).toEqual([
+            "Novo cliente",
+            "Ativando",
+            "Ativo",
+            "Em risco",
+            "Recuperado",
+            "Perdido",
+          ]);
           expect(p.stages.some((s) => s.kind === "lost")).toBe(true);
           const names = p.stages.map((s) => s.name.toLowerCase());
           expect(new Set(names).size).toBe(names.length);

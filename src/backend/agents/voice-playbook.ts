@@ -48,7 +48,7 @@ const OUTBOUND_STEPS = [
 ].join("\n");
 
 // Modelo dentro da ElevenLabs: ela mesma fala antes de chamar ferramenta (pre_tool_speech), e
-// cada ferramenta é um webhook até o Nexus (~6 s de silêncio na ligação de 28/10 para um preço
+// cada ferramenta é um webhook até o Vínculo (~6 s de silêncio na ligação de 28/10 para um preço
 // que já estava no prompt). Então: responder do contexto e anunciar nada.
 const NATIVE_RULES =
   "A base e o catálogo inteiros estão no CONTEXTO abaixo: responda direto deles, sem ferramenta. Só busque na base (kb_search) o que de fato não está lá. Não anuncie que vai procurar ('vou ver aqui'): fale a resposta. Você é a assistente e quem atende é o cliente: se a pessoa repetir sua pergunta ou não disser quem é, pergunte de novo, com naturalidade, se fala com o cliente da ficha; nunca responda como se fosse ele. Nunca peça o telefone da pessoa: as ferramentas já recebem o número desta ligação.";

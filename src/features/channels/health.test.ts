@@ -25,7 +25,7 @@ describe("channelHealth", () => {
   it("Meta direta com erro oferece os dados do webhook", () => {
     expect(channelHealth(ch("whatsapp_cloud", "whatsapp", "error")).action).toBe("webhook");
   });
-  it("canal de provedor removido diz que saiu do Nexus e manda conectar o SMS pela Zadarma", () => {
+  it("canal de provedor removido diz que não é mais atendido e manda conectar o SMS pela Zadarma", () => {
     const h = channelHealth(ch("provedor_antigo", "sms", "error"));
     expect(h.tone).toBe("problem");
     expect(h.fix).toContain("Zadarma");

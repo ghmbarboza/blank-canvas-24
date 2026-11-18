@@ -76,7 +76,7 @@ async function guestCall<T>(body: Record<string, unknown>): Promise<T> {
   return j as T;
 }
 
-// Sala Nexus: convidado entra pelo link (?t=) sem login; quem é da equipe entra logado como anfitrião.
+// Sala Vínculo: convidado entra pelo link (?t=) sem login; quem é da equipe entra logado como anfitrião.
 export function RoomPage({ meetingId, token }: { meetingId: string; token: string | null }) {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
@@ -112,7 +112,7 @@ function Shell({ children, wide = false }: { children: React.ReactNode; wide?: b
       />
       <header className="relative z-10 flex items-center gap-3 px-6 py-4">
         <Logo className="w-8" />
-        <span className="text-[13px] font-medium text-white/70">Sala Nexus</span>
+        <span className="text-[13px] font-medium text-white/70">Sala Vínculo</span>
       </header>
       <main
         className={cn(
@@ -473,7 +473,7 @@ function WaitingList({ accountId, meetingId }: { accountId: string; meetingId: s
               type="button"
               aria-label="Admitir"
               onClick={() => void act(p.identity, true)}
-              className="rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-[#0A1F3B]"
+              className="rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-[#001F35]"
             >
               <UserCheck className="mr-1 inline size-3" /> Admitir
             </button>
@@ -528,7 +528,7 @@ function RoomUnavailable({ manageUrl }: { manageUrl: string | null }) {
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           {manageUrl && (
-            <Button asChild className="bg-white text-[#0A1F3B] hover:bg-white/90">
+            <Button asChild className="bg-white text-[#001F35] hover:bg-white/90">
               <a href={`${manageUrl}?acao=remarcar`}>
                 <CalendarClock /> Remarcar
               </a>
@@ -558,7 +558,7 @@ function LeftScreen({ meetingId, member = false }: { meetingId?: string; member?
             : "Obrigado pela conversa. Pode fechar esta aba."}
         </p>
         {member && meetingId && (
-          <Button asChild className="mt-6 bg-white text-[#0A1F3B] hover:bg-white/90">
+          <Button asChild className="mt-6 bg-white text-[#001F35] hover:bg-white/90">
             <Link to="/reunioes/$meetingId" params={{ meetingId }}>
               Ver reunião
             </Link>

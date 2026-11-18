@@ -1,5 +1,5 @@
 // Agenda pessoal do anfitrião (Google Agenda ou Outlook) nos dois sentidos.
-// - calendar.push: reunião criada, remarcada ou cancelada no Nexus → cria, atualiza ou apaga o
+// - calendar.push: reunião criada, remarcada ou cancelada no Vínculo → cria, atualiza ou apaga o
 //   evento externo (o gatilho meetings_enqueue_calendar_push enfileira nas mudanças).
 // - calendar.pull: lê o que mudou numa agenda conectada (Google syncToken / Graph delta) e
 //   remarca ou cancela a reunião nossa cujo evento foi mexido lá; avisa o anfitrião.

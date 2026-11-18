@@ -1,10 +1,10 @@
-// O modal da Nexa, no jeito do ChatGPT: uma conversa só, caixa de texto embaixo, e o que
+// A conversa com a Vi (a guia de implantação): uma conversa só, caixa de texto embaixo, e o que
 // ela precisa de clique (opções, formulário, cartões, conexões) dentro da própria resposta.
-// Fala com voz (opcional) e guarda tudo na alma do Nexus. Configura a central e, depois de
-// pronta, continua sendo a conversa com o agente.
+// Fala com voz (opcional) e guarda o que aprende. É a ajuda ao lado do passo a passo: os botões
+// "Fazer pela tela" levam de volta ao formulário do passo.
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useNavigate } from "@tanstack/react-router";
-import { Brain, Check, Volume2, VolumeX, X } from "lucide-react";
+import { Brain, Check, ListChecks, Volume2, VolumeX, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -12,6 +12,7 @@ import { chapters, currentChapter, type ChapterState } from "@/backend/setup-age
 import { useSetupFacts, useUploadDocuments } from "@/features/setup-chat/api";
 import { SidePanel } from "@/features/setup-chat/SidePanel";
 import { useAuth } from "@/lib/auth";
+import { BRAND } from "@/lib/brand";
 import { errorMessage } from "@/lib/functions";
 import { cn } from "@/lib/utils";
 
@@ -23,18 +24,17 @@ import { useVoice } from "./useVoice";
 
 const STARTERS = [
   { label: "Contar sobre a empresa", text: "Vou te contar sobre a empresa: " },
-  { label: "Ler o nosso site", text: "Nosso site é " },
-  { label: "Atender pelo WhatsApp com IA", text: "Quero atender pelo WhatsApp com IA" },
-  { label: "Ensinar com documentos", text: "Tenho documentos para a IA aprender" },
+  { label: "Conectar o WhatsApp", text: "Quero conectar o WhatsApp da empresa" },
+  { label: "Ensinar o atendente", text: "Tenho documentos para o atendente aprender" },
+  { label: "Regras de pós-venda", text: "Quais regras de pós-venda eu posso ligar?" },
 ];
 
 function greeting(name: string, ready: boolean): { title: string; text: string } {
-  const hi = `Oi${name ? `, ${name}` : ""}! Eu sou a Nexa.`;
-  if (ready)
-    return { title: hi, text: "Sua central está de pé. O que você quer ajustar no agente hoje?" };
+  const hi = `Oi${name ? `, ${name}` : ""}! Eu sou a ${BRAND.assistant}.`;
+  if (ready) return { title: hi, text: "O pós-venda está de pé. O que você quer ajustar hoje?" };
   return {
     title: hi,
-    text: "Vou deixar a sua central pronta conversando com você. Para começar: qual é o nome da empresa e o que vocês fazem?",
+    text: "Estou aqui para ajudar a deixar o pós-venda da sua empresa funcionando no WhatsApp. Para começar: qual é o nome da empresa e o que vocês vendem?",
   };
 }
 
@@ -44,7 +44,7 @@ function SoulMeter({ list, onClick }: { list: ChapterState[]; onClick: () => voi
     <button
       type="button"
       onClick={onClick}
-      aria-label={`O que a Nexa já sabe: alma do Nexus ${done} de ${list.length}`}
+      aria-label={`O que a ${BRAND.assistant} já sabe: ${done} de ${list.length} assuntos`}
       className="flex items-center gap-2.5 rounded-full border border-border px-3 py-1.5 text-[12.5px] transition hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
       <span aria-hidden className="flex gap-[3px]">
@@ -59,7 +59,7 @@ function SoulMeter({ list, onClick }: { list: ChapterState[]; onClick: () => voi
         ))}
       </span>
       <span className="hidden sm:inline">
-        O que a Nexa sabe: {done} de {list.length}
+        O que a {BRAND.assistant} sabe: {done} de {list.length}
       </span>
       <Brain className="size-3.5 text-muted-foreground sm:hidden" />
     </button>
@@ -100,9 +100,11 @@ type Props = {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   segment: string | null;
+  /** abre o passo a passo (Primeiros passos), direto num passo se vier o id */
+  onOpenStep?: (step?: string) => void;
 };
 
-export function NexaModal({ accountId, open, onOpenChange, segment }: Props) {
+export function NexaModal({ accountId, open, onOpenChange, segment, onOpenStep }: Props) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const name = (user?.user_metadata?.["full_name"] as string | undefined)?.split(" ")[0] ?? "";
@@ -134,6 +136,7 @@ export function NexaModal({ accountId, open, onOpenChange, segment }: Props) {
         documents: 0,
         wishes: 0,
         modules: [],
+        rulesOn: 0,
         firstWin: { received: false, replied: false, deal: false },
       }),
     [facts.data, segment],
@@ -183,6 +186,11 @@ export function NexaModal({ accountId, open, onOpenChange, segment }: Props) {
   }
 
   function openScreen(to: string) {
+    // "passo:<id>" vem do botão "Fazer pela tela": troca a conversa pelo formulário do passo
+    if (to.startsWith("passo:")) {
+      onOpenStep?.(to.slice("passo:".length));
+      return;
+    }
     onOpenChange(false);
     void navigate({ to });
   }
@@ -209,19 +217,34 @@ export function NexaModal({ accountId, open, onOpenChange, segment }: Props) {
             <NexaFace className="size-9" />
             <div className="min-w-0 leading-tight">
               <DialogPrimitive.Title className="text-[15px] font-semibold">
-                Configurar com a Nexa
+                {BRAND.assistant}, {BRAND.assistantRole}
               </DialogPrimitive.Title>
               <p className="truncate text-[12px] text-muted-foreground">
-                {nexa.working ? `${nexa.working}…` : "Sua implantadora no Nexus"}
+                {nexa.working ? `${nexa.working}…` : "Tira dúvidas e faz os passos com você"}
               </p>
             </div>
             <div className="ml-auto flex items-center gap-1">
+              {onOpenStep ? (
+                <button
+                  type="button"
+                  onClick={() => onOpenStep()}
+                  className="flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-[12.5px] font-medium transition hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <ListChecks className="size-3.5" aria-hidden />
+                  <span className="hidden sm:inline">Passo a passo</span>
+                  <span className="sr-only sm:hidden">Passo a passo</span>
+                </button>
+              ) : null}
               <SoulMeter list={list} onClick={() => setMemoryOpen((v) => !v)} />
               {voice.canSpeak ? (
                 <button
                   type="button"
                   onClick={voice.toggleMute}
-                  aria-label={voice.muted ? "Ligar a voz da Nexa" : "Silenciar a Nexa"}
+                  aria-label={
+                    voice.muted
+                      ? `Ligar a voz da ${BRAND.assistant}`
+                      : `Silenciar a ${BRAND.assistant}`
+                  }
                   aria-pressed={!voice.muted}
                   className={ICON_BTN}
                 >
@@ -233,7 +256,10 @@ export function NexaModal({ accountId, open, onOpenChange, segment }: Props) {
               </DialogPrimitive.Close>
             </div>
           </header>
-          <RoteiroStrip accountId={accountId} onOpen={() => setMemoryOpen(true)} />
+          <RoteiroStrip
+            accountId={accountId}
+            onOpen={() => (onOpenStep ? onOpenStep() : setMemoryOpen(true))}
+          />
 
           <div className="relative flex min-h-0 flex-1">
             <div className="flex min-w-0 flex-1 flex-col">
@@ -304,15 +330,15 @@ export function NexaModal({ accountId, open, onOpenChange, segment }: Props) {
                   inputRef={box}
                 />
                 <p className="mt-2 text-center text-[11.5px] text-muted-foreground">
-                  A Nexa configura por você e guarda tudo no que ela já sabe. Pode fechar para ver a
-                  central: o que faltar fica no aviso do menu.
+                  A {BRAND.assistant} ajuda e guarda o que você conta. Prefere formulário e botão?
+                  Use o passo a passo: o que faltar fica no aviso do menu.
                 </p>
               </div>
             </div>
 
             {memoryOpen ? (
               <aside
-                aria-label="O que a Nexa já sabe"
+                aria-label={`O que a ${BRAND.assistant} já sabe`}
                 className="absolute inset-0 z-10 overflow-y-auto border-l border-border bg-background p-5 md:static md:w-[360px] md:shrink-0"
               >
                 <div className="mb-4 flex items-center justify-between">
@@ -327,7 +353,7 @@ export function NexaModal({ accountId, open, onOpenChange, segment }: Props) {
                   </button>
                 </div>
                 <p className="mb-2 font-mono text-[10.5px] uppercase tracking-[0.14em] text-muted-foreground">
-                  Alma do Nexus
+                  O que já aprendi
                 </p>
                 <Chapters list={list} />
                 <SidePanel accountId={accountId} />

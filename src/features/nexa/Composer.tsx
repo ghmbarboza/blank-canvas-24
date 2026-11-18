@@ -5,6 +5,7 @@ import { useEffect, useRef, type RefObject } from "react";
 
 import { ACCEPT } from "@/features/setup-chat/SidePanel";
 import { cn } from "@/lib/utils";
+import { BRAND } from "@/lib/brand";
 
 type Props = {
   value: string;
@@ -62,8 +63,8 @@ export function Composer({
             onSubmit();
           }
         }}
-        placeholder={isListening ? "Estou ouvindo…" : "Converse com a Nexa…"}
-        aria-label="Mensagem para a Nexa"
+        placeholder={isListening ? "Estou ouvindo…" : `Converse com a ${BRAND.assistant}…`}
+        aria-label={`Mensagem para a ${BRAND.assistant}`}
         className="block max-h-[200px] min-h-11 w-full resize-none bg-transparent px-3 pt-2.5 text-[15px] leading-relaxed outline-none placeholder:text-muted-foreground"
       />
       <div className="mt-1 flex items-center gap-1">
@@ -97,7 +98,7 @@ export function Composer({
               type="button"
               onClick={onListen}
               disabled={busy}
-              aria-label={isListening ? "Parar de ouvir" : "Falar com a Nexa"}
+              aria-label={isListening ? "Parar de ouvir" : `Falar com a ${BRAND.assistant}`}
               aria-pressed={isListening}
               className={cn(
                 "grid size-9 place-items-center rounded-full transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40",

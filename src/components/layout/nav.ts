@@ -1,7 +1,6 @@
 import type { LinkProps } from "@tanstack/react-router";
 import {
   BarChart3,
-  Briefcase,
   Bot,
   Building2,
   CalendarDays,
@@ -11,6 +10,8 @@ import {
   Crosshair,
   GraduationCap,
   Headphones,
+  HeartHandshake,
+  HeartPulse,
   Inbox,
   KanbanSquare,
   LayoutDashboard,
@@ -33,6 +34,8 @@ import {
   Workflow,
   type LucideIcon,
 } from "lucide-react";
+
+import { BRAND } from "@/lib/brand";
 
 import type { ModuleId } from "./modules";
 
@@ -60,8 +63,9 @@ export interface NavGroup {
   items: NavItem[];
 }
 
-// Uma central de atendimento: o painel, atender, vender, saber de onde veio cada lead e o que
-// a equipe (gente e IA) está entregando. Extras (module) só aparecem quando o gestor liga.
+// Uma central de pós-venda: atender, cuidar da carteira de clientes, ligar as regras que agem
+// sozinhas e ver o resultado. Extras (module) só aparecem quando o gestor liga; o que é de venda
+// (origem dos leads, captação, pontuação, metas, treino) fica atrás de recurso desligado.
 // O que se configura uma vez fica no rodapé, em CONFIG_GROUP.
 export const NAV_GROUPS: NavGroup[] = [
   {
@@ -74,6 +78,7 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     label: "Atender",
     items: [
+      { to: "/inbox", label: "Caixa de entrada", icon: Inbox, shortcut: "G I", badge: "unread" },
       {
         to: "/fila",
         label: "Minha fila",
@@ -82,19 +87,38 @@ export const NAV_GROUPS: NavGroup[] = [
         exact: true,
         badge: "myQueue",
       },
-      { to: "/inbox", label: "Caixa de entrada", icon: Inbox, shortcut: "G I", badge: "unread" },
-      { to: "/ligacoes", label: "Ligações", icon: Headphones, shortcut: "G L", needs: "zadarma" },
       { to: "/atendimento", label: "Chamados", icon: LifeBuoy, shortcut: "G T" },
+      { to: "/ligacoes", label: "Ligações", icon: Headphones, shortcut: "G L", needs: "zadarma" },
       { to: "/reunioes", label: "Reuniões", icon: Video, shortcut: "G R", needs: "livekit" },
     ],
   },
   {
-    label: "Vender",
+    label: "Clientes",
     items: [
-      { to: "/crm", label: "Funil de vendas", icon: KanbanSquare, shortcut: "G F" },
-      { to: "/contatos", label: "Contatos e leads", icon: Users, shortcut: "G C" },
+      { to: "/contatos", label: "Clientes", icon: Users, shortcut: "G C" },
+      { to: "/crm", label: "Carteira", icon: KanbanSquare, shortcut: "G F" },
+      {
+        to: "/gestao",
+        label: "Saúde da carteira",
+        icon: HeartPulse,
+        shortcut: "G G",
+        manager: true,
+        module: "gestao",
+      },
       { to: "/agenda", label: "Agenda", icon: CalendarDays, shortcut: "G A" },
       { to: "/empresas", label: "Empresas", icon: Building2, shortcut: "G E", module: "empresas" },
+    ],
+  },
+  {
+    label: "Pós-venda",
+    items: [
+      {
+        to: "/pos-venda",
+        label: "Regras de pós-venda",
+        icon: HeartHandshake,
+        shortcut: "G 6",
+        manager: true,
+      },
       {
         to: "/automacoes",
         label: "Automações",
@@ -123,29 +147,15 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     label: "Resultados",
     items: [
-      {
-        to: "/origem",
-        label: "Origem dos leads",
-        icon: Megaphone,
-        shortcut: "G 3",
-        manager: true,
-      },
       { to: "/relatorios", label: "Relatórios", icon: BarChart3, shortcut: "G B", manager: true },
+      { to: "/qualidade", label: "Qualidade", icon: ClipboardCheck, shortcut: "G V" },
       {
         to: "/pergunte",
-        label: "Pergunte ao Nexus",
+        label: `Pergunte ao ${BRAND.name}`,
         icon: MessageSquareText,
         shortcut: "G 1",
         manager: true,
         module: "pergunte",
-      },
-      {
-        to: "/gestao",
-        label: "Gestão",
-        icon: Briefcase,
-        shortcut: "G G",
-        manager: true,
-        module: "gestao",
       },
       {
         to: "/incidentes",
@@ -162,7 +172,6 @@ export const NAV_GROUPS: NavGroup[] = [
     label: "Equipe",
     items: [
       { to: "/equipe-ia", label: "Equipe de IA", icon: Bot, shortcut: "G H", manager: true },
-      { to: "/qualidade", label: "Qualidade", icon: ClipboardCheck, shortcut: "G V" },
       { to: "/metas", label: "Metas e comissão", icon: Target, shortcut: "G Q", module: "metas" },
       { to: "/treino", label: "Treino", icon: GraduationCap, shortcut: "G X", module: "treino" },
       {
@@ -174,6 +183,36 @@ export const NAV_GROUPS: NavGroup[] = [
       },
     ],
   },
+  // Só existe para quem também capta cliente novo pelo Vínculo (recurso "Captação de leads").
+  {
+    label: "Captação",
+    items: [
+      {
+        to: "/origem",
+        label: "Origem dos leads",
+        icon: Megaphone,
+        shortcut: "G 3",
+        manager: true,
+        module: "captacao",
+      },
+      {
+        to: "/formularios",
+        label: "Formulários",
+        icon: ClipboardList,
+        shortcut: "G O",
+        manager: true,
+        module: "captacao",
+      },
+      {
+        to: "/sdr",
+        label: "Pontuação e rodízio",
+        icon: Crosshair,
+        shortcut: "G Z",
+        manager: true,
+        module: "captacao",
+      },
+    ],
+  },
 ];
 
 // Ajustado uma vez e revisitado de vez em quando: no rodapé, recolhível, só para gestor.
@@ -182,24 +221,10 @@ export const CONFIG_GROUP: NavGroup = {
   items: [
     { to: "/canais", label: "Canais", icon: Plug, shortcut: "G N", manager: true },
     {
-      to: "/formularios",
-      label: "Captação",
-      icon: ClipboardList,
-      shortcut: "G O",
-      manager: true,
-    },
-    {
       to: "/fila/roteamento",
       label: "Fila e roteamento",
       icon: Route,
       shortcut: "G 2",
-      manager: true,
-    },
-    {
-      to: "/sdr",
-      label: "Pontuação e rodízio",
-      icon: Crosshair,
-      shortcut: "G Z",
       manager: true,
     },
     {
@@ -298,5 +323,5 @@ export function groupLabelFor(pathname: string): string {
     }
   if (best) return best.label;
   if (pathname.startsWith(String(HELP_ITEM.to))) return "Ajuda";
-  return "Nexus One";
+  return BRAND.name;
 }

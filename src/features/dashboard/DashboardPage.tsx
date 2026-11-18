@@ -148,7 +148,7 @@ export function DashboardPage() {
 
 function LoadingHero() {
   return (
-    <div className="mx-3 mt-3 rounded-[28px] bg-[#0A1F3B] px-5 pt-10 pb-6 md:mx-5 md:mt-5 md:rounded-[36px] md:px-10">
+    <div className="mx-3 mt-3 rounded-[28px] bg-[#001F35] px-5 pt-10 pb-6 md:mx-5 md:mt-5 md:rounded-[36px] md:px-10">
       <div className="mx-auto max-w-[1400px] animate-pulse">
         <div className="h-3 w-40 rounded-full bg-white/15" />
         <div className="mt-4 h-10 w-80 rounded-xl bg-white/15" />

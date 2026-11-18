@@ -1,5 +1,5 @@
 // Lead de anúncio que a Zernio entrega (evento lead.received) → valores do formulário "Leads de
-// anúncios" do Nexus. Puro: testado sem banco. A Zernio já traz as respostas (lead.fields), então
+// anúncios" do Vínculo. Puro: testado sem banco. A Zernio já traz as respostas (lead.fields), então
 // não há Graph API nem app da Meta do cliente no caminho.
 import type { FormField } from "@/features/forms/types";
 
@@ -15,7 +15,7 @@ export interface ZernioLead {
   consents?: { checkboxKey?: string; isChecked?: boolean }[];
 }
 
-/** Marca o formulário criado pelo Nexus para receber os leads de anúncio da conta. */
+/** Marca o formulário criado pelo Vínculo para receber os leads de anúncio da conta. */
 export const ADS_FORM_MARKER = "zernio:lead_ads";
 
 export const ADS_FORM_FIELDS: FormField[] = [

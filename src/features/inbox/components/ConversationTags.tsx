@@ -53,7 +53,7 @@ export function ConversationTags({
                     `Etiqueta “${t}” removida`,
                   )
                 }
-                className="grid size-5 place-items-center rounded-full text-muted-foreground hover:bg-[var(--via-navy-06,rgba(10,31,59,0.06))] hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                className="grid size-5 place-items-center rounded-full text-muted-foreground hover:bg-[var(--via-navy-06,rgba(0, 31, 53,0.06))] hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
               >
                 <X className="size-3" aria-hidden />
               </button>

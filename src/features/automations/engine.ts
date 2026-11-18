@@ -7,6 +7,7 @@ export type NodeType =
   | "sms"
   | "voice_call"
   | "task"
+  | "ticket"
   | "move_stage"
   | "assign"
   | "add_tag"
@@ -38,7 +39,7 @@ export interface Graph {
   nodes: Record<string, AutoNode>;
 }
 
-export type TriggerType = "manual" | "event" | "segment" | "no_reply" | "date";
+export type TriggerType = "manual" | "event" | "segment" | "no_reply" | "date" | "inactive";
 export interface Trigger {
   type: TriggerType;
   event?: string;
@@ -48,11 +49,16 @@ export interface Trigger {
     pipeline_id?: string;
     to?: string;
     channel?: string;
+    /** Nota da pesquisa (evento nps.answered): só entra quem deu de score_min a score_max. */
+    score_min?: number;
+    score_max?: number;
   };
   segment_id?: string;
   hours?: number;
   field?: string;
   days_before?: number;
+  /** Gatilho "inactive": cliente sem conversa há tantos dias. */
+  days?: number;
 }
 
 export interface ExitRules {
@@ -134,6 +140,7 @@ export const NODE_LABEL: Record<NodeType, string> = {
   sms: "Enviar SMS",
   voice_call: "Ligação da IA de voz",
   task: "Criar tarefa",
+  ticket: "Abrir chamado",
   move_stage: "Mover no funil",
   assign: "Atribuir responsável",
   add_tag: "Adicionar etiqueta",
@@ -221,6 +228,8 @@ export function nodeConfigErrors(n: AutoNode): string[] {
       return !s("voice_agent_id") ? [`${label}: escolha o agente de voz`] : [];
     case "task":
       return !s("title") ? [`${label}: falta o título`] : [];
+    case "ticket":
+      return !s("subject") ? [`${label}: falta o assunto`] : [];
     case "move_stage":
       return !s("stage_id") ? [`${label}: escolha a etapa`] : [];
     case "add_tag":
@@ -386,6 +395,22 @@ export function nextAllowedTime(at: Date, tz: string, bh: BusinessHours | null):
   return at;
 }
 
+/** Meia-noite do dia seguinte no fuso da conta (em UTC). */
+export function startOfNextDay(at: Date, tz: string): Date {
+  const p = localParts(at, tz);
+  const local = Date.UTC(p.y, p.m - 1, p.d + 1, 0, 0, 0);
+  const guess = new Date(local - tzOffsetMs(new Date(local), tz));
+  return new Date(local - tzOffsetMs(guess, tz));
+}
+
+/** Meia-noite de hoje no fuso da conta (em UTC): de onde se conta o teto do dia. */
+export function startOfDay(at: Date, tz: string): Date {
+  const p = localParts(at, tz);
+  const local = Date.UTC(p.y, p.m - 1, p.d, 0, 0, 0);
+  const guess = new Date(local - tzOffsetMs(new Date(local), tz));
+  return new Date(local - tzOffsetMs(guess, tz));
+}
+
 /** Está no horário silencioso da conta (ex.: 21:00–08:00)? */
 export function inQuietHours(at: Date, tz: string, start: string, end: string): boolean {
   const p = localParts(at, tz);
@@ -413,6 +438,10 @@ export interface StepContext {
   consent: (channel: "email" | "whatsapp" | "sms" | "voice") => boolean;
   /** Contexto da inscrição (ex.: quando começou a esperar um evento). */
   runContext: Record<string, unknown>;
+  /** Teto de WhatsApp automático por dia na conta inteira (0 ou ausente = sem teto). */
+  dailyCap?: number;
+  /** Quantos WhatsApp as automações da conta já mandaram hoje. */
+  sentToday?: number;
 }
 
 export type StepAction =
@@ -422,6 +451,7 @@ export type StepAction =
       config: Record<string, unknown>;
     }
   | { kind: "task"; config: Record<string, unknown> }
+  | { kind: "ticket"; config: Record<string, unknown> }
   | { kind: "move_stage"; stage_id: string }
   | { kind: "assign"; config: Record<string, unknown> }
   | { kind: "tag"; tag: string; add: boolean }
@@ -471,6 +501,25 @@ export function planStep(node: AutoNode, ctx: StepContext): StepPlan {
         `Pulado: teto de ${ctx.guards.weekly_cap} contatos na semana`,
         "skipped",
       );
+    // Teto do dia (protege o número de WhatsApp): a mensagem não se perde, sai no dia seguinte.
+    if (
+      channel === "whatsapp" &&
+      (ctx.dailyCap ?? 0) > 0 &&
+      (ctx.sentToday ?? 0) >= ctx.dailyCap!
+    ) {
+      const tomorrow = startOfNextDay(ctx.now, ctx.tz);
+      return {
+        status: "wait",
+        action: null,
+        next: node.id,
+        at: nextAllowedTime(tomorrow, ctx.tz, ctx.guards.business_hours),
+        contextPatch: {},
+        log: {
+          status: "deferred",
+          message: `Teto de ${ctx.dailyCap} mensagens por dia atingido: fica para amanhã`,
+        },
+      };
+    }
     const allowed = nextAllowedTime(ctx.now, ctx.tz, ctx.guards.business_hours);
     if (allowed.getTime() > ctx.now.getTime()) {
       return {
@@ -488,6 +537,8 @@ export function planStep(node: AutoNode, ctx: StepContext): StepPlan {
   switch (node.type) {
     case "task":
       return go(node.next, { kind: "task", config: c }, "Tarefa criada");
+    case "ticket":
+      return go(node.next, { kind: "ticket", config: c }, "Chamado aberto");
     case "move_stage":
       return go(
         node.next,
@@ -616,6 +667,12 @@ export function triggerMatches(
   if (f.form_id && ev.payload["form_id"] !== f.form_id) return false;
   if (f.stage_id && ev.payload["to"] !== f.stage_id) return false;
   if (f.to && ev.payload["to"] !== f.to) return false;
+  if (f.score_min !== undefined || f.score_max !== undefined) {
+    const score = Number(ev.payload["score"]);
+    if (!Number.isFinite(score) || ev.payload["score"] === null) return false;
+    if (f.score_min !== undefined && score < f.score_min) return false;
+    if (f.score_max !== undefined && score > f.score_max) return false;
+  }
   return true;
 }
 

@@ -12,7 +12,7 @@ interface Props {
 }
 
 // Renderização da landing page por blocos (página pública e prévia do construtor).
-export function LandingView({ title, blocks, form, accent = "#0A1F3B", preview = false }: Props) {
+export function LandingView({ title, blocks, form, accent = "#001F35", preview = false }: Props) {
   const scrollToForm = () =>
     document.getElementById("lp-form")?.scrollIntoView({ behavior: "smooth" });
   return (

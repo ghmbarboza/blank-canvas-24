@@ -33,7 +33,7 @@ export const Route = createFileRoute("/entrar")({
   head: () =>
     pageHead(
       "Entrar",
-      "Entre ou crie sua conta no Nexus One para acessar sua central de atendimento.",
+      "Entre ou crie sua conta no Vínculo para acessar sua central de atendimento.",
     ),
   component: SignIn,
 });
@@ -167,10 +167,10 @@ function SignIn() {
           <div className="mb-8 lg:hidden">
             <Wordmark />
           </div>
-          <p className="mb-1.5 text-[11px] font-medium tracking-[0.08em] text-subtle uppercase">
+          <p className="mb-1.5 text-[11px] font-medium tracking-[0.16em] text-gold-text uppercase">
             Acesso
           </p>
-          <h1 className="font-display text-3xl font-medium">
+          <h1 className="font-display text-3xl font-extrabold">
             {mode === "signin"
               ? "Entrar na sua conta."
               : mode === "signup"
@@ -205,7 +205,7 @@ function SignIn() {
             <div role="status" className="mt-8 space-y-4">
               <h3 className="font-medium">Confira seu e-mail</h3>
               <p className="text-sm text-muted-foreground">
-                Se {resetSentTo} tiver conta no Nexus One, o link para criar uma senha nova chega em
+                Se {resetSentTo} tiver conta no Vínculo, o link para criar uma senha nova chega em
                 alguns minutos. Olhe também a caixa de spam.
               </p>
               <Button variant="outline" className="w-full" onClick={() => switchMode("signin")}>

@@ -83,7 +83,7 @@ export function ManageMeetingPage({ token, intent }: { token: string; intent: Ma
   return (
     <Frame>
       <div className="overflow-hidden rounded-[32px] border border-border bg-surface">
-        <header className="relative overflow-hidden bg-[#0A1F3B] p-7 text-white">
+        <header className="relative overflow-hidden bg-[#001F35] p-7 text-white">
           <div
             className="hero-orb pointer-events-none absolute -top-20 -right-20 size-56 rounded-full bg-white/10 blur-3xl"
             aria-hidden
@@ -337,7 +337,7 @@ function Notice({
     <div
       className={
         dark
-          ? "rounded-[32px] bg-[#0A1F3B] px-8 py-12 text-center text-white"
+          ? "rounded-[32px] bg-[#001F35] px-8 py-12 text-center text-white"
           : "rounded-[32px] border border-border bg-surface px-8 py-12 text-center"
       }
     >

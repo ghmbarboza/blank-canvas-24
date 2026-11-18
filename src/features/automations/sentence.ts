@@ -7,6 +7,8 @@ const TRIGGER_PHRASE: Record<string, string> = {
   "contact.created": "Quando um contato é criado",
   "contact.became_hot": "Quando um contato esquenta",
   "contact.lifecycle_changed": "Quando um contato muda de fase",
+  "customer.new": "Quando alguém vira cliente",
+  "nps.answered": "Quando o cliente responde a pesquisa",
   "deal.created": "Quando um negócio é criado",
   "deal.stage_changed": "Quando um negócio muda de etapa",
   "deal.won": "Quando um negócio é ganho",
@@ -39,6 +41,8 @@ export function triggerPhrase(t: Trigger): string {
       return "Quando alguém entra no segmento";
     case "no_reply":
       return `Quando a conversa fica ${t.hours ?? 24} h sem resposta`;
+    case "inactive":
+      return `Quando o cliente fica ${t.days ?? 30} dias sem conversa`;
     case "date": {
       const field = t.field?.replace(/^custom\./, "") ?? "uma data";
       return `${t.days_before ?? 0} dia${t.days_before === 1 ? "" : "s"} antes de ${field}`;
@@ -85,6 +89,8 @@ export function stepPhrase(n: AutoNode): string {
       return "liga com o agente de voz";
     case "task":
       return "cria tarefa para o vendedor";
+    case "ticket":
+      return "abre um chamado";
     case "notify":
       return "avisa a equipe";
     case "assign":

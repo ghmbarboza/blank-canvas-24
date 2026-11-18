@@ -7,6 +7,7 @@ import {
   GitBranch,
   Hourglass,
   KanbanSquare,
+  LifeBuoy,
   ListTodo,
   Mail,
   MessageCircle,
@@ -29,6 +30,7 @@ export const NODE_ICON: Record<NodeType, LucideIcon> = {
   sms: MessageSquareText,
   voice_call: PhoneCall,
   task: ListTodo,
+  ticket: LifeBuoy,
   move_stage: KanbanSquare,
   assign: UserPlus,
   add_tag: Tag,
@@ -48,7 +50,7 @@ export const NODE_ICON: Record<NodeType, LucideIcon> = {
 
 export const PALETTE: { group: string; types: NodeType[] }[] = [
   { group: "Falar com o contato", types: ["whatsapp", "email", "sms", "voice_call"] },
-  { group: "Trabalho da equipe", types: ["task", "notify", "assign"] },
+  { group: "Trabalho da equipe", types: ["task", "ticket", "notify", "assign"] },
   { group: "Equipe de IA e apps", types: ["ai_agent", "composio_action"] },
   { group: "CRM", types: ["move_stage", "add_tag", "remove_tag", "set_field", "ai_toggle"] },
   { group: "Tempo e decisão", types: ["wait", "wait_event", "condition", "ab_split"] },
@@ -91,6 +93,8 @@ export function nodeSummary(n: AutoNode): string {
       return s("goal") || "Agente de voz";
     case "task":
       return s("title") || "Sem título";
+    case "ticket":
+      return s("subject") || "Sem assunto";
     case "wait":
       return formatMinutes(Number(c["minutes"] ?? 60));
     case "wait_event":

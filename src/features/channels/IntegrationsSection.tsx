@@ -2,6 +2,7 @@ import { useState, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { Bot, Loader2, type LucideIcon } from "lucide-react";
 import { toast } from "sonner";
+import { OPEN_OFFICIAL_EVENT } from "./constants";
 
 import { BrandIcon, BrandTile } from "@/components/brand/BrandIcon";
 import { Button } from "@/components/ui/button";
@@ -187,9 +188,10 @@ export function IntegrationsSection({ isAdmin }: { isAdmin: boolean }) {
           A chave da Zernio fica no{" "}
           <a
             href="#whatsapp-oficial"
+            onClick={() => window.dispatchEvent(new Event(OPEN_OFFICIAL_EVENT))}
             className="font-medium text-foreground underline-offset-4 hover:underline"
           >
-            passo 1 do WhatsApp Oficial
+            bloco do número oficial da Meta
           </a>
           . As outras (IA própria, e-mail, telefonia, reuniões) ficam em Ajustes › Integrações, no
           cofre da conta.

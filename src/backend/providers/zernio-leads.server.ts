@@ -1,4 +1,4 @@
-// lead.received da Zernio: o lead do anúncio (Facebook/Instagram) entra no Nexus pelo mesmo caminho
+// lead.received da Zernio: o lead do anúncio (Facebook/Instagram) entra no Vínculo pelo mesmo caminho
 // de um formulário (contato, deduplicação, dono, negócio, automações). O formulário "Leads de
 // anúncios" é criado na primeira vez; a pessoa pode editar o destino dele em Captação.
 import { admin } from "@/backend/http.server";

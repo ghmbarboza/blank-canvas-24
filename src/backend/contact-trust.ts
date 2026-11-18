@@ -56,5 +56,5 @@ export function portalLinkHtml(input: {
   const first = escapeHtml(input.first);
   const company = escapeHtml(input.accountName);
   const link = escapeHtml(input.link);
-  return `<div style="font-family:sans-serif;font-size:14px;line-height:1.6"><p>Oi${first ? `, ${first}` : ""}.</p><p>Clique para acompanhar seus chamados na ${company}:</p><p><a href="${link}" style="display:inline-block;background:#0A1F3B;color:#fff;padding:10px 18px;border-radius:999px;text-decoration:none">Entrar no portal</a></p><p style="color:#667">O link vale por 20 minutos e só funciona uma vez. Se não foi você, ignore este e-mail.</p></div>`;
+  return `<div style="font-family:sans-serif;font-size:14px;line-height:1.6"><p>Oi${first ? `, ${first}` : ""}.</p><p>Clique para acompanhar seus chamados na ${company}:</p><p><a href="${link}" style="display:inline-block;background:#B9915B;color:#001F35;font-weight:700;padding:10px 18px;border-radius:10px;text-decoration:none">Entrar no portal</a></p><p style="color:#667">O link vale por 20 minutos e só funciona uma vez. Se não foi você, ignore este e-mail.</p></div>`;
 }

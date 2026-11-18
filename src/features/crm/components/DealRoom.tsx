@@ -104,7 +104,7 @@ function SuggestionBanner({ accountId, deal }: { accountId: string; deal: DealRo
   return (
     <section
       aria-label="Sugestão de forecast"
-      className="rounded-[24px] bg-[#0A1F3B] p-4 text-white"
+      className="rounded-[24px] bg-[#001F35] p-4 text-white"
     >
       <p className="flex items-center gap-1.5 text-[11px] tracking-wide text-white/60 uppercase">
         <Bot className="size-3.5" aria-hidden /> A IA leu a última reunião

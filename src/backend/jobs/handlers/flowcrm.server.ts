@@ -1,4 +1,4 @@
-// Nexus → Flow CRM (revisão de 27/10, P3-1). O outbox (domain_events) enfileira um job por
+// Vínculo → Flow CRM (revisão de 27/10, P3-1). O outbox (domain_events) enfileira um job por
 // evento só para contas com a integração conectada; o job lê o estado atual e envia com
 // Idempotency-Key = id do evento. Falha lança erro e a fila tenta de novo (backoff do runner).
 import { admin } from "@/backend/http.server";

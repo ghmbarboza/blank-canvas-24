@@ -1,3 +1,4 @@
+import { BRAND } from "@/lib/brand";
 // Eventos de e-mail vindos de fora: abertura (pixel), clique, descadastro, webhook do Resend e
 // e-mail recebido (caixa compartilhada). Tudo público, então tudo valida antes de gravar.
 import { createHash, createHmac, timingSafeEqual } from "node:crypto";
@@ -159,13 +160,13 @@ export async function unsubscribe(
 
 // ── páginas do descadastro (escapadas: o e-mail vem da URL) ───────────────────
 function frame(brand: string, inner: string): string {
-  return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(brand)}</title></head><body style="margin:0;min-height:100vh;display:grid;place-items:center;background:#f4f6fa;font-family:Geist,-apple-system,Segoe UI,sans-serif;color:#0A1F3B"><main style="max-width:440px;margin:24px;padding:32px;background:#fff;border-radius:24px;box-shadow:0 1px 3px rgba(10,31,59,.08);text-align:center">${inner}</main></body></html>`;
+  return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(brand)}</title></head><body style="margin:0;min-height:100vh;display:grid;place-items:center;background:#f4f6fa;font-family:Manrope,-apple-system,Segoe UI,sans-serif;color:#001F35"><main style="max-width:440px;margin:24px;padding:32px;background:#fff;border-radius:24px;box-shadow:0 1px 3px rgba(0, 31, 53,.08);text-align:center">${inner}</main></body></html>`;
 }
 
 export function confirmPage(brand: string, email: string, action: string): string {
   return frame(
     brand,
-    `<h1 style="font-size:22px;margin:0 0 8px">Parar de receber e-mails?</h1><p style="color:#5b6478;margin:0 0 20px;font-size:15px">O endereço <b>${escapeHtml(email)}</b> deixa de receber as campanhas de ${escapeHtml(brand)}. E-mails de atendimento e cobrança continuam.</p><form method="post" action="${escapeHtml(action)}"><input type="hidden" name="confirmar" value="1"><button type="submit" style="font:inherit;font-weight:600;padding:12px 24px;border:0;border-radius:999px;background:#0A1F3B;color:#fff;cursor:pointer">Sim, descadastrar</button></form>`,
+    `<h1 style="font-size:22px;margin:0 0 8px">Parar de receber e-mails?</h1><p style="color:#5b6478;margin:0 0 20px;font-size:15px">O endereço <b>${escapeHtml(email)}</b> deixa de receber as campanhas de ${escapeHtml(brand)}. E-mails de atendimento e cobrança continuam.</p><form method="post" action="${escapeHtml(action)}"><input type="hidden" name="confirmar" value="1"><button type="submit" style="font:inherit;font-weight:600;padding:12px 24px;border:0;border-radius:999px;background:#001F35;color:#fff;cursor:pointer">Sim, descadastrar</button></form>`,
   );
 }
 
@@ -178,7 +179,7 @@ export function donePage(brand: string, email: string): string {
 
 export function invalidPage(): string {
   return frame(
-    "Nexus One",
+    BRAND.name,
     `<h1 style="font-size:22px;margin:0 0 8px">Link inválido</h1><p style="color:#5b6478;margin:0;font-size:15px">Abra o link de descadastro direto do e-mail que você recebeu.</p>`,
   );
 }

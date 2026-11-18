@@ -11,12 +11,14 @@ import {
   checkExit,
   isStaleStep,
   planStep,
+  startOfDay,
   type ExitRules,
   type Facts,
   type Graph,
   type Guards,
   type StepAction,
 } from "@/features/automations/engine";
+import { dailyCapOf } from "@/features/posvenda/rules";
 import type { Json, Tables } from "@/integrations/supabase/types";
 
 type Automation = Tables<"automations">;
@@ -185,6 +187,79 @@ async function sentThisWeek(contactId: string): Promise<number> {
   return count ?? 0;
 }
 
+/** WhatsApp que as automações da conta já mandaram hoje (teto do dia, edição de pós-venda). */
+async function whatsappSentToday(accountId: string, tz: string): Promise<number> {
+  const { count } = await admin()
+    .from("automation_logs")
+    .select("id", { count: "exact", head: true })
+    .eq("account_id", accountId)
+    .eq("status", "ok")
+    .eq("node_type", "whatsapp")
+    .gte("created_at", startOfDay(new Date(), tz).toISOString());
+  return count ?? 0;
+}
+
+const SURVEY_NAME = "Pesquisa de pós-venda";
+
+/**
+ * Link da pesquisa de satisfação (NPS que já existe) para este contato. Usa a pesquisa permanente
+ * "Pesquisa de pós-venda" da conta (cria na primeira vez). null = o contato já respondeu.
+ */
+async function surveyLink(accountId: string, contactId: string): Promise<string | null> {
+  const db = admin();
+  let { data: survey } = await db
+    .from("nps_surveys")
+    .select("id")
+    .eq("account_id", accountId)
+    .eq("name", SURVEY_NAME)
+    .neq("status", "closed")
+    .order("created_at")
+    .limit(1)
+    .maybeSingle();
+  if (!survey) {
+    const created = await db
+      .from("nps_surveys")
+      .insert({
+        account_id: accountId,
+        name: SURVEY_NAME,
+        channel: "whatsapp",
+        status: "sent",
+        sent_at: new Date().toISOString(),
+      })
+      .select("id")
+      .single();
+    if (created.error) throw new Error(`Pesquisa: ${created.error.message}`);
+    survey = created.data;
+  }
+  const { data: prior } = await db
+    .from("nps_responses")
+    .select("token, answered_at")
+    .eq("survey_id", survey.id)
+    .eq("contact_id", contactId)
+    .maybeSingle();
+  if (prior?.answered_at) return null;
+  let token = prior?.token ?? null;
+  if (!token) {
+    const row = await db
+      .from("nps_responses")
+      .insert({ account_id: accountId, survey_id: survey.id, contact_id: contactId })
+      .select("token")
+      .single();
+    if (row.error) throw new Error(`Pesquisa: ${row.error.message}`);
+    token = row.data.token;
+    const { count } = await db
+      .from("nps_responses")
+      .select("id", { count: "exact", head: true })
+      .eq("survey_id", survey.id);
+    await db
+      .from("nps_surveys")
+      .update({ sent_count: count ?? 0 })
+      .eq("id", survey.id);
+  }
+  const { appBaseUrl } = await import("@/backend/http.server");
+  return `${appBaseUrl()}/nps/${token}`;
+}
+
 // ------------------------------------------------------------------ variáveis e ações
 
 export function fillVars(text: string, c: Contact, ownerName: string | null): string {
@@ -305,9 +380,18 @@ async function applyAction(
       }
       if (a.channel === "whatsapp") {
         const tpl = str("template_name");
+        let waText = str("text") ? fillVars(str("text"), contact, owner) : null;
+        // Pesquisa de satisfação: o texto leva o link pessoal de resposta ({{link_pesquisa}}).
+        if (cfg["survey"] === "nps" && waText) {
+          const link = await surveyLink(run.account_id, contact.id);
+          if (!link) return "Já respondeu a pesquisa: pulado";
+          waText = /\{\{\s*link_pesquisa\s*\}\}/i.test(waText)
+            ? waText.replace(/\{\{\s*link_pesquisa\s*\}\}/gi, link)
+            : `${waText} ${link}`;
+        }
         await enqueue(run.account_id, "whatsapp.send", {
           contact_id: contact.id,
-          text: str("text") ? fillVars(str("text"), contact, owner) : null,
+          text: waText,
           template: tpl
             ? {
                 name: tpl,
@@ -356,6 +440,48 @@ async function applyAction(
         due_in_minutes: Number(cfg["due_in_minutes"] ?? 0),
       });
       return "Tarefa criada";
+    }
+    case "ticket": {
+      let description = fillVars(str("description"), contact, owner);
+      if (cfg["include_survey"] === true) {
+        const { data: last } = await db
+          .from("nps_responses")
+          .select("score, comment")
+          .eq("contact_id", contact.id)
+          .not("answered_at", "is", null)
+          .order("answered_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (last)
+          description = [
+            description,
+            `Nota na pesquisa: ${last.score}.`,
+            last.comment ? `O que o cliente escreveu: ${last.comment}` : "",
+          ]
+            .filter(Boolean)
+            .join("\n");
+      }
+      const priority = ["low", "normal", "high", "urgent"].includes(str("priority"))
+        ? str("priority")
+        : "normal";
+      const { data: ticket, error } = await db
+        .from("tickets")
+        .insert({
+          account_id: run.account_id,
+          subject: (fillVars(str("subject"), contact, owner) || "Chamado da automação").slice(
+            0,
+            200,
+          ),
+          description: description.slice(0, 4000),
+          priority,
+          source: "api",
+          contact_id: contact.id,
+          owner_user_id: contact.owner_user_id,
+        } as never)
+        .select("number")
+        .single();
+      if (error) throw new Error(`Chamado: ${error.message}`);
+      return `Chamado #${(ticket as { number: number }).number} aberto`;
     }
     case "move_stage": {
       const deal = await targetDeal(run);
@@ -434,7 +560,7 @@ async function applyAction(
         a.url,
         {
           method: "POST",
-          headers: { "content-type": "application/json", "user-agent": "NexusOne-Automations/1.0" },
+          headers: { "content-type": "application/json", "user-agent": "Vinculo-Automations/1.0" },
           body: JSON.stringify({
             automation: { id: automation.id, name: automation.name },
             contact: {
@@ -565,10 +691,12 @@ export async function runStep(
   }
   const { data: account } = await db
     .from("accounts")
-    .select("timezone")
+    .select("timezone, settings")
     .eq("id", run.account_id)
     .single();
   const tz = account?.timezone || "America/Sao_Paulo";
+  const dailyCap = dailyCapOf(account?.settings);
+  let sentToday = dailyCap > 0 ? await whatsappSentToday(run.account_id, tz) : 0;
   const graph = automation.graph as unknown as Graph;
   const exitRules = { ...DEFAULT_EXIT, ...((automation.exit_rules ?? {}) as Partial<ExitRules>) };
   const guards = { ...DEFAULT_GUARDS, ...((automation.guards ?? {}) as Partial<Guards>) };
@@ -614,6 +742,8 @@ export async function runStep(
       sentThisWeek: sent,
       consent,
       runContext: context,
+      dailyCap,
+      sentToday,
     });
     context = { ...context, ...plan.contextPatch };
     let message = plan.log.message;
@@ -621,7 +751,10 @@ export async function runStep(
     if (plan.action) {
       try {
         message = await applyAction(plan.action, run, contact, automation);
-        if (plan.action.kind === "send") sent += 1;
+        if (plan.action.kind === "send") {
+          sent += 1;
+          if (plan.action.channel === "whatsapp") sentToday += 1;
+        }
       } catch (err) {
         status = "failed";
         message = `Falhou: ${err instanceof Error ? err.message : String(err)}`;

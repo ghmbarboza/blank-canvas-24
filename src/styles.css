@@ -6,22 +6,25 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /*
- * Nexus One · design system Viver de IA (https://viver-de-ia-ds.vercel.app).
- * Regras do DS que valem aqui:
- *  1. Paleta restrita: navy domina, cinza estrutura, branco respira. Sem acento quente, roxo ou neon.
+ * Vínculo · design system no visual do G4 Educação.
+ * Regras que valem aqui:
+ *  1. Paleta: azul-marinho #001F35 (texto e fundos escuros), dourado #B9915B (ação e destaque),
+ *     dourado escuro #977342 (borda, foco e texto dourado sobre branco), branco de fundo.
  *     Coral só para destrutivo/erro real; verde só para status ao vivo e check.
- *  2. Pill canônica: 11px, peso 500, sem caixa alta, sem bolinha decorativa.
- *  3. Temperatura do lead é uma rampa de navy (quente = navy cheio, morno = azul-aço, frio = cinza),
- *     sempre acompanhada do rótulo.
- *  4. Sombra pela tinta (navy no claro, preta no escuro), nunca branca.
+ *  2. Ação primária: fundo dourado com texto azul-marinho (5,8:1). No hover o fundo escurece para
+ *     #A67F4B (4,6:1 com o navy) e a borda vai para #977342. Texto dourado sobre branco usa
+ *     --gold-text (#7D5E33, 6:1), nunca o #B9915B (2,9:1).
+ *  3. Fonte: Manrope em tudo (400 a 800); títulos pesados, tracking apertado.
+ *  4. Temperatura do lead é uma rampa de navy, sempre acompanhada do rótulo.
+ *  5. Sombra pela tinta (navy no claro, preta no escuro), nunca branca.
  * Os nomes do shadcn (card, popover, muted, accent...) apontam para estes tokens.
  * Cores de terceiros (logos das redes) só aparecem no ícone da própria rede.
  */
 
 @theme inline {
-  --font-sans: "Geist", "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Geist", "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "Geist Mono", "JetBrains Mono", ui-monospace, monospace;
+  --font-sans: "Manrope", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Manrope", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
   --radius-sm: 6px;
   --radius-md: 10px;
@@ -48,12 +51,19 @@
   --color-primary-foreground: var(--primary-fg);
   --color-primary-soft: var(--primary-soft);
   --color-primary-line: var(--primary-line);
+  --color-action: var(--action);
+  --color-action-hover: var(--action-hover);
+  --color-action-line: var(--action-line);
+  --color-action-foreground: var(--action-fg);
+  --color-gold: var(--gold);
+  --color-gold-text: var(--gold-text);
+  --color-gold-soft: var(--gold-soft);
   --color-secondary: var(--surface-2);
   --color-secondary-foreground: var(--foreground);
   --color-muted: var(--surface-2);
   --color-muted-foreground: var(--muted-fg);
   --color-accent: var(--surface-2);
-  /* Hover e item destacado (DS SUBIDO): lavagem navy 6% + texto primário, nunca o accent. */
+  /* Hover e item destacado: lavagem navy 6% + texto primário, nunca o accent. */
   --color-hover: var(--via-navy-06);
   --color-accent-foreground: var(--foreground);
   --color-destructive: var(--danger);
@@ -96,10 +106,10 @@
   --color-sidebar-ring: var(--ring);
 
   --shadow-xs: 0 1px 2px var(--ink-06);
-  --shadow-card: 0 1px 2px var(--ink-06), 0 0 0 1px var(--ink-03);
+  --shadow-card: 0 1px 2px var(--ink-06), 0 0 0 1px var(--ink-06);
   --shadow-pop: 0 16px 40px -12px var(--ink-20), 0 0 0 1px var(--ink-06);
   --shadow-drag: 0 24px 48px -12px var(--ink-30), 0 0 0 1px var(--primary-line);
-  --shadow-primary: 0 8px 24px -8px var(--ink-40), inset 0 1px 0 rgb(255 255 255 / 0.12);
+  --shadow-primary: 0 8px 20px -10px var(--action-shadow), inset 0 1px 0 rgb(255 255 255 / 0.22);
   --shadow-lift: 0 14px 32px -12px var(--ink-20), 0 0 0 1px var(--ink-06);
 
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -107,38 +117,49 @@
 }
 
 :root {
-  --radius: 0.75rem;
+  --radius: 0.625rem;
 
-  /* Nexa (guia da implantação): navy da marca em canais HSL para usar com alfa (DS: sem azul solto). */
-  --nexa-accent: 215 71% 14%;
-  --nexa-wash: 214 24% 94%;
+  /* Vi (guia da implantação): navy da marca em canais HSL para usar com alfa (DS: sem azul solto). */
+  --nexa-accent: 205 100% 10%;
+  --nexa-wash: 205 24% 94%;
 
   /* Superfícies: off-white de fundo, card branco, cinzas para estrutura. */
-  --background: #f7f8fa;
+  --background: #ffffff;
   --surface: #ffffff;
-  --surface-2: #f0f2f5;
-  --surface-3: #e4e7ec;
-  --border: #e4e7ec;
-  --border-strong: rgb(10 31 59 / 0.16); /* DS: controle com hairline navy translúcido */
-  --foreground: #0a1f3b;
-  --muted-fg: #4f596b;
-  --subtle-fg: #667085;
+  --surface-2: #f3f5f7;
+  --surface-3: #e5e9ed;
+  --border: #e2e6ea;
+  --border-strong: rgb(0 31 53 / 0.16); /* DS: controle com hairline navy translúcido */
+  --foreground: #001f35;
+  --muted-fg: #4a5a68;
+  --subtle-fg: #5f6f7d;
 
-  /* Navy é a marca: CTA, seleção, foco. */
-  --primary: #0a1f3b;
-  --primary-hover: #1e3a5f;
+  /* Navy é a marca: seleção, texto forte, superfícies escuras. */
+  --primary: #001f35;
+  --primary-hover: #12384f;
   --primary-fg: #ffffff;
-  --primary-soft: #edf0f4;
-  --primary-line: #c4cfdd;
-  --ring: rgb(10 31 59 / 0.28);
+  --primary-soft: #edf1f4;
+  --primary-line: #c3ced6;
+  /* Foco: dourado escuro (4,3:1 sobre branco). */
+  --ring: #977342;
+
+  /* Dourado é a ação: botão primário com texto navy (5,8:1); hover #a67f4b (4,6:1). */
+  --action: #b9915b;
+  --action-hover: #a67f4b;
+  --action-line: #977342;
+  --action-fg: #001f35;
+  --action-shadow: rgb(151 115 66 / 0.55);
+  --gold: #b9915b;
+  --gold-text: #7d5e33; /* dourado como TEXTO sobre branco (6:1) */
+  --gold-soft: #f6efe4;
 
   /* Lavagem navy das linhas (hover e selecionada). */
-  --wash: rgb(10 31 59 / 0.04);
-  --wash-strong: rgb(10 31 59 / 0.08);
+  --wash: rgb(0 31 53 / 0.04);
+  --wash-strong: rgb(0 31 53 / 0.08);
 
   /* Temperatura do lead: rampa monocromática. */
-  --hot: #0a1f3b;
-  --hot-fg: #0a1f3b;
+  --hot: #001f35;
+  --hot-fg: #001f35;
   --hot-soft: #e3e8ef;
   --hot-line: #93a8c2;
   --warm: #5e7b9e;
@@ -154,32 +175,32 @@
   --danger: #b85c5c;
   /* Nota interna: papel editorial, não post-it amarelo. */
   --note: #f0f2f5;
-  --note-line: rgb(10 31 59 / 0.16);
+  --note-line: rgb(0 31 53 / 0.16);
   --note-fg: #344054;
 
-  --chart-1: #0a1f3b;
+  --chart-1: #001f35;
   --chart-2: #335379;
   --chart-3: #5e7b9e;
   --chart-4: #93a8c2;
   --chart-5: #c4cfdd;
 
   /* Tinta de sombra: navy no claro. */
-  --ink-03: rgb(10 31 59 / 0.03);
-  --ink-06: rgb(10 31 59 / 0.06);
-  --ink-20: rgb(10 31 59 / 0.16);
-  --ink-30: rgb(10 31 59 / 0.22);
-  --ink-40: rgb(10 31 59 / 0.32);
+  --ink-03: rgb(0 31 53 / 0.03);
+  --ink-06: rgb(0 31 53 / 0.06);
+  --ink-20: rgb(0 31 53 / 0.16);
+  --ink-30: rgb(0 31 53 / 0.22);
+  --ink-40: rgb(0 31 53 / 0.32);
 }
 
 .dark {
-  --nexa-accent: 213 41% 34%;
-  --nexa-wash: 220 45% 14%;
-  --background: #0b1220;
-  --surface: #131c30;
-  --surface-2: #1b273f;
-  --surface-3: #24324d;
-  --border: #222d43;
-  --border-strong: #303d57;
+  --nexa-accent: 205 45% 34%;
+  --nexa-wash: 205 60% 12%;
+  --background: #00131f;
+  --surface: #001f35;
+  --surface-2: #0a2c45;
+  --surface-3: #153a55;
+  --border: #12344d;
+  --border-strong: #23496a;
   --foreground: #f4f6fa;
   --muted-fg: #aeb8c6;
   --subtle-fg: #9ca5b5;
@@ -187,10 +208,20 @@
   /* No escuro o CTA vira superfície branca com texto navy (botão "onnavy" do DS). */
   --primary: #f4f6fa;
   --primary-hover: #ffffff;
-  --primary-fg: #0a1f3b;
-  --primary-soft: #1f2b44;
-  --primary-line: #3d4c68;
-  --ring: rgb(255 255 255 / 0.24);
+  --primary-fg: #001f35;
+  --primary-soft: #0d3049;
+  --primary-line: #2c5373;
+  /* Foco e ação no escuro: o dourado cheio (5,8:1 sobre o navy). */
+  --ring: #b9915b;
+
+  --action: #b9915b;
+  --action-hover: #c9a676;
+  --action-line: #d9bc8c;
+  --action-fg: #001f35;
+  --action-shadow: rgb(0 0 0 / 0.5);
+  --gold: #b9915b;
+  --gold-text: #d9bc8c;
+  --gold-soft: rgb(185 145 91 / 0.14);
 
   --wash: rgb(255 255 255 / 0.045);
   --wash-strong: rgb(255 255 255 / 0.09);
@@ -210,8 +241,8 @@
 
   --success: #3fae7c;
   --danger: #e89b9b;
-  --note: #1b273f;
-  --note-line: #303d57;
+  --note: #0a2c45;
+  --note-line: #23496a;
   --note-fg: #d0d5dd;
 
   --chart-1: #9fbde4;
@@ -241,14 +272,35 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
-    font-feature-settings: "ss01";
   }
 
   ::selection {
     background: var(--primary-soft);
   }
 
+  /* Foco visível por padrão (dourado); componentes com ring próprio continuam valendo. */
   :focus-visible {
+    outline: none;
+  }
+  :where(
+    a,
+    button,
+    input,
+    select,
+    textarea,
+    summary,
+    [role="button"],
+    [role="tab"],
+    [role="switch"],
+    [role="checkbox"],
+    [role="radio"],
+    [tabindex="0"]
+  ):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  [class*="focus-visible:ring"]:focus-visible,
+  [class*="focus:ring"]:focus-visible {
     outline: none;
   }
 }
@@ -261,9 +313,9 @@
   .text-balance {
     text-wrap: balance;
   }
-  /* Geist como display: contraste editorial por peso e tracking apertado. */
+  /* Manrope como display: contraste editorial por peso e tracking apertado. */
   .font-display {
-    letter-spacing: -0.025em;
+    letter-spacing: -0.03em;
   }
   /* Rótulo editorial (eyebrow) do DS: caixa alta só aqui, nunca em pill. */
   .eyebrow {
@@ -317,7 +369,7 @@
     border: 1px solid var(--ink-06);
   }
   .dark .glass {
-    background: linear-gradient(180deg, rgb(27 39 63 / 0.92), rgb(19 28 48 / 0.78));
+    background: linear-gradient(180deg, rgb(10 44 69 / 0.92), rgb(0 31 53 / 0.78));
     border-color: rgb(255 255 255 / 0.08);
   }
 }
@@ -349,7 +401,7 @@
   }
 }
 
-/* Nexa: anel do retrato quando fala ou ouve, e as barras do microfone. Só transform/opacity. */
+/* Vi: anel do retrato quando fala ou ouve, e as barras do microfone. Só transform/opacity. */
 @keyframes nexa-pulse {
   0% {
     transform: scale(0.92);
@@ -375,7 +427,7 @@
   }
 }
 
-/* DS SUBIDO · rótulo de grupo em menu interno (sidebar, Ajustes): eyebrow, nunca parece item. */
+/* DS · rótulo de grupo em menu interno (sidebar, Ajustes): eyebrow, nunca parece item. */
 .ds-group-label {
   font-size: 11px;
   font-weight: 500;
@@ -388,7 +440,7 @@
   user-select: none;
 }
 
-/* DS SUBIDO · hover e item destacado de menu: lavagem navy 6% + texto primário (nunca o accent). */
+/* DS · hover e item destacado de menu: lavagem navy 6% + texto primário (nunca o accent). */
 .ds-menu-item:hover,
 .ds-menu-item:focus,
 .ds-menu-item[data-highlighted],
@@ -397,7 +449,7 @@
   color: var(--via-text-primary);
 }
 
-/* DS SUBIDO · M2: com a tela vazia, a ação do estado vazio é a única dominante e o botão do
+/* DS · M2: com a tela vazia, a ação do estado vazio é a única dominante e o botão do
    topo recua para contorno (Revenue-Centric: uma ação por tela). */
 main:has(.ds-empty-state .ds-btn--default) .ds-page-header .ds-btn--default {
   background: transparent;
@@ -409,7 +461,7 @@ main:has(.ds-empty-state .ds-btn--default) .ds-page-header .ds-btn--default:hove
   background: var(--wash);
 }
 
-/* DS SUBIDO · piso de 13px no conteúdo (kit/revenue.css): rótulo em caixa alta, selo e grupo do
+/* DS · piso de 13px no conteúdo (kit/revenue.css): rótulo em caixa alta, selo e grupo do
    menu continuam em 11px; o resto do texto pequeno sobe para 13px. */
 main
   :is(
@@ -421,4 +473,10 @@ main
   ):not([class*="uppercase"], .ds-group-label, .eyebrow, [data-slot="badge"], kbd) {
   font-size: 0.8125rem;
   line-height: 1.45;
+}
+
+/* Títulos no visual G4: Manrope pesada. Fora de camada para valer sobre o peso utilitário. */
+h1.font-display,
+h2.font-display {
+  font-weight: 800;
 }

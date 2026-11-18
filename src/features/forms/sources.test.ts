@@ -5,7 +5,7 @@ import { formEmbedCode, ownerModeLabel } from "./sources";
 describe("formEmbedCode", () => {
   it("gera o div do formulário e o script do widget da conta", () => {
     expect(formEmbedCode("https://x.app", "acc", "f1")).toBe(
-      '<div data-nexus-form="f1"></div>\n<script src="https://x.app/api/public/widget.js" data-account="acc" async></script>',
+      '<div data-vinculo-form="f1"></div>\n<script src="https://x.app/api/public/widget.js" data-account="acc" async></script>',
     );
   });
 });

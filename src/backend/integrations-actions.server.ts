@@ -1,5 +1,6 @@
+import { BRAND } from "@/lib/brand";
 // Salvar e testar integração da conta (config na coluna, segredos no Vault). Usado pela tela
-// (/api/integrations) e pela Nexa, a implantação por conversa: o mesmo caminho, as mesmas regras.
+// (/api/integrations) e pela Vi, a implantação por conversa: o mesmo caminho, as mesmas regras.
 import { admin, HttpError, type Caller } from "@/backend/http.server";
 import { providerDef, secretKeyName, type ProviderId } from "@/features/integrations/providers";
 
@@ -173,7 +174,7 @@ async function adoptPlatformAlert(
   if (!email || !key) return "";
   const fromEmail = config["from_email"];
   const from = fromEmail
-    ? `${(config["from_name"] || "Nexus One").replace(/[<>"\r\n]/g, "")} <${fromEmail}>`
+    ? `${(config["from_name"] || BRAND.name).replace(/[<>"\r\n]/g, "")} <${fromEmail}>`
     : null;
   const { admin } = await import("@/backend/http.server");
   const { data, error } = await admin().rpc("platform_adopt_alert", {

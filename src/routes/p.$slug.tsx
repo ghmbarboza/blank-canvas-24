@@ -82,7 +82,7 @@ function LandingPage() {
       title={q.data.title}
       blocks={q.data.blocks}
       form={q.data.form}
-      accent={q.data.theme?.accent ?? "#0A1F3B"}
+      accent={q.data.theme?.accent ?? "#001F35"}
     />
   );
 }

@@ -20,7 +20,7 @@ export function AiBanner({ accountId, conversation, members }: Props) {
   return (
     <div
       role="status"
-      className="flex shrink-0 items-center gap-3 bg-[#0A1F3B] px-3 py-2.5 text-white sm:px-5 dark:bg-surface-3"
+      className="flex shrink-0 items-center gap-3 bg-[#001F35] px-3 py-2.5 text-white sm:px-5 dark:bg-surface-3"
     >
       <Bot className="size-4 shrink-0 text-white/80" aria-hidden />
       <p className="min-w-0 flex-1 text-[13px] leading-snug font-medium">
@@ -43,7 +43,7 @@ export function AiBanner({ accountId, conversation, members }: Props) {
             success: "Conversa assumida. A IA parou de responder.",
           })
         }
-        className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full bg-white px-3.5 text-[12px] font-semibold text-[#0A1F3B] transition-transform focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A1F3B] focus-visible:outline-none active:scale-[0.98] disabled:opacity-60"
+        className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full bg-white px-3.5 text-[12px] font-semibold text-[#001F35] transition-transform focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#001F35] focus-visible:outline-none active:scale-[0.98] disabled:opacity-60"
       >
         {update.isPending && <Loader2 className="size-3.5 animate-spin" aria-hidden />}
         Assumir conversa

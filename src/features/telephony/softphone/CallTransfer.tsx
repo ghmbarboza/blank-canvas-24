@@ -8,7 +8,7 @@ import { useAuth } from "@/lib/auth";
 
 import { transferCodes } from "./transfer-codes";
 
-// Transferir a ligação em curso (#69): escolhe o colega e o Nexus mostra os dois códigos da PBX.
+// Transferir a ligação em curso (#69): escolhe o colega e o Vínculo mostra os dois códigos da PBX.
 export function CallTransfer({ accountId }: { accountId: string }) {
   const { user } = useAuth();
   const live = useLive(accountId);

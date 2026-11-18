@@ -26,7 +26,7 @@ export const Route = createFileRoute("/api/webchat")({
             const caller = await h.requireMember(req, body.accountId, "admin");
             const config = {
               greeting: String(body.greeting ?? "Oi! Como podemos ajudar?").slice(0, 300),
-              color: /^#[0-9a-f]{6}$/i.test(String(body.color ?? "")) ? body.color : "#0A1F3B",
+              color: /^#[0-9a-f]{6}$/i.test(String(body.color ?? "")) ? body.color : "#001F35",
               ai: body.ai !== false,
               ask_email: body.ask_email !== false,
             };

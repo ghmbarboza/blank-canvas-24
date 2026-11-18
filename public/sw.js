@@ -1,4 +1,4 @@
-// Service worker do Nexus One: só recebe Web Push e abre o link ao clicar. Não faz cache de nada.
+// Service worker do Vínculo: só recebe Web Push e abre o link ao clicar. Não faz cache de nada.
 self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", (event) => event.waitUntil(self.clients.claim()));
 
@@ -7,9 +7,9 @@ self.addEventListener("push", (event) => {
   try {
     data = event.data ? event.data.json() : {};
   } catch {
-    data = { title: event.data ? event.data.text() : "Nexus One" };
+    data = { title: event.data ? event.data.text() : "Vínculo" };
   }
-  const title = data.title || "Nexus One";
+  const title = data.title || "Vínculo";
   event.waitUntil(
     self.registration.showNotification(title, {
       body: data.body || "",

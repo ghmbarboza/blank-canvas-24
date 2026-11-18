@@ -71,7 +71,7 @@ export function PublicFormView({ form, preview = false, source = "form", classNa
     schedule?: { url: string; label: string } | null;
   }>({ kind: "idle" });
   const accent =
-    form.theme?.accent && /^#[0-9a-f]{6}$/i.test(form.theme.accent) ? form.theme.accent : "#0A1F3B";
+    form.theme?.accent && /^#[0-9a-f]{6}$/i.test(form.theme.accent) ? form.theme.accent : "#001F35";
   const utm = useMemo(readUtm, []);
 
   async function submit(e: React.FormEvent) {

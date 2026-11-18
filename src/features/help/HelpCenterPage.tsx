@@ -97,7 +97,7 @@ export function HelpCenterPage() {
     <div className="flex min-h-0 flex-1 flex-col">
       <PageHeader
         title="Ajuda"
-        description="Guias passo a passo e respostas para as dúvidas mais comuns do Nexus."
+        description="Guias passo a passo e respostas para as dúvidas mais comuns do Vínculo."
       />
       <div className="flex-1 overflow-y-auto px-4 py-5 sm:px-6">
         <HelpPage
@@ -110,7 +110,7 @@ export function HelpCenterPage() {
             { pergunta: "Por que a IA não respondeu?", secao: "duvidas" },
           ]}
           naoAchou={{
-            texto: "A Nexa responde dúvidas sobre a configuração, conversando.",
+            texto: "A Vi responde dúvidas sobre a configuração, conversando.",
             acao: (
               <Button asChild>
                 <Link to="/painel">Voltar ao Painel</Link>

@@ -124,7 +124,7 @@ export function VoiceAgentsPage() {
                     className="lift flex h-full w-full flex-col rounded-[24px] border border-border bg-surface p-5 text-left"
                   >
                     <div className="flex items-start gap-3">
-                      <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[#0A1F3B] text-white">
+                      <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[#001F35] text-white">
                         <Bot className="size-5" />
                       </span>
                       <span className="min-w-0 flex-1">
@@ -581,7 +581,7 @@ function TestChat({
             key={i}
             className={cn(
               "max-w-[90%] rounded-2xl px-3 py-2",
-              m.role === "user" ? "ml-auto bg-[#0A1F3B] text-white" : "bg-surface",
+              m.role === "user" ? "ml-auto bg-[#001F35] text-white" : "bg-surface",
             )}
           >
             {m.content}

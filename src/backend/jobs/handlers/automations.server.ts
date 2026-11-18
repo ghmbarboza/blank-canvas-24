@@ -67,7 +67,7 @@ registerJob("automation.scan", async () => {
     .from("automations")
     .select("*")
     .eq("status", "active")
-    .in("trigger->>type", ["segment", "no_reply", "date"]);
+    .in("trigger->>type", ["segment", "no_reply", "date", "inactive"]);
   let total = 0;
   for (const a of autos ?? []) {
     const t = a.trigger as unknown as Trigger;
@@ -102,6 +102,37 @@ registerJob("automation.scan", async () => {
           (c) => c.contact_id && (!c.last_inbound_at || c.last_message_at! > c.last_inbound_at),
         )
         .map((c) => c.contact_id!) as string[];
+    } else if (t.type === "inactive") {
+      // Cliente parado: quem já é cliente e não conversa há N dias. Entra uma vez por período de
+      // silêncio: só volta a entrar se conversou de novo depois da última vez.
+      const days = Math.max(1, Number(t.days ?? 30));
+      const cutoff = new Date(Date.now() - days * 86_400_000).toISOString();
+      const { data } = await db
+        .from("contacts")
+        .select("id, last_interaction_at")
+        .eq("account_id", a.account_id)
+        .eq("lifecycle", "customer")
+        .lt("last_interaction_at", cutoff)
+        .order("last_interaction_at", { ascending: false })
+        .limit(200);
+      const candidates = data ?? [];
+      const { data: runs } = candidates.length
+        ? await db
+            .from("automation_runs")
+            .select("contact_id, enrolled_at")
+            .eq("automation_id", a.id)
+            .in(
+              "contact_id",
+              candidates.map((c) => c.id),
+            )
+        : { data: [] };
+      const lastRun = new Map<string, string>();
+      for (const r of runs ?? [])
+        if (!lastRun.has(r.contact_id) || lastRun.get(r.contact_id)! < r.enrolled_at)
+          lastRun.set(r.contact_id, r.enrolled_at);
+      ids = candidates
+        .filter((c) => !lastRun.has(c.id) || lastRun.get(c.id)! < c.last_interaction_at!)
+        .map((c) => c.id);
     } else if (t.type === "date" && t.field) {
       const target = new Date(Date.now() + Number(t.days_before ?? 0) * 86_400_000)
         .toISOString()

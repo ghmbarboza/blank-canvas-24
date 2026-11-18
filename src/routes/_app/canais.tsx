@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_app/canais")({
     }
     return out;
   },
-  head: () => pageHead("Canais", "Conexões de atendimento da sua empresa no Nexus One."),
+  head: () => pageHead("Canais", "Conexões de atendimento da sua empresa no Vínculo."),
   component: ChannelsRoute,
 });
 

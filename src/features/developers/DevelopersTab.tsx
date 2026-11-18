@@ -234,7 +234,7 @@ function Webhooks({ accountId, isAdmin }: { accountId: string; isAdmin: boolean 
   return (
     <SettingsCard
       title="Webhooks"
-      description="Avisamos seu sistema quando algo acontece. Cada envio é assinado (x-nexus-signature = HMAC-SHA256 de timestamp.corpo) e reenviado com recuo em caso de falha."
+      description="Avisamos seu sistema quando algo acontece. Cada envio é assinado (x-vinculo-signature = HMAC-SHA256 de timestamp.corpo) e reenviado com recuo em caso de falha."
       actions={
         isAdmin && (
           <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
@@ -300,7 +300,7 @@ function Webhooks({ accountId, isAdmin }: { accountId: string; isAdmin: boolean 
                   id="wh-url"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
-                  placeholder="https://seu-sistema.com/webhooks/nexus"
+                  placeholder="https://seu-sistema.com/webhooks/vinculo"
                 />
               </div>
               <div className="grid gap-2">

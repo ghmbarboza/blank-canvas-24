@@ -5,16 +5,18 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-[13px] font-medium tracking-[-0.004em] cursor-pointer transition-[background-color,color,box-shadow,transform] duration-200 ease-[cubic-bezier(0.2,0.7,0.2,1)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[10px] text-[13px] font-medium tracking-[-0.004em] cursor-pointer transition-[background-color,color,box-shadow,transform] duration-200 ease-[cubic-bezier(0.2,0.7,0.2,1)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground shadow-primary hover:bg-primary-hover",
+        // Ação primária no visual G4: fundo dourado, texto azul-marinho, hover no dourado escuro.
+        default:
+          "border border-transparent bg-action font-semibold text-action-foreground shadow-primary hover:border-action-line hover:bg-action-hover",
         destructive: "bg-destructive text-destructive-foreground shadow-xs hover:bg-destructive/90",
         outline: "border border-border bg-surface shadow-xs hover:bg-surface-2",
         secondary: "bg-surface-2 text-foreground hover:bg-surface-3",
         ghost: "text-muted-foreground hover:bg-surface-2 hover:text-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+        link: "text-gold-text underline-offset-4 hover:underline",
       },
       size: {
         default: "h-9 px-4",

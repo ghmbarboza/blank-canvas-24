@@ -1,4 +1,4 @@
-// Ferramentas da Nexa. Cada uma faz pelo mesmo caminho da tela (mesmas regras e permissões) e
+// Ferramentas da Vi. Cada uma faz pelo mesmo caminho da tela (mesmas regras e permissões) e
 // devolve, além do texto para a IA, uma ação para a tela desenhar (botão, link, "feito").
 import { admin, HttpError, type Caller } from "@/backend/http.server";
 import type { Json } from "@/integrations/supabase/types";
@@ -6,8 +6,8 @@ import { PROVIDERS, type ProviderId } from "@/features/integrations/providers";
 import { EXTRA_MODULES } from "@/components/layout/modules";
 
 import { compileSoul, type Soul } from "./soul";
-import { OPENABLE, SEGMENT_IDS, type Fact, type SetupSnapshot } from "./spec";
-import type { StageBlock } from "./stage";
+import { OPENABLE, SEGMENT_IDS, STEP_IDS, type Fact, type SetupSnapshot } from "./spec";
+import type { StageAction, StageBlock } from "./stage";
 
 export interface SetupAction {
   kind: "link" | "open" | "done" | "error";
@@ -49,7 +49,7 @@ const SEGMENT_TEMPLATE: Record<string, string | undefined> = {
 
 const s = (v: unknown, max = 4000) => (typeof v === "string" ? v.trim().slice(0, max) : "");
 
-async function patchSettings(
+export async function patchSettings(
   accountId: string,
   fn: (cur: Record<string, Json | undefined>) => Record<string, Json | undefined>,
 ) {
@@ -70,10 +70,10 @@ export async function loadSnapshot(accountId: string): Promise<SetupSnapshot> {
     db.from("account_integrations").select("provider, status").eq("account_id", accountId),
     db
       .from("channels")
-      .select("platform, name")
+      .select("platform, name, handle")
       .eq("account_id", accountId)
       .eq("status", "connected"),
-    db.from("ai_agents").select("name, status").eq("account_id", accountId),
+    db.from("ai_agents").select("name, status, role").eq("account_id", accountId),
     db
       .from("memberships")
       .select("user_id", { head: true, count: "exact" })
@@ -112,7 +112,11 @@ export async function loadSnapshot(accountId: string): Promise<SetupSnapshot> {
   const settings = (acc.data?.settings ?? {}) as {
     setup?: { segment?: string; ai_mode?: string };
     modules?: string[];
+    posvenda?: { rules?: Record<string, unknown> };
   };
+  const rules = settings.posvenda?.rules;
+  const rulesOn =
+    rules && typeof rules === "object" ? Object.values(rules).filter((v) => v === true).length : 0;
   const aiKeys = (integ.data ?? []).filter(
     (i) => ["openai", "anthropic"].includes(i.provider) && i.status === "connected",
   );
@@ -124,12 +128,17 @@ export async function loadSnapshot(accountId: string): Promise<SetupSnapshot> {
       ? `chave própria (${aiKeys.map((a) => a.provider).join(", ")})`
       : "IA inclusa da plataforma",
     integrations: (integ.data ?? []).map((i) => ({ id: i.provider, status: i.status })),
-    channels: (ch.data ?? []).map((c) => ({ platform: c.platform, name: c.name })),
-    agents: (ag.data ?? []).map((a) => ({ name: a.name, status: a.status })),
+    channels: (ch.data ?? []).map((c) => ({
+      platform: c.platform,
+      name: c.name,
+      ...(c.handle ? { handle: c.handle } : {}),
+    })),
+    agents: (ag.data ?? []).map((a) => ({ name: a.name, status: a.status, role: a.role })),
     team: team.count ?? 0,
     documents: docs.count ?? 0,
     wishes: wishes.count ?? 0,
     modules: settings.modules ?? [],
+    rulesOn,
     firstWin: {
       received: (inbound.count ?? 0) > 0,
       replied: (replied.count ?? 0) > 0,
@@ -153,17 +162,34 @@ export async function loadRoteiro(accountId: string) {
   const [snapshot, facts] = await Promise.all([loadSnapshot(accountId), loadFacts(accountId)]);
   const { roteiroState } = await import("./roteiro");
   const r = roteiroState(snapshot, facts);
+  const wa = snapshot.channels.find((c) => c.platform === "whatsapp");
   return {
     steps: r.steps.map((st) => ({
       id: st.id,
       title: st.title,
+      summary: st.summary,
       required: st.required,
+      later: st.later,
       done: st.done,
       skipped: st.skipped,
     })),
     current: r.current?.id ?? null,
     requiredPending: r.requiredPending,
     remaining: r.remaining,
+    mainTotal: r.mainTotal,
+    mainDone: r.mainDone,
+    // o que os cartões do passo a passo mostram sem outra consulta
+    detail: {
+      company: snapshot.company,
+      segment: snapshot.segment,
+      sells: facts.find((f) => f.key === "o_que_vende")?.value ?? "",
+      tone: facts.find((f) => f.key === "tom_de_voz")?.value ?? "",
+      whatsapp: wa ? (wa.handle ?? wa.name) : null,
+      documents: snapshot.documents,
+      rulesOn: snapshot.rulesOn,
+      received: snapshot.firstWin.received,
+      replied: snapshot.firstWin.replied,
+    },
   };
 }
 
@@ -186,13 +212,17 @@ export async function startConversation(caller: Caller, person: string) {
 }
 
 // Grava as mensagens da abertura uma a uma (a ordem vem do created_at de cada insert).
-async function insertOpener(accountId: string, messages: { text: string; blocks: StageBlock[] }[]) {
+async function insertOpener(
+  accountId: string,
+  messages: { text: string; blocks: StageBlock[]; actions?: StageAction[] }[],
+) {
   const db = admin();
   const saved = [];
   for (const m of messages) {
     const parts = [
       { type: "text", text: m.text },
       ...m.blocks.map((block) => ({ type: "block", block })),
+      ...(m.actions ?? []).map((action) => ({ type: "action", action })),
     ];
     const { data, error } = await db
       .from("setup_messages")
@@ -212,7 +242,7 @@ async function insertOpener(accountId: string, messages: { text: string; blocks:
 
 /**
  * "Refazer configuração inicial": esquece o que a pessoa pulou e a escolha de recursos (para a
- * Nexa oferecer de novo) e abre uma rodada nova do começo. Não apaga empresa, canais, agentes,
+ * Vi oferecer de novo) e abre uma rodada nova do começo. Não apaga empresa, canais, agentes,
  * conhecimento nem a conversa anterior.
  */
 export async function restartConversation(caller: Caller, person: string) {
@@ -237,7 +267,7 @@ export async function restartConversation(caller: Caller, person: string) {
   return insertOpener(caller.accountId, o.messages);
 }
 
-/** A alma do Nexus para o construtor da alma: estado + fatos + biblioteca + sonhos. */
+/** O que a Vi aprendeu, para o painel "o que já sei": estado + fatos + biblioteca + sonhos. */
 export async function loadSoul(accountId: string): Promise<Soul> {
   const db = admin();
   const [snapshot, facts, docs, wishes] = await Promise.all([
@@ -307,6 +337,88 @@ export function normalizeFields(
       out[secrets[0].key] = value;
   }
   return out;
+}
+
+async function upsertFact(
+  caller: Caller,
+  f: { key: string; label: string; value: string; category: string; source: string },
+) {
+  const { error } = await admin()
+    .from("setup_facts")
+    .upsert(
+      {
+        account_id: caller.accountId,
+        ...f,
+        updated_by: caller.userId,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "account_id,key" },
+    );
+  if (error) throw new Error(error.message);
+}
+
+/** Passo "Sua empresa": o mesmo caminho para a ferramenta da Vi e para o formulário da tela. */
+export async function saveCompany(
+  caller: Caller,
+  p: { name?: string; segment?: string; sells?: string; tone?: string; source?: string },
+): Promise<string[]> {
+  const db = admin();
+  const name = (p.name ?? "").trim();
+  const segment = (p.segment ?? "").trim();
+  const source = p.source ?? "ia";
+  const done: string[] = [];
+  if (segment && !(SEGMENT_IDS as readonly string[]).includes(segment))
+    throw new Error(`ramo desconhecido: ${segment}`);
+  if (name.length >= 2) {
+    const { error } = await db.from("accounts").update({ name }).eq("id", caller.accountId);
+    if (error) throw new Error(error.message);
+    done.push(`nome "${name}"`);
+  }
+  if (segment) {
+    const tplKey = SEGMENT_TEMPLATE[segment];
+    if (tplKey) {
+      const { segmentTemplate } = await import("@/features/gestao/templates/segments");
+      const t = segmentTemplate(tplKey);
+      if (t) {
+        const { error } = await db.rpc("apply_segment_template", {
+          _account: caller.accountId,
+          _key: tplKey,
+          _model: t.model as unknown as Json,
+        });
+        if (error) throw new Error(`modelo do ramo: ${error.message}`);
+        done.push("modelo do ramo aplicado (campos, respostas e textos da IA)");
+      }
+    }
+    await patchSettings(caller.accountId, (cur) => ({
+      ...cur,
+      setup: { ...((cur["setup"] as Record<string, Json>) ?? {}), segment },
+    }));
+    done.push(`ramo ${segment}`);
+  }
+  const sells = (p.sells ?? "").trim();
+  if (sells) {
+    await upsertFact(caller, {
+      key: "o_que_vende",
+      label: "O que a empresa vende",
+      value: sells,
+      category: "produtos",
+      source,
+    });
+    done.push("o que vende");
+  }
+  const tone = (p.tone ?? "").trim();
+  if (tone) {
+    await upsertFact(caller, {
+      key: "tom_de_voz",
+      label: "Tom de voz",
+      value: tone,
+      category: "voz",
+      source,
+    });
+    done.push("tom de voz");
+  }
+  if (!done.length) throw new Error("informe o nome ou o ramo");
+  return done;
 }
 
 type Runner = (ctx: SetupCtx, args: Record<string, unknown>) => Promise<ToolRun>;
@@ -381,39 +493,12 @@ const RUNNERS: Record<string, Runner> = {
   },
 
   async salvar_empresa(ctx, a) {
-    const db = admin();
-    const name = s(a["nome"], 120);
-    const segment = s(a["ramo"], 20);
-    const done: string[] = [];
-    if (name.length >= 2) {
-      const { error } = await db.from("accounts").update({ name }).eq("id", ctx.caller.accountId);
-      if (error) throw new Error(error.message);
-      done.push(`nome "${name}"`);
-    }
-    if (segment) {
-      if (!(SEGMENT_IDS as readonly string[]).includes(segment))
-        throw new Error(`ramo desconhecido: ${segment}`);
-      const tplKey = SEGMENT_TEMPLATE[segment];
-      if (tplKey) {
-        const { segmentTemplate } = await import("@/features/gestao/templates/segments");
-        const t = segmentTemplate(tplKey);
-        if (t) {
-          const { error } = await db.rpc("apply_segment_template", {
-            _account: ctx.caller.accountId,
-            _key: tplKey,
-            _model: t.model as unknown as Json,
-          });
-          if (error) throw new Error(`modelo do ramo: ${error.message}`);
-          done.push("modelo do ramo aplicado (funil, campos, respostas e textos da IA)");
-        }
-      }
-      await patchSettings(ctx.caller.accountId, (cur) => ({
-        ...cur,
-        setup: { ...((cur["setup"] as Record<string, Json>) ?? {}), segment },
-      }));
-      done.push(`ramo ${segment}`);
-    }
-    if (!done.length) throw new Error("informe o nome ou o ramo");
+    const done = await saveCompany(ctx.caller, {
+      name: s(a["nome"], 120),
+      segment: s(a["ramo"], 20),
+      sells: s(a["o_que_vende"], 600),
+      tone: s(a["tom"], 300),
+    });
     return {
       content: `salvo: ${done.join(", ")}`,
       action: { kind: "done", label: "Empresa salva", tool: "salvar_empresa" },
@@ -787,7 +872,7 @@ const RUNNERS: Record<string, Runner> = {
       });
     if (error) throw new Error(error.message);
     return {
-      content: "pedido anotado para a equipe da Viver de IA",
+      content: "pedido anotado para a equipe do produto",
       action: { kind: "done", label: `Pedido anotado: ${title}`, tool: "registrar_desejo" },
     };
   },
@@ -839,6 +924,13 @@ const RUNNERS: Record<string, Runner> = {
       content: `menu ajustado: ${value}`,
       action: { kind: "done", label: `No menu: núcleo + ${value}`, tool: "escolher_recursos" },
     };
+  },
+
+  async abrir_passo(_ctx, a) {
+    const id = s(a["passo"], 20);
+    if (!(STEP_IDS as readonly string[]).includes(id)) throw new Error("passo desconhecido");
+    const { stepAction } = await import("./roteiro");
+    return { content: "botão do passo mostrado", action: stepAction(id as never) };
   },
 
   async abrir_tela(_ctx, a) {

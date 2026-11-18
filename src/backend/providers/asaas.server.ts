@@ -14,7 +14,7 @@ export async function asaas<T>(
     headers: {
       access_token: apiKey,
       "content-type": "application/json",
-      "user-agent": "NexusOne",
+      "user-agent": "Vinculo",
       ...(init.headers ?? {}),
     },
     signal: AbortSignal.timeout(15_000),

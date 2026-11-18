@@ -1,20 +1,28 @@
-/* Tokens do Design System Viver de IA (kit SUBIDO, kit/css/tokens.css), só as variáveis --via-*.
+/* Tokens do design system do Vínculo (kit/css/tokens.css), só as variáveis --via-*.
    As regras de elemento do kit (html, body, h1–h4, a) ficam de fora: o app já tem a própria base
    (src/styles.css) aprovada. O tema escuro do app é pela classe .dark. */
 :root {
   /* ========== COLORS ========================================== */
 
   /* Navy — the brand color. Used for primary text and primary surfaces. */
-  --via-navy: #0a1f3b; /* primary navy */
-  --via-navy-deep: #02162a; /* deep, used for full-bleed dark moments */
-  --via-navy-darker: #010b1a; /* darkest, footers / borders */
-  --via-blue: #1e3a5f; /* mid azul-escuro */
-  --via-blue-soft: #2a4a6e; /* hover state on navy / borders on navy */
+  --via-navy: #001f35; /* primary navy */
+  --via-navy-deep: #001626; /* deep, used for full-bleed dark moments */
+  --via-navy-darker: #000d18; /* darkest, footers / borders */
+  --via-blue: #12384f; /* mid azul-escuro */
+  --via-blue-soft: #24506b; /* hover state on navy / borders on navy */
+
+  /* Dourado — ação e destaque (visual G4). Texto navy sobre ele: 5,8:1. */
+  --via-gold: #b9915b;
+  --via-gold-hover: #a67f4b; /* hover do botão · 4,6:1 com texto navy */
+  --via-gold-deep: #977342; /* borda, foco */
+  --via-gold-light: #d9bc8c;
+  --via-gold-text: #7d5e33; /* dourado como texto sobre branco · 6:1 */
+  --via-gold-soft: #f6efe4;
 
   /* Data-viz · rampa monocromática de 5 passos com separação REAL de valor
      (navy → azul-aço → azul-claro). Resolve "cor próxima e escura": cada
      série/segmento vira um tom nitidamente distinto, sem sair da paleta. */
-  --via-chart-1: #0a1f3b; /* navy — anchor, série dominante */
+  --via-chart-1: #001f35; /* navy — anchor, série dominante */
   --via-chart-2: #335379; /* azul-aço escuro */
   --via-chart-3: #5e7b9e; /* azul-aço médio */
   --via-chart-4: #93a8c2; /* azul claro */
@@ -23,24 +31,24 @@
   --via-chart-ink-2: var(--via-blue); /* fim do gradiente de dado */
 
   /* Navy transparency stops (for hairlines, hovers, soft surfaces) */
-  --via-navy-80: rgba(10, 31, 59, 0.8);
-  --via-navy-60: rgba(10, 31, 59, 0.6);
-  --via-navy-40: rgba(10, 31, 59, 0.4);
-  --via-navy-30: rgba(10, 31, 59, 0.3);
-  --via-navy-25: rgba(10, 31, 59, 0.25);
-  --via-navy-22: rgba(10, 31, 59, 0.22);
-  --via-navy-20: rgba(10, 31, 59, 0.2);
-  --via-navy-18: rgba(10, 31, 59, 0.18);
-  --via-navy-16: rgba(10, 31, 59, 0.16);
-  --via-navy-14: rgba(10, 31, 59, 0.14);
-  --via-navy-12: rgba(10, 31, 59, 0.12);
-  --via-navy-10: rgba(10, 31, 59, 0.1);
-  --via-navy-08: rgba(10, 31, 59, 0.08);
-  --via-navy-06: rgba(10, 31, 59, 0.06);
-  --via-navy-05: rgba(10, 31, 59, 0.05);
-  --via-navy-04: rgba(10, 31, 59, 0.04);
-  --via-navy-03: rgba(10, 31, 59, 0.03);
-  --via-navy-02: rgba(10, 31, 59, 0.02);
+  --via-navy-80: rgba(0, 31, 53, 0.8);
+  --via-navy-60: rgba(0, 31, 53, 0.6);
+  --via-navy-40: rgba(0, 31, 53, 0.4);
+  --via-navy-30: rgba(0, 31, 53, 0.3);
+  --via-navy-25: rgba(0, 31, 53, 0.25);
+  --via-navy-22: rgba(0, 31, 53, 0.22);
+  --via-navy-20: rgba(0, 31, 53, 0.2);
+  --via-navy-18: rgba(0, 31, 53, 0.18);
+  --via-navy-16: rgba(0, 31, 53, 0.16);
+  --via-navy-14: rgba(0, 31, 53, 0.14);
+  --via-navy-12: rgba(0, 31, 53, 0.12);
+  --via-navy-10: rgba(0, 31, 53, 0.1);
+  --via-navy-08: rgba(0, 31, 53, 0.08);
+  --via-navy-06: rgba(0, 31, 53, 0.06);
+  --via-navy-05: rgba(0, 31, 53, 0.05);
+  --via-navy-04: rgba(0, 31, 53, 0.04);
+  --via-navy-03: rgba(0, 31, 53, 0.03);
+  --via-navy-02: rgba(0, 31, 53, 0.02);
 
   /* Grayscale — the secondary palette */
   --via-gray-50: #f7f8fa; /* page bg (alt) */
@@ -100,7 +108,7 @@
 
   /* Status — desaturated, navy-adjacent */
   --via-success: #1f8a5b;
-  --via-warning: #0a1f3b;
+  --via-warning: #001f35;
   --via-danger: #b83a3a;
 
   /* ========== EDITORIAL INK SCALE =============================
@@ -112,14 +120,13 @@
   --via-ink-2: #5e6b82; /* texto secundário editorial · 76+ usos */
   --via-ink-3: #525c72; /* terciário · timestamps · 224 usos · mais legível (era #5F6981) */
 
-  /* ========== ACCENT (navy / cinza · paleta restrita) ==========
-     Paleta canônica VIA: branco · off-white · cinza · azul-escuro · navy · preto.
-     Sem gold/amarelo/dourado em nenhum nível — accent é só intensidade
-     editorial dentro da própria família navy + cinza.
+  /* ========== ACCENT (dourado sobre navy) ==========
+     Paleta do Vínculo (visual G4): navy #001F35 + dourado #B9915B.
+     O acento é o dourado; como TEXTO sobre branco use --via-gold-text.
      ============================================================ */
-  --via-accent: var(--via-navy); /* navy primário · CTA · headers fortes */
-  --via-accent-deep: var(--via-navy-deep); /* navy mais profundo · gradient stops */
-  --via-accent-soft: var(--via-gray-300); /* cinza claro · gradient highlights */
+  --via-accent: var(--via-gold); /* dourado · CTA · destaque */
+  --via-accent-deep: var(--via-gold-deep); /* dourado escuro · borda · hover */
+  --via-accent-soft: var(--via-gold-light); /* dourado claro · gradient highlights */
   --via-accent-warm: var(--via-navy-deep); /* alias semântico legado · navy-deep */
   --via-accent-light: var(--via-gray-300); /* alias semântico legado · cinza claro */
 
@@ -129,13 +136,13 @@
   --via-coral-deep: #a14848; /* destrutivo hover */
 
   /* ========== ALIASES (compat) ================================
-     Aliases curtos pra Geist Display / Mono · 159+ usos
+     Aliases curtos pra Manrope Display / Mono · 159+ usos
      ============================================================ */
   --via-display: var(--via-font-display);
   --via-mono: var(--via-font-mono);
 
   /* ========== BG SOFT (surfaces) ============================== */
-  --via-bg-soft: rgba(10, 31, 59, 0.025); /* card soft alternate */
+  --via-bg-soft: rgba(0, 31, 53, 0.025); /* card soft alternate */
 }
 :root[data-theme="dark"],
 .dark {
@@ -143,11 +150,11 @@
      SURFACES · escala com mais separação entre camadas
      Tons levemente warm pra não ficar "preto técnico"
      ================================================= */
-  --via-bg: #0b1220; /* canvas principal · warm dark */
-  --via-bg-2: #131c30; /* surface alt · separação clara */
-  --via-bg-3: #1b273f; /* surface elevated */
-  --via-surface: #131c30; /* card base */
-  --via-surface-elev: #1b273f; /* card elevado · modals/popovers */
+  --via-bg: #00131f; /* canvas principal · warm dark */
+  --via-bg-2: #001f35; /* surface alt · separação clara */
+  --via-bg-3: #0a2c45; /* surface elevated */
+  --via-surface: #001f35; /* card base */
+  --via-surface-elev: #0a2c45; /* card elevado · modals/popovers */
   --via-bg-soft: rgba(255, 255, 255, 0.04);
 
   /* =================================================
@@ -158,16 +165,16 @@
      painel escuro sutil, senão viram "mancha clara" (ex: o
      rodapé que clareava embaixo, o container dos cards da home).
      gray-200+ NÃO adaptam (são usados como texto claro). */
-  --via-gray-50: #0f1729; /* painel sutil · 1 passo acima do canvas */
-  --via-gray-100: #17213a; /* painel · 2 passos acima */
+  --via-gray-50: #031a2b; /* painel sutil · 1 passo acima do canvas */
+  --via-gray-100: #08263c; /* painel · 2 passos acima */
   /* STAGE · backdrops/wells/avatares que usam gray-200/300/400 como FUNDO.
      Não dá pra adaptar gray-200/300/400 direto (são usados como TEXTO claro
      em contexto escuro). Então: tokens de palco que no light valem o mesmo
      cinza (no-op) e no dark viram superfície escura. Migração via
      scripts/fix-stage-bg.mjs (só backgrounds). */
-  --via-stage-soft: #1b273f; /* era gray-200 (#E4E7EC) */
-  --via-stage-1: #131c30; /* era gray-300 (#D0D5DD) */
-  --via-stage-2: #0b1220; /* era gray-400 (#98A2B3) */
+  --via-stage-soft: #0a2c45; /* era gray-200 (#E4E7EC) */
+  --via-stage-1: #001f35; /* era gray-300 (#D0D5DD) */
+  --via-stage-2: #00131f; /* era gray-400 (#98A2B3) */
 
   /* =================================================
      TEXT · cores SÓLIDAS (não rgba com opacity)
@@ -286,7 +293,9 @@
     rgba(255, 255, 255, 0.04),
     rgba(255, 255, 255, 0.018)
   );
-  --via-glass-bar: rgba(11, 18, 32, 0.55);
+  --via-glass-bar: rgba(0, 19, 31, 0.55);
+  --via-gold-text: #d9bc8c;
+  --via-gold-soft: rgba(185, 145, 91, 0.14);
   /* onnavy NÃO muda · permanece branco mesmo em dark */
   --via-edge-hi: rgba(255, 255, 255, 0.08);
   --via-edge-lo: rgba(255, 255, 255, 0.05);
@@ -305,13 +314,13 @@
 :root {
   /* ========== TYPOGRAPHY ====================================== */
 
-  /* Single-family system: Geist (variable sans, Vercel).
-     Same family for display + UI. Geist Mono para código.
-     Italic é synthesized em Geist (não tem italic axis) — contraste
+  /* Single-family system: Manrope (variable sans, Google Fonts).
+     Same family for display + UI. JetBrains Mono para código.
+     Italic é synthesized em Manrope (não tem italic axis) — contraste
      editorial vem por peso + cor (não por inclinação). */
-  --via-font-display: "Geist", "Inter", system-ui, -apple-system, sans-serif;
-  --via-font: "Geist", "Inter", system-ui, -apple-system, sans-serif;
-  --via-font-mono: "Geist Mono", "JetBrains Mono", ui-monospace, monospace;
+  --via-font-display: "Manrope", "Inter", system-ui, -apple-system, sans-serif;
+  --via-font: "Manrope", "Inter", system-ui, -apple-system, sans-serif;
+  --via-font-mono: "JetBrains Mono", ui-monospace, monospace;
 
   /* Weights */
   --via-fw-light: 300;
@@ -335,7 +344,7 @@
   --via-fs-label: 0.6875rem; /* 11px · canônico (pill/eyebrow) */
   --via-fs-micro: 0.625rem; /* 10px · micro-rótulos / kbd / badges */
 
-  /* Letter-spacing buckets — Geist precisa menos tight no display */
+  /* Letter-spacing buckets — Manrope precisa menos tight no display */
   --via-ls-brand: 0.32em;
   --via-ls-mark: 0.22em;
   --via-ls-label: 0.18em;
@@ -381,7 +390,7 @@
        md  botão, input, card pequeno · lg  CARD PADRÃO
        xl  card grande, modal, drawer · 2xl painel hero / seção full  */
   --via-radius-xs: 6px;
-  --via-radius-sm: 10px;
+  --via-radius-sm: 10px; /* raio do botão (G4) */
   --via-radius-md: 14px;
   --via-radius-lg: 20px;
   --via-radius-xl: 28px;
@@ -402,14 +411,14 @@
 
      Exceção legítima: `inset 0 1px 0 var(--via-edge-hi)` — a linha de
      luz no topo do vidro. Ali o branco é o efeito desejado. */
-  --via-shadow-ink-03: rgba(10, 31, 59, 0.03);
-  --via-shadow-ink-06: rgba(10, 31, 59, 0.06);
-  --via-shadow-ink-10: rgba(10, 31, 59, 0.1);
-  --via-shadow-ink-14: rgba(10, 31, 59, 0.14);
-  --via-shadow-ink-20: rgba(10, 31, 59, 0.2);
-  --via-shadow-ink-30: rgba(10, 31, 59, 0.3);
-  --via-shadow-ink-40: rgba(10, 31, 59, 0.4);
-  --via-shadow-ink-60: rgba(10, 31, 59, 0.6);
+  --via-shadow-ink-03: rgba(0, 31, 53, 0.03);
+  --via-shadow-ink-06: rgba(0, 31, 53, 0.06);
+  --via-shadow-ink-10: rgba(0, 31, 53, 0.1);
+  --via-shadow-ink-14: rgba(0, 31, 53, 0.14);
+  --via-shadow-ink-20: rgba(0, 31, 53, 0.2);
+  --via-shadow-ink-30: rgba(0, 31, 53, 0.3);
+  --via-shadow-ink-40: rgba(0, 31, 53, 0.4);
+  --via-shadow-ink-60: rgba(0, 31, 53, 0.6);
 
   /* ========== DATAVIZ · paleta de série (VALIDADA por script) ===
      Regra desta marca: a paleta é navy-only, o que torna gráfico
@@ -462,22 +471,22 @@
 
   /* ========== SHADOWS ========================================= */
   /* Navy-tinted, gentle. The brand never uses gray-black shadows. */
-  --via-shadow-xs: 0 1px 2px rgba(10, 31, 59, 0.04);
-  --via-shadow-sm: 0 2px 6px rgba(10, 31, 59, 0.05), 0 1px 2px rgba(10, 31, 59, 0.03);
-  --via-shadow-md: 0 6px 18px rgba(10, 31, 59, 0.07), 0 1px 3px rgba(10, 31, 59, 0.04);
-  --via-shadow-lg: 0 16px 40px rgba(10, 31, 59, 0.1), 0 2px 8px rgba(10, 31, 59, 0.05);
-  --via-shadow-xl: 0 32px 80px rgba(10, 31, 59, 0.14), 0 4px 16px rgba(10, 31, 59, 0.06);
+  --via-shadow-xs: 0 1px 2px rgba(0, 31, 53, 0.04);
+  --via-shadow-sm: 0 2px 6px rgba(0, 31, 53, 0.05), 0 1px 2px rgba(0, 31, 53, 0.03);
+  --via-shadow-md: 0 6px 18px rgba(0, 31, 53, 0.07), 0 1px 3px rgba(0, 31, 53, 0.04);
+  --via-shadow-lg: 0 16px 40px rgba(0, 31, 53, 0.1), 0 2px 8px rgba(0, 31, 53, 0.05);
+  --via-shadow-xl: 0 32px 80px rgba(0, 31, 53, 0.14), 0 4px 16px rgba(0, 31, 53, 0.06);
 
   /* Glass-specific shadow: inner highlight + soft outer drop */
   --via-shadow-glass-light:
     inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(255, 255, 255, 0.3),
-    0 12px 32px rgba(10, 31, 59, 0.08), 0 2px 8px rgba(10, 31, 59, 0.04);
+    0 12px 32px rgba(0, 31, 53, 0.08), 0 2px 8px rgba(0, 31, 53, 0.04);
 
   --via-shadow-glass-dark:
     inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 -1px 0 rgba(255, 255, 255, 0.06),
     0 16px 40px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.15);
 
-  --via-shadow-focus: 0 0 0 3px rgba(10, 31, 59, 0.15);
+  --via-shadow-focus: 0 0 0 3px rgba(0, 31, 53, 0.15);
 
   /* ========== BLUR =========================================== */
   --via-blur-sm: blur(8px) saturate(140%);
@@ -506,7 +515,7 @@
   --via-mesh-light:
     radial-gradient(ellipse 60% 70% at 12% 0%, rgba(30, 58, 95, 0.28) 0%, transparent 55%),
     radial-gradient(ellipse 50% 60% at 95% 8%, rgba(46, 76, 118, 0.22) 0%, transparent 55%),
-    radial-gradient(ellipse 70% 80% at 100% 100%, rgba(10, 31, 59, 0.3) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 80% at 100% 100%, rgba(0, 31, 53, 0.3) 0%, transparent 55%),
     radial-gradient(ellipse 50% 60% at 5% 100%, rgba(30, 58, 95, 0.18) 0%, transparent 55%),
     linear-gradient(135deg, #ccd4dd 0%, #a7b2c0 100%);
 
@@ -516,17 +525,17 @@
     radial-gradient(ellipse 50% 60% at 95% 8%, rgba(30, 58, 95, 0.5) 0%, transparent 60%),
     radial-gradient(ellipse 70% 80% at 100% 100%, rgba(2, 22, 42, 0.85) 0%, transparent 55%),
     radial-gradient(ellipse 50% 60% at 5% 100%, rgba(46, 76, 118, 0.4) 0%, transparent 55%),
-    linear-gradient(135deg, #0a1f3b 0%, #02162a 100%);
+    linear-gradient(135deg, #001f35 0%, #001626 100%);
 
   /* Noise texture: data-URI SVG turbulence em 4% opacity */
   --via-noise: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.12 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>");
 
   /* Glow navy — aura sutil pra elementos navy sólidos */
   --via-glow-navy:
-    0 0 0 1px rgba(10, 31, 59, 0.05), 0 8px 24px rgba(10, 31, 59, 0.2),
-    0 16px 48px rgba(10, 31, 59, 0.14);
+    0 0 0 1px rgba(0, 31, 53, 0.05), 0 8px 24px rgba(0, 31, 53, 0.2),
+    0 16px 48px rgba(0, 31, 53, 0.14);
 
   --via-glow-navy-strong:
-    0 0 0 1px rgba(10, 31, 59, 0.1), 0 16px 48px rgba(10, 31, 59, 0.3),
-    0 32px 80px rgba(10, 31, 59, 0.2);
+    0 0 0 1px rgba(0, 31, 53, 0.1), 0 16px 48px rgba(0, 31, 53, 0.3),
+    0 32px 80px rgba(0, 31, 53, 0.2);
 }

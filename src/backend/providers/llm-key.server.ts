@@ -16,6 +16,6 @@ export async function llmKeyTest(provider: "openai" | "anthropic", key: string):
     throw new Error("A chave foi recusada. Confira se copiou inteira e se está ativa.");
   if (!res.ok) throw new Error(`O provedor respondeu ${res.status}. Tente de novo em instantes.`);
   return provider === "openai"
-    ? "Chave da OpenAI aceita. A IA do Nexus já usa a sua conta."
+    ? "Chave da OpenAI aceita. A IA do Vínculo já usa a sua conta."
     : "Chave da Anthropic aceita. O Claude já responde pela sua conta.";
 }

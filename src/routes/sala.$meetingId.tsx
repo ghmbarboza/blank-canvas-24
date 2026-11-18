@@ -9,7 +9,7 @@ export const Route = createFileRoute("/sala/$meetingId")({
     const t = search["t"];
     return typeof t === "string" && /^[a-f0-9]{48}$/.test(t) ? { t } : {};
   },
-  head: () => pageHead("Sala de reunião", "Reunião por vídeo no Nexus One."),
+  head: () => pageHead("Sala de reunião", "Reunião por vídeo no Vínculo."),
   component: SalaRoute,
 });
 

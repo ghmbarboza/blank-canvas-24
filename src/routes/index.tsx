@@ -2,11 +2,12 @@ import { Navigate, createFileRoute } from "@tanstack/react-router";
 
 import { useAuth } from "@/lib/auth";
 import { FullScreenLoader } from "@/components/layout/FullScreenLoader";
+import { BRAND } from "@/lib/brand";
 import { pageHead } from "@/lib/page-head";
 import { useAuthDestination } from "@/hooks/use-auth-destination";
 
 export const Route = createFileRoute("/")({
-  head: () => pageHead("Nexus One", "Central de atendimento e vendas do Nexus One."),
+  head: () => pageHead("Início", BRAND.description),
   component: Index,
 });
 

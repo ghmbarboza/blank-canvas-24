@@ -4,7 +4,7 @@ import { lookup } from "node:dns/promises";
 
 import { htmlToText, isPrivateHost, parseDuckResults, sameSiteLinks } from "./text";
 
-const UA = "Mozilla/5.0 (compatible; NexusOne/1.0; +https://viverdeia.ai)";
+const UA = "Mozilla/5.0 (compatible; VinculoBot/1.0)";
 const MAX_BYTES = 2_000_000;
 const TIMEOUT_MS = 12_000;
 

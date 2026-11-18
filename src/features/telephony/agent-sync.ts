@@ -21,7 +21,7 @@ export interface AgentInput {
   postCallWebhookId?: string | null;
   /** Modelo que roda DENTRO da ElevenLabs (1ª palavra ~0,6 s; Custom LLM no Lovable dava ~3 s). */
   llm?: string;
-  /** Ferramentas da equipe (as mesmas do texto), executadas pelo Nexus via webhook. */
+  /** Ferramentas da equipe (as mesmas do texto), executadas pelo Vínculo via webhook. */
   teamTools?: { name: string; description: string; parameters: JsonSchemaLite; async?: boolean }[];
   /** O que a ElevenLabs extrai de cada ligação (vai para calls.data_collection e para a ficha). */
   dataCollection?: Record<string, { type: "string" | "boolean" | "number"; description: string }>;
@@ -295,7 +295,7 @@ export function buildAgentBody(i: AgentInput) {
       type: "webhook",
       name: t.name,
       description: t.description.slice(0, 900),
-      // efeito colateral sem resposta necessária: ela segue falando enquanto o Nexus grava
+      // efeito colateral sem resposta necessária: ela segue falando enquanto o Vínculo grava
       execution_mode: t.async ? "async" : "immediate",
       api_schema: {
         url: `${toolUrl(t.name)}&g=${i.agentRowId}`,
@@ -313,7 +313,7 @@ export function buildAgentBody(i: AgentInput) {
     ? `${i.prompt}\n\nBase de conhecimento (use só isto para fatos da empresa):\n${i.knowledge.trim()}`
     : i.prompt;
   return {
-    name: `Nexus · ${i.name}`,
+    name: `Vínculo · ${i.name}`,
     conversation_config: {
       agent: {
         // vazio = a abertura muda com o sentido da ligação ({{abertura}})
@@ -368,7 +368,7 @@ export function buildAgentBody(i: AgentInput) {
           request_headers: { "x-nexus-tool-secret": i.toolSecret },
         },
         // transcrição E falha ao iniciar (não atendeu, ocupado): sem esta, a ligação ficava
-        // "chamando" para sempre no Nexus
+        // "chamando" para sempre no Vínculo
         ...(i.postCallWebhookId
           ? {
               webhooks: {

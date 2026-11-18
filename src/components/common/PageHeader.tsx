@@ -12,7 +12,7 @@ type Props = {
   eyebrow?: string;
 };
 
-// Cabeçalho de página do DS SUBIDO: sem barra de topo; eyebrow (grupo da sidebar) + título
+// Cabeçalho de página do DS: sem barra de topo; eyebrow (grupo da sidebar) + título
 // 30px/500 + descrição do resultado, e a ação da tela à direita.
 export function PageHeader({ title, description, actions, children, eyebrow }: Props) {
   const path = useRouterState({ select: (s) => s.location.pathname });

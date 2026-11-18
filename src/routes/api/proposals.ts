@@ -78,10 +78,10 @@ export const Route = createFileRoute("/api/proposals")({
             const valid = p.valid_until
               ? new Date(`${p.valid_until}T12:00:00`).toLocaleDateString("pt-BR")
               : "—";
-            const html = `<div style="font-family:Geist,Arial,sans-serif;max-width:560px;margin:0 auto;color:#0A1F3B">
+            const html = `<div style="font-family:Manrope,Arial,sans-serif;max-width:560px;margin:0 auto;color:#001F35">
 <p>Olá${first ? `, ${esc(first)}` : ""}!</p>
 <p>${esc(intro)}</p>
-<p style="margin:28px 0"><a href="${link}" style="background:#0A1F3B;color:#fff;padding:12px 22px;border-radius:999px;text-decoration:none">Ver proposta nº ${p.number}</a></p>
+<p style="margin:28px 0"><a href="${link}" style="background:#B9915B;color:#001F35;font-weight:700;padding:12px 22px;border-radius:10px;text-decoration:none">Ver proposta nº ${p.number}</a></p>
 <p style="color:#5b6b80;font-size:13px">Válida até ${valid}. Você pode aceitar online, em poucos cliques.</p></div>`;
             const { error } = await db.rpc("enqueue_job", {
               _account: caller.accountId,

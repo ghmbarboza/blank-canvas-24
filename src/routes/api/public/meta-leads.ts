@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-// Webhook do Meta Lead Ads: /api/public/meta-leads?account=<id>&form=<formulário do Nexus que recebe>
+// Webhook do Meta Lead Ads: /api/public/meta-leads?account=<id>&form=<formulário do Vínculo que recebe>
 // GET verifica (hub.verify_token); POST confere x-hub-signature-256 com o app secret e busca o lead na Graph API.
 export const Route = createFileRoute("/api/public/meta-leads")({
   server: {
@@ -64,7 +64,8 @@ export const Route = createFileRoute("/api/public/meta-leads")({
             .eq("id", formId)
             .eq("account_id", account)
             .maybeSingle();
-          if (!form) throw new h.HttpError(404, "Formulário do Nexus não encontrado", "not_found");
+          if (!form)
+            throw new h.HttpError(404, "Formulário do Vínculo não encontrado", "not_found");
           const payload = JSON.parse(raw) as {
             entry?: {
               changes?: {
@@ -93,7 +94,7 @@ export const Route = createFileRoute("/api/public/meta-leads")({
                 error?: { message: string };
               };
               if (!res.ok) throw new Error(`Graph API: ${lead.error?.message ?? res.status}`);
-              // Campos do anúncio → chaves do formulário do Nexus (por nome igual ou pelo mapeamento padrão da Meta).
+              // Campos do anúncio → chaves do formulário do Vínculo (por nome igual ou pelo mapeamento padrão da Meta).
               const values: Record<string, string> = {};
               const alias: Record<string, string> = {
                 full_name: "name",

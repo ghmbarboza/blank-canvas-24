@@ -24,9 +24,10 @@ function GestaoRoute() {
   const navigate = useNavigate();
   return (
     <GestaoPage
-      tab={aba ?? "escala"}
+      // No Vínculo o menu chama esta tela de "Saúde da carteira": abre direto nessa aba.
+      tab={aba ?? "clientes"}
       onTabChange={(t) =>
-        void navigate({ to: "/gestao", search: t === "escala" ? {} : { aba: t }, replace: true })
+        void navigate({ to: "/gestao", search: t === "clientes" ? {} : { aba: t }, replace: true })
       }
     />
   );

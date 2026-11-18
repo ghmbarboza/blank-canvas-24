@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/_app'
+import { Route as AulaRouteImport } from './routes/aula'
 import { Route as BemVindoRouteImport } from './routes/bem-vindo'
 import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as RedefinirSenhaRouteImport } from './routes/redefinir-senha'
@@ -29,6 +30,7 @@ import { Route as AppMeuDiaRouteImport } from './routes/_app/meu-dia'
 import { Route as AppOrigemRouteImport } from './routes/_app/origem'
 import { Route as AppPainelRouteImport } from './routes/_app/painel'
 import { Route as AppPergunteRouteImport } from './routes/_app/pergunte'
+import { Route as AppPosVendaRouteImport } from './routes/_app/pos-venda'
 import { Route as AppQualidadeRouteImport } from './routes/_app/qualidade'
 import { Route as AppRelatoriosRouteImport } from './routes/_app/relatorios'
 import { Route as AppSdrRouteImport } from './routes/_app/sdr'
@@ -159,6 +161,11 @@ const AppRoute = AppRouteImport.update({
   id: '/_app',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AulaRoute = AulaRouteImport.update({
+  id: '/aula',
+  path: '/aula',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BemVindoRoute = BemVindoRouteImport.update({
   id: '/bem-vindo',
   path: '/bem-vindo',
@@ -247,6 +254,11 @@ const AppPainelRoute = AppPainelRouteImport.update({
 const AppPergunteRoute = AppPergunteRouteImport.update({
   id: '/pergunte',
   path: '/pergunte',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPosVendaRoute = AppPosVendaRouteImport.update({
+  id: '/pos-venda',
+  path: '/pos-venda',
   getParentRoute: () => AppRoute,
 } as any)
 const AppQualidadeRoute = AppQualidadeRouteImport.update({
@@ -857,6 +869,7 @@ const ApiPublicEmailOIdRoute = ApiPublicEmailOIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/aula': typeof AulaRoute
   '/bem-vindo': typeof BemVindoRoute
   '/entrar': typeof EntrarRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
@@ -875,6 +888,7 @@ export interface FileRoutesByFullPath {
   '/origem': typeof AppOrigemRoute
   '/painel': typeof AppPainelRoute
   '/pergunte': typeof AppPergunteRoute
+  '/pos-venda': typeof AppPosVendaRoute
   '/qualidade': typeof AppQualidadeRoute
   '/relatorios': typeof AppRelatoriosRoute
   '/sdr': typeof AppSdrRoute
@@ -998,6 +1012,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/aula': typeof AulaRoute
   '/bem-vindo': typeof BemVindoRoute
   '/entrar': typeof EntrarRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
@@ -1015,6 +1030,7 @@ export interface FileRoutesByTo {
   '/origem': typeof AppOrigemRoute
   '/painel': typeof AppPainelRoute
   '/pergunte': typeof AppPergunteRoute
+  '/pos-venda': typeof AppPosVendaRoute
   '/qualidade': typeof AppQualidadeRoute
   '/relatorios': typeof AppRelatoriosRoute
   '/sdr': typeof AppSdrRoute
@@ -1140,6 +1156,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
+  '/aula': typeof AulaRoute
   '/bem-vindo': typeof BemVindoRoute
   '/entrar': typeof EntrarRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
@@ -1158,6 +1175,7 @@ export interface FileRoutesById {
   '/_app/origem': typeof AppOrigemRoute
   '/_app/painel': typeof AppPainelRoute
   '/_app/pergunte': typeof AppPergunteRoute
+  '/_app/pos-venda': typeof AppPosVendaRoute
   '/_app/qualidade': typeof AppQualidadeRoute
   '/_app/relatorios': typeof AppRelatoriosRoute
   '/_app/sdr': typeof AppSdrRoute
@@ -1283,6 +1301,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/aula'
     | '/bem-vindo'
     | '/entrar'
     | '/redefinir-senha'
@@ -1301,6 +1320,7 @@ export interface FileRouteTypes {
     | '/origem'
     | '/painel'
     | '/pergunte'
+    | '/pos-venda'
     | '/qualidade'
     | '/relatorios'
     | '/sdr'
@@ -1424,6 +1444,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/aula'
     | '/bem-vindo'
     | '/entrar'
     | '/redefinir-senha'
@@ -1441,6 +1462,7 @@ export interface FileRouteTypes {
     | '/origem'
     | '/painel'
     | '/pergunte'
+    | '/pos-venda'
     | '/qualidade'
     | '/relatorios'
     | '/sdr'
@@ -1565,6 +1587,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_app'
+    | '/aula'
     | '/bem-vindo'
     | '/entrar'
     | '/redefinir-senha'
@@ -1583,6 +1606,7 @@ export interface FileRouteTypes {
     | '/_app/origem'
     | '/_app/painel'
     | '/_app/pergunte'
+    | '/_app/pos-venda'
     | '/_app/qualidade'
     | '/_app/relatorios'
     | '/_app/sdr'
@@ -1708,6 +1732,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
+  AulaRoute: typeof AulaRoute
   BemVindoRoute: typeof BemVindoRoute
   EntrarRoute: typeof EntrarRoute
   RedefinirSenhaRoute: typeof RedefinirSenhaRoute
@@ -1811,6 +1836,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aula': {
+      id: '/aula'
+      path: '/aula'
+      fullPath: '/aula'
+      preLoaderRoute: typeof AulaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/bem-vindo': {
@@ -1937,6 +1969,13 @@ declare module '@tanstack/react-router' {
       path: '/pergunte'
       fullPath: '/pergunte'
       preLoaderRoute: typeof AppPergunteRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/pos-venda': {
+      id: '/_app/pos-venda'
+      path: '/pos-venda'
+      fullPath: '/pos-venda'
+      preLoaderRoute: typeof AppPosVendaRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/qualidade': {
@@ -2812,6 +2851,7 @@ interface AppRouteChildren {
   AppOrigemRoute: typeof AppOrigemRoute
   AppPainelRoute: typeof AppPainelRoute
   AppPergunteRoute: typeof AppPergunteRoute
+  AppPosVendaRoute: typeof AppPosVendaRoute
   AppQualidadeRoute: typeof AppQualidadeRoute
   AppRelatoriosRoute: typeof AppRelatoriosRoute
   AppSdrRoute: typeof AppSdrRoute
@@ -2864,6 +2904,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppOrigemRoute: AppOrigemRoute,
   AppPainelRoute: AppPainelRoute,
   AppPergunteRoute: AppPergunteRoute,
+  AppPosVendaRoute: AppPosVendaRoute,
   AppQualidadeRoute: AppQualidadeRoute,
   AppRelatoriosRoute: AppRelatoriosRoute,
   AppSdrRoute: AppSdrRoute,
@@ -2905,6 +2946,7 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
+  AulaRoute: AulaRoute,
   BemVindoRoute: BemVindoRoute,
   EntrarRoute: EntrarRoute,
   RedefinirSenhaRoute: RedefinirSenhaRoute,

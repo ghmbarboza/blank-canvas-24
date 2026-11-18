@@ -147,7 +147,7 @@ export function ProviderForm({ accountId, def, state, onSaved, hideWhat }: Props
               <div key={f.key} className="grid gap-1.5">
                 <CopyField label={f.label} value={values[f.key] ?? ""} />
                 <p className="text-[11px] text-subtle">
-                  Gerado pelo Nexus. Copie para o painel do {def.name}; ele fica guardado no cofre
+                  Gerado pelo Vínculo. Copie para o painel do {def.name}; ele fica guardado no cofre
                   quando você salvar.
                 </p>
               </div>
@@ -253,7 +253,7 @@ function FormChooser({
   }, [forms.data, value, onChange]);
   return (
     <div className="grid gap-1.5">
-      <Label htmlFor={id}>Formulário do Nexus que recebe estes leads</Label>
+      <Label htmlFor={id}>Formulário do Vínculo que recebe estes leads</Label>
       {forms.data?.length ? (
         <Select value={value} onValueChange={onChange}>
           <SelectTrigger id={id}>

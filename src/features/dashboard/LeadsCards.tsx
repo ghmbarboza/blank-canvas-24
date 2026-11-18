@@ -16,13 +16,13 @@ export function TemperatureCard({ data, className }: { data: Gerencial; classNam
   const t = data.temperature;
   const classified = t.hot + t.warm + t.cold;
   const parts = [
-    { key: "hot", label: "Quentes", n: t.hot, bg: "bg-hot", fg: "text-white dark:text-[#0A1F3B]" },
+    { key: "hot", label: "Quentes", n: t.hot, bg: "bg-hot", fg: "text-white dark:text-[#001F35]" },
     {
       key: "warm",
       label: "Mornos",
       n: t.warm,
       bg: "bg-warm",
-      fg: "text-white dark:text-[#0A1F3B]",
+      fg: "text-white dark:text-[#001F35]",
     },
     { key: "cold", label: "Frios", n: t.cold, bg: "bg-cold-line", fg: "text-foreground" },
   ];

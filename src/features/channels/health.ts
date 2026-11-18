@@ -39,7 +39,7 @@ function fixFor(c: HealthInput): Pick<ChannelHealth, "fix" | "action"> {
     return { fix: "Confira a chave da Zadarma em Ajustes › Integrações.", action: null };
   if (!KNOWN_PROVIDERS.has(c.provider))
     return {
-      fix: "Este provedor saiu do Nexus. Conecte o SMS pela Zadarma em Outras formas de conectar e remova este canal.",
+      fix: "Este provedor não é mais atendido. Conecte o SMS pela Zadarma em Outras formas de conectar e remova este canal.",
       action: null,
     };
   return { fix: "Remova o canal e conecte de novo.", action: null };

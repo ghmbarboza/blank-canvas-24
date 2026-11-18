@@ -16,12 +16,12 @@ import { Label } from "@/components/ui/label";
 import { pageHead } from "@/lib/page-head";
 
 export const Route = createFileRoute("/bem-vindo")({
-  head: () => pageHead("Bem-vindo", "Configure seu perfil e sua empresa no Nexus One."),
+  head: () => pageHead("Bem-vindo", "Configure seu perfil e sua empresa no Vínculo."),
   component: Welcome,
 });
 
 // Entrou sem central. Banco sem nenhuma conta (remix recém-criado): quem chega primeiro vira
-// dono na hora (claim_first_account, garantido no banco) e vai direto para a Nexa, que pergunta
+// dono na hora (claim_first_account, garantido no banco) e vai direto para a Vi, que pergunta
 // o nome da empresa na conversa. Banco que já tem dono: só por convite. No original de
 // desenvolvimento (várias contas) o formulário abaixo continua criando conta nova.
 function Welcome() {
@@ -73,8 +73,8 @@ function Welcome() {
       });
       if (error) throw error;
       await queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
-      toast.success("Central criada. A Nexa vai configurar o resto com você.");
-      // a configuração é a conversa com a Nexa: ela abre sozinha logo depois
+      toast.success("Central criada. A Vi vai configurar o resto com você.");
+      // a configuração é a conversa com a Vi: ela abre sozinha logo depois
       navigate({ to: "/painel", replace: true });
     } catch (err) {
       toast.error(errorMessage(err));

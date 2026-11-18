@@ -10,9 +10,9 @@ const PALETTE = {
     bg: "#f7f8fa",
     surface: "#ffffff",
     line: "#e4e7ec",
-    text: "#0a1f3b",
+    text: "#001f35",
     muted: "#98a2b3",
-    brand: "#0a1f3b",
+    brand: "#001f35",
     brandFg: "#ffffff",
   },
   dark: {
@@ -22,7 +22,7 @@ const PALETTE = {
     text: "#f4f6fa",
     muted: "#6b778c",
     brand: "#f4f6fa",
-    brandFg: "#0a1f3b",
+    brandFg: "#001f35",
   },
 };
 

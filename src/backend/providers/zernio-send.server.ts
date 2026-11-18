@@ -1,4 +1,4 @@
-// Envio de WhatsApp pela Zernio numa conversa do Nexus: dentro da janela de 24 h vai texto ou
+// Envio de WhatsApp pela Zernio numa conversa do Vínculo: dentro da janela de 24 h vai texto ou
 // mídia; fora dela só modelo aprovado. Usado pela caixa de entrada, pela IA e pelas automações.
 import { admin } from "@/backend/http.server";
 import { isOutsideWindow, participantId } from "@/features/channels/zernio-rules";

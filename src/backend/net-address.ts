@@ -1,5 +1,5 @@
 // Única regra de "endereço que o servidor não pode buscar" (revisão de segurança de 05/11, R8).
-// Pura (sem node:*): usada pelo net-guard.server.ts (com DNS) e pela leitura de sites da Nexa.
+// Pura (sem node:*): usada pelo net-guard.server.ts (com DNS) e pela leitura de sites da Vi.
 // Cobre IPv4 privado, loopback, link-local, CGNAT e reservados; IPv6 loopback (::1), não
 // especificado (::), ULA (fc00::/7), link-local (fe80::/10), site-local, multicast e os formatos
 // que embutem um IPv4 (::ffff:a.b.c.d, ::ffff:7f00:1, ::ffff:0:a.b.c.d, ::a.b.c.d, 64:ff9b::/96,

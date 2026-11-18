@@ -6,7 +6,7 @@ vi.mock("@/backend/integrations.server", () => ({ getIntegration }));
 vi.mock("@/integrations/supabase/client.server", () => ({ supabaseAdmin: {} }));
 
 describe("Asaas", () => {
-  it("sem token responde 401, mesmo sem referência do Nexus", async () => {
+  it("sem token responde 401, mesmo sem referência do Vínculo", async () => {
     const { handleAsaasWebhook } = await import("./commerce.server");
     await expect(
       handleAsaasWebhook({ event: "PAYMENT_RECEIVED" } as never, null),

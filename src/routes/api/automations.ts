@@ -80,7 +80,7 @@ export const Route = createFileRoute("/api/automations")({
                 .eq("account_id", caller.accountId);
               await rt.scheduleStep(caller.accountId, r.id, r.step_seq, new Date());
             }
-            if (["segment", "no_reply", "date"].includes(trigger.type)) {
+            if (["segment", "no_reply", "date", "inactive"].includes(trigger.type)) {
               await db.rpc("enqueue_job", {
                 _account: caller.accountId,
                 _kind: "automation.scan",

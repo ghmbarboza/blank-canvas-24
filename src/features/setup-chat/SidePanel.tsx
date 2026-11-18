@@ -33,6 +33,7 @@ import {
   type KbDocument,
   type SetupFact,
 } from "./api";
+import { BRAND } from "@/lib/brand";
 
 const CATEGORY: Record<string, string> = {
   empresa: "Empresa",
@@ -133,8 +134,8 @@ function FactsTab({ accountId }: { accountId: string }) {
   if (!facts.length)
     return (
       <p className="p-4 text-[13px] leading-relaxed text-muted-foreground">
-        Tudo o que você contar para a Nexa aparece aqui, organizado. Se algo estiver errado, corrija
-        ou apague: ela passa a usar a versão nova.
+        Tudo o que você contar para a {BRAND.assistant} aparece aqui, organizado. Se algo estiver
+        errado, corrija ou apague: ela passa a usar a versão nova.
       </p>
     );
   const groups = [...new Set(facts.map((f) => f.category))];
@@ -217,7 +218,8 @@ function LibraryTab({ accountId }: { accountId: string }) {
         onChange={(e) => (send(e.target.files), (e.target.value = ""))}
       />
       <p className="px-1 text-[12px] text-muted-foreground">
-        Do Google Drive ou do OneDrive? Peça para a Nexa: “importe os arquivos do meu Drive”.
+        Do Google Drive ou do OneDrive? Peça para a {BRAND.assistant}: “importe os arquivos do meu
+        Drive”.
       </p>
       <ul className="space-y-1">
         {docs.map((d) => {
@@ -280,8 +282,8 @@ function WishesTab({ accountId }: { accountId: string }) {
   if (!list.length)
     return (
       <p className="p-4 text-[13px] leading-relaxed text-muted-foreground">
-        Sonhe alto: conte para a Nexa o que você gostaria que a central fizesse. Ela anota aqui e a
-        equipe da Viver de IA avalia para adaptar o produto ao seu negócio.
+        Sonhe alto: conte para a {BRAND.assistant} o que você gostaria que a central fizesse. Ela
+        anota aqui e a equipe do produto avalia.
       </p>
     );
   return (
@@ -320,11 +322,11 @@ function WishesTab({ accountId }: { accountId: string }) {
 function ProgressTab({ accountId }: { accountId: string }) {
   const roteiro = useRoteiro(accountId, true);
   const steps = roteiro.data?.steps ?? [];
-  const required = steps.filter((s) => s.required);
+  const main = steps.filter((s) => !s.later);
   return (
     <div className="p-3">
       <p className="px-1 pb-2 text-[12px] text-muted-foreground">
-        {required.filter((s) => s.done).length} de {required.length} obrigatórios prontos
+        {main.filter((s) => s.done).length} de {main.length} passos prontos
       </p>
       <ul className="space-y-0.5">
         {steps.map((s) => (
@@ -337,7 +339,11 @@ function ProgressTab({ accountId }: { accountId: string }) {
             <span className="min-w-0">
               <span className="block text-[13px] font-medium">
                 {s.title}
-                {s.required ? null : <span className="font-normal text-subtle"> · opcional</span>}
+                {s.required ? (
+                  <span className="font-normal text-subtle"> · obrigatório</span>
+                ) : s.later ? (
+                  <span className="font-normal text-subtle"> · depois, se quiser</span>
+                ) : null}
               </span>
               {s.skipped && !s.done ? (
                 <span className="block text-[11px] text-muted-foreground">
@@ -366,7 +372,7 @@ export function SidePanel({ accountId }: { accountId: string }) {
   const wishes = useWishes(accountId).data?.length ?? 0;
   const count: Partial<Record<Tab, number>> = { fatos: facts, biblioteca: docs, pedidos: wishes };
   return (
-    <aside aria-label="O que a Nexa já organizou" className="flex min-h-0 flex-col">
+    <aside aria-label={`O que a ${BRAND.assistant} já organizou`} className="flex min-h-0 flex-col">
       <div
         role="tablist"
         className="flex shrink-0 gap-1 overflow-x-auto border-b border-border px-2 pt-2"

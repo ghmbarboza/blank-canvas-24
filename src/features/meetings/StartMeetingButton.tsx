@@ -26,7 +26,7 @@ interface Props {
   label?: string;
 }
 
-// "Iniciar reunião": abre a sala Nexus do evento (ou cria uma agora) e leva o vendedor para dentro.
+// "Iniciar reunião": abre a sala Vínculo do evento (ou cria uma agora) e leva o vendedor para dentro.
 export function StartMeetingButton({
   eventId,
   contactId,

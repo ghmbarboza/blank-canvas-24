@@ -192,16 +192,16 @@ export function reportEmailHtml(
       (
         r,
       ) => `<tr><td style="padding:6px 8px;border-bottom:1px solid #eef1f5">${esc(displayLabel(r))}</td>
-<td style="padding:6px 8px;border-bottom:1px solid #eef1f5;width:45%"><div style="background:#0A1F3B;height:8px;border-radius:4px;width:${Math.max(2, Math.round((100 * (Number(r.value) || 0)) / max))}%"></div></td>
+<td style="padding:6px 8px;border-bottom:1px solid #eef1f5;width:45%"><div style="background:#001F35;height:8px;border-radius:4px;width:${Math.max(2, Math.round((100 * (Number(r.value) || 0)) / max))}%"></div></td>
 <td style="padding:6px 8px;border-bottom:1px solid #eef1f5;text-align:right;font-variant-numeric:tabular-nums">${esc(formatMetric(config.metric, Number(r.value)))}</td></tr>`,
     )
     .join("");
-  return `<div style="font-family:Geist,Arial,sans-serif;max-width:640px;margin:0 auto;color:#0A1F3B">
+  return `<div style="font-family:Manrope,Arial,sans-serif;max-width:640px;margin:0 auto;color:#001F35">
 <p style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#5b6b80">Relatório semanal</p>
 <h1 style="font-size:22px;margin:4px 0 4px">${esc(name)}</h1>
 <p style="color:#5b6b80;font-size:13px;margin:0 0 18px">${esc(ENTITY_LABEL[config.entity])} · ${esc(metricLabel)} por ${esc(groupLabel.toLowerCase())}</p>
 <table style="width:100%;border-collapse:collapse;font-size:13px">${body || '<tr><td style="padding:12px;color:#5b6b80">Nada neste período.</td></tr>'}</table>
-<p style="margin:24px 0"><a href="${link}" style="background:#0A1F3B;color:#fff;padding:10px 20px;border-radius:999px;text-decoration:none">Abrir no Nexus</a></p></div>`;
+<p style="margin:24px 0"><a href="${link}" style="background:#B9915B;color:#001F35;font-weight:700;padding:10px 20px;border-radius:10px;text-decoration:none">Abrir no Vínculo</a></p></div>`;
 }
 
 export function monthRange(d = new Date()): { from: string; to: string } {

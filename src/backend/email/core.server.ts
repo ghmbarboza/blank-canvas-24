@@ -1,3 +1,4 @@
+import { BRAND } from "@/lib/brand";
 // Motor de envio de e-mail (um despachante só, para 1:1, automação, convite e campanha).
 // Lição EasyCover: dois despachantes com regras divergentes foi a origem de quase todos os bugs.
 import { createHmac, timingSafeEqual } from "node:crypto";
@@ -60,7 +61,7 @@ export async function getSender(accountId: string, fromName?: string | null): Pr
     string,
     string
   >;
-  const name = fromName || sender.fromName || acc?.name || "Nexus One";
+  const name = fromName || sender.fromName || acc?.name || BRAND.name;
   return {
     transport,
     from: `${name.replace(/[<>"\r\n]/g, "")} <${sender.fromEmail}>`,

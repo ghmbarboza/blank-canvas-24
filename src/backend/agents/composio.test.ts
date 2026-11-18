@@ -1,5 +1,5 @@
 // Testes de contrato da Composio v3.1. As respostas abaixo foram copiadas de chamadas reais
-// (26/10/2026, chave de teste da VIA, sem conta conectada) e da documentação oficial.
+// (26/10/2026, chave de teste, sem conta conectada) e da documentação oficial.
 import { createHmac } from "node:crypto";
 
 import { describe, expect, it } from "vitest";

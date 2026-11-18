@@ -20,7 +20,7 @@ export function projectRef(supabaseUrl: string | undefined | null): string | nul
 /**
  * Troca o endereço gravado pela origem atual? Só quando há divergência, a origem foi aceita
  * (https, fora da prévia) e o endereço gravado comprovadamente não é deste projeto.
- * `storedProject` null = o endereço gravado não respondeu como um Nexus (fora do ar ou outro app).
+ * `storedProject` null = o endereço gravado não respondeu como um Vínculo (fora do ar ou outro app).
  */
 export function shouldReclaimBase(p: {
   originMismatch: boolean;
@@ -32,7 +32,7 @@ export function shouldReclaimBase(p: {
   return p.storedProject !== p.ownProject;
 }
 
-/** Pergunta ao endereço gravado de qual projeto ele é (null se não responder como Nexus). */
+/** Pergunta ao endereço gravado de qual projeto ele é (null se não responder como Vínculo). */
 export async function probeProject(baseUrl: string, timeoutMs = 4_000): Promise<string | null> {
   if (!/^https:\/\/[a-z0-9.-]+(:[0-9]+)?$/i.test(baseUrl)) return null;
   try {

@@ -6,7 +6,7 @@ const BASE: SignatureProposal = {
   number: 42,
   version: 1,
   title: "Plano Equipe",
-  company: "VIA",
+  company: "ACME",
   client: "Empresa A",
   items: [
     {

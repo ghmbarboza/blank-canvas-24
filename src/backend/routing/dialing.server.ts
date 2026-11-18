@@ -1,6 +1,6 @@
 // Regras de discagem configuráveis pelo cliente (padrão desligado). Chamado antes de toda ligação
 // de saída (clicar para ligar, discador, campanha de voz). Ligar ou não cada regra é decisão e
-// responsabilidade da empresa cliente; o Nexus só aplica o que ela escolheu.
+// responsabilidade da empresa cliente; o Vínculo só aplica o que ela escolheu.
 import { HttpError, admin } from "@/backend/http.server";
 import { applyDialPrefix, checkDialingRules, parseDialingRules } from "@/features/queue/lib";
 

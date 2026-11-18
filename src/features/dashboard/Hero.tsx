@@ -55,13 +55,13 @@ export function Hero({ data, days, onDays, userName }: Props) {
     <div className="px-3 pt-3 md:px-5 md:pt-5">
       <section
         aria-label="Resumo da operação"
-        className="relative isolate mx-auto max-w-[1440px] overflow-hidden rounded-[28px] bg-[#0A1F3B] px-5 pt-8 pb-6 text-white shadow-[0_40px_80px_-40px_rgba(2,22,42,0.75)] md:rounded-[36px] md:px-10 md:pt-11 md:pb-8"
+        className="relative isolate mx-auto max-w-[1440px] overflow-hidden rounded-[28px] bg-[#001F35] px-5 pt-8 pb-6 text-white shadow-[0_40px_80px_-40px_rgba(2,22,42,0.75)] md:rounded-[36px] md:px-10 md:pt-11 md:pb-8"
       >
         <div
           className="pointer-events-none absolute inset-0 -z-10"
           style={{
             background:
-              "radial-gradient(900px 420px at 0% 0%, rgba(46,82,124,0.75), transparent 62%), radial-gradient(700px 360px at 100% 120%, rgba(30,58,95,0.6), transparent 60%), linear-gradient(180deg, #0A1F3B 0%, #02162A 100%)",
+              "radial-gradient(900px 420px at 0% 0%, rgba(46,82,124,0.75), transparent 62%), radial-gradient(700px 360px at 100% 120%, rgba(30,58,95,0.6), transparent 60%), linear-gradient(180deg, #001F35 0%, #001626 100%)",
           }}
           aria-hidden
         />
@@ -116,7 +116,7 @@ export function Hero({ data, days, onDays, userName }: Props) {
                   className={cn(
                     "h-8 rounded-full px-4 text-[12px] font-medium tabular-nums transition-[background-color,color] duration-200 focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:outline-none",
                     days === p
-                      ? "bg-white text-[#0A1F3B] shadow-sm"
+                      ? "bg-white text-[#001F35] shadow-sm"
                       : "text-white/65 hover:text-white",
                   )}
                 >

@@ -12,7 +12,7 @@ export function CollisionBanner({ viewers }: { viewers: Viewer[] }) {
       role="status"
       aria-live="polite"
       data-typing={typing}
-      className="mx-4 mb-2 flex items-center gap-2 rounded-xl bg-[var(--via-navy-06,rgba(10,31,59,0.06))] px-3.5 py-2 text-[13px] text-foreground lg:mx-8"
+      className="mx-4 mb-2 flex items-center gap-2 rounded-xl bg-[var(--via-navy-06,rgba(0, 31, 53,0.06))] px-3.5 py-2 text-[13px] text-foreground lg:mx-8"
     >
       <Users className="size-4 shrink-0 text-muted-foreground" aria-hidden />
       <span className={typing ? "font-medium" : undefined}>{text}</span>

@@ -4,8 +4,7 @@ import { ContactDetailPage } from "@/features/contacts/components/detail/Contact
 import { pageHead } from "@/lib/page-head";
 
 export const Route = createFileRoute("/_app/contatos/$contactId")({
-  head: () =>
-    pageHead("Detalhes do contato", "Histórico e informações de um contato no Nexus One."),
+  head: () => pageHead("Detalhes do contato", "Histórico e informações de um contato no Vínculo."),
   component: ContactPage,
 });
 

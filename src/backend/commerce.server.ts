@@ -483,7 +483,7 @@ export async function handleAsaasWebhook(
   accountHint: string | null = null,
 ) {
   // Sem token, 401 antes de qualquer coisa (S8). Com ?a=<conta> na URL, o token é conferido já,
-  // mesmo para evento de cobrança que não é do Nexus.
+  // mesmo para evento de cobrança que não é do Vínculo.
   if (!token) throw new HttpError(401, "Token do webhook inválido", "unauthorized");
   if (accountHint) {
     if (!/^[0-9a-f-]{36}$/i.test(accountHint))
@@ -503,7 +503,7 @@ export async function handleAsaasWebhook(
     !/^[0-9a-f-]{36}$/i.test(accountId) ||
     !/^[0-9a-f-]{36}$/i.test(paymentRowId)
   )
-    return { ignored: "sem referência do Nexus" };
+    return { ignored: "sem referência do Vínculo" };
   const it = await getIntegration(accountId, "asaas");
   const expected = it?.secrets["webhook_token"];
   if (!expected || !safeEqual(token, expected))

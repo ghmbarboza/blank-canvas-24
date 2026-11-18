@@ -225,7 +225,7 @@ export function MeetingsTab({ accountId, range }: { accountId: string; range: Ra
       <EmptyState
         icon={Video}
         title="Reuniões ainda não ligadas"
-        description="As reuniões na sala própria do Nexus aparecem aqui com duração e comparecimento."
+        description="As reuniões na sala própria do Vínculo aparecem aqui com duração e comparecimento."
       />
     );
   return <ActivityBlock data={q.data} kind="meetings" />;

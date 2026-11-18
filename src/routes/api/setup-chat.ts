@@ -1,11 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-// Implantação por conversa (Nexa). POST { accountId, action }: (restart = refazer do começo)
+// Implantação (Vi). POST { accountId, action }: (restart = refazer do começo)
 //   send   { text }                → uma rodada da conversa (a IA configura pelas ferramentas)
 //   index  { path, name, mime }    → arquivo já enviado ao bucket kb-docs vira conhecimento
 //   soul   {}                      → a "alma do Nexus" (o que a Nexa aprendeu, versionado)
 //   start  { name? }               → primeira mensagem da conversa, no passo do roteiro que falta
 //   progress {}                    → o roteiro (única fonte do onboarding) para o indicador do layout
+// Passo a passo pela tela (formulário e botão, sem passar pela IA):
+//   company { name, segment, sells?, tone? } → passo "Sua empresa"
+//   knowledge_text { title?, content }       → texto colado vira documento da base
+//   agent_state {} | agent_create { name?, greeting? } | agent_activate {} → atendente de pós-venda
 // Só dono e administrador configuram a central.
 export const Route = createFileRoute("/api/setup-chat")({
   server: {
@@ -47,6 +51,34 @@ export const Route = createFileRoute("/api/setup-chat")({
               );
             });
             return h.json(r);
+          }
+          if (body.action === "company") {
+            const { saveCompanyForm } = await import("@/backend/setup-agent/steps.server");
+            return h.json(await saveCompanyForm(caller, body as Record<string, unknown>));
+          }
+          if (body.action === "knowledge_text") {
+            await h.rateLimit(`setup-index:${caller.accountId}`, 60, 3600);
+            const { saveKnowledgeText } = await import("@/backend/setup-agent/steps.server");
+            return h.json(await saveKnowledgeText(caller, body as Record<string, unknown>));
+          }
+          if (body.action === "agent_state") {
+            const { agentStepState } = await import("@/backend/setup-agent/steps.server");
+            return h.json(await agentStepState(caller));
+          }
+          if (body.action === "agent_create") {
+            await h.rateLimit(`agents:create:${caller.accountId}`, 20, 600);
+            const { createPostSaleAgent } = await import("@/backend/setup-agent/steps.server");
+            return h.json(await createPostSaleAgent(caller, body as Record<string, unknown>));
+          }
+          if (body.action === "agent_activate") {
+            await h.rateLimit(
+              `agents:eval:${caller.accountId}`,
+              10,
+              3600,
+              "Muitas avaliações nesta hora. Espere um pouco e tente de novo.",
+            );
+            const { activatePostSaleAgent } = await import("@/backend/setup-agent/steps.server");
+            return h.json(await activatePostSaleAgent(caller));
           }
           if (body.action === "progress") {
             const { loadRoteiro } = await import("@/backend/setup-agent/tools.server");

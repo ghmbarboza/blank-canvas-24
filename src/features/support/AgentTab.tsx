@@ -508,7 +508,7 @@ function EvalSuiteCard() {
           className={cn(
             "mb-4 flex items-center justify-between rounded-2xl px-4 py-3",
             (last.accept_rate ?? 0) >= META
-              ? "bg-[#0A1F3B] text-white"
+              ? "bg-[#001F35] text-white"
               : "bg-danger/10 text-danger",
           )}
         >

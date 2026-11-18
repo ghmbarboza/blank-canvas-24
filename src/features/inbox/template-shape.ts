@@ -1,5 +1,5 @@
 // Forma de um modelo aprovado do WhatsApp para a tela de envio: texto de prévia, os campos que a pessoa
-// preenche e, quando o Nexus ainda não consegue enviar o modelo, o motivo em linguagem simples.
+// preenche e, quando o Vínculo ainda não consegue enviar o modelo, o motivo em linguagem simples.
 // A Zernio recebe os valores numa lista só, na ordem em que aparecem: cabeçalho de texto, corpo e
 // botões de link (https://docs.zernio.com, "Send a template").
 
@@ -21,7 +21,7 @@ export interface TemplateShape {
   header: string;
   body: string;
   slots: TemplateSlot[];
-  /** Preenchido quando o modelo não pode sair pelo Nexus (ex.: imagem no topo). */
+  /** Preenchido quando o modelo não pode sair pelo Vínculo (ex.: imagem no topo). */
   unsupported: string | null;
 }
 
@@ -70,7 +70,7 @@ export function templateShape(components: TemplateComponent[] | undefined): Temp
     body: bodyText,
     slots,
     unsupported: media
-      ? `Este modelo tem ${media} no topo e o Nexus ainda não envia mídia em modelo. Escolha um modelo só com texto.`
+      ? `Este modelo tem ${media} no topo e o Vínculo ainda não envia mídia em modelo. Escolha um modelo só com texto.`
       : null,
   };
 }

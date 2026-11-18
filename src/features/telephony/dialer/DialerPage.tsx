@@ -196,7 +196,7 @@ function Session({ accountId, session }: { accountId: string; session: DialerSes
   if (done)
     return (
       <div className="mx-auto max-w-3xl p-6">
-        <div className="rounded-[28px] bg-[#0A1F3B] p-8 text-white">
+        <div className="rounded-[28px] bg-[#001F35] p-8 text-white">
           <p className="eyebrow !text-white/60">Sessão concluída</p>
           <h2 className="mt-2 font-display text-[28px] font-medium">{session.name}</h2>
           <StatsRow stats={stats} total={total} className="mt-6" dark />
@@ -207,7 +207,7 @@ function Session({ accountId, session }: { accountId: string; session: DialerSes
   return (
     <div className="mx-auto grid max-w-6xl gap-5 p-4 md:p-6 lg:grid-cols-[1fr_320px]">
       <section aria-label="Contato da vez" className="space-y-4">
-        <div className="relative overflow-hidden rounded-[28px] bg-[#0A1F3B] p-6 text-white md:p-8">
+        <div className="relative overflow-hidden rounded-[28px] bg-[#001F35] p-6 text-white md:p-8">
           <div className="flex flex-wrap items-center gap-2 text-[12px] text-white/60">
             <span className="eyebrow !text-white/60">{session.name}</span>
             <span aria-hidden>·</span>
@@ -227,7 +227,7 @@ function Session({ accountId, session }: { accountId: string; session: DialerSes
           <div className="mt-6 flex flex-wrap items-center gap-2">
             <Button
               size="lg"
-              className="bg-white text-[#0A1F3B] hover:bg-white/90"
+              className="bg-white text-[#001F35] hover:bg-white/90"
               disabled={!current?.phone || Boolean(sp?.dialing) || Boolean(sp?.activeCall)}
               onClick={() => current && void dial(current)}
             >

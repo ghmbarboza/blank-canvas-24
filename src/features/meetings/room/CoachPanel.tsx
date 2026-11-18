@@ -277,7 +277,7 @@ export function CoachPanel({ meetingId, checklist }: Props) {
                   <button
                     type="button"
                     onClick={() => hide(t)}
-                    className="flex-1 rounded-full bg-white py-1.5 text-[12px] font-semibold text-[#0A1F3B] transition-transform active:scale-[0.98]"
+                    className="flex-1 rounded-full bg-white py-1.5 text-[12px] font-semibold text-[#001F35] transition-transform active:scale-[0.98]"
                   >
                     Usei
                   </button>

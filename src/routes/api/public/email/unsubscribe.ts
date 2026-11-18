@@ -1,3 +1,4 @@
+import { BRAND } from "@/lib/brand";
 import { createFileRoute } from "@tanstack/react-router";
 
 const HTML = { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" };
@@ -13,7 +14,7 @@ async function context(request: Request) {
   const { admin } = await import("@/backend/http.server");
   const valid =
     /^[0-9a-f-]{36}$/i.test(accountId) && (await core.verifyUnsubscribe(accountId, email, sig));
-  let brand = "Nexus One";
+  let brand: string = BRAND.name;
   if (valid) {
     const { data } = await admin()
       .from("accounts")

@@ -1,3 +1,4 @@
+import { BRAND } from "@/lib/brand";
 // Reuniões (Meet próprio em LiveKit): criação, convites, tokens e contexto do agente.
 import { createHash, randomBytes } from "node:crypto";
 
@@ -76,7 +77,7 @@ export async function createMeeting(input: CreateMeetingInput) {
         starts_at: input.start.toISOString(),
         ends_at: input.end.toISOString(),
         meeting_url: meetingUrl(id),
-        location: "Sala Nexus",
+        location: `Sala ${BRAND.name}`,
         contact_id: input.contactId ?? null,
         deal_id: input.dealId ?? null,
         owner_user_id: input.hostUserId,
@@ -389,11 +390,11 @@ export function buildIcs(o: {
   return [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Nexus One//Reunioes//PT-BR",
+    `PRODID:-//${BRAND.slug}//Reunioes//PT-BR`,
     "CALSCALE:GREGORIAN",
     `METHOD:${o.method ?? "REQUEST"}`,
     "BEGIN:VEVENT",
-    `UID:${o.uid}@nexus-one`,
+    `UID:${o.uid}@${BRAND.slug}`,
     `DTSTAMP:${icsDate(new Date())}`,
     `DTSTART:${icsDate(o.start)}`,
     `DTEND:${icsDate(o.end)}`,
@@ -401,7 +402,7 @@ export function buildIcs(o: {
     `DESCRIPTION:${icsEscape(`${o.description}\n\nEntrar: ${o.url}`)}`,
     `LOCATION:${icsEscape(o.url)}`,
     `URL:${o.url}`,
-    `ORGANIZER;CN=${icsEscape(o.organizer)}:mailto:no-reply@nexus-one.app`,
+    `ORGANIZER;CN=${icsEscape(o.organizer)}:mailto:no-reply@${BRAND.slug}.invalid`,
     o.method === "CANCEL" ? "STATUS:CANCELLED" : "STATUS:CONFIRMED",
     "BEGIN:VALARM",
     "TRIGGER:-PT15M",

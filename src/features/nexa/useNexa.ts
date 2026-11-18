@@ -12,6 +12,7 @@ import { refreshAfterTurn, useSetupMessages } from "@/features/setup-chat/api";
 import { supabase } from "@/integrations/supabase/client";
 import { callApi } from "@/lib/api";
 import { errorMessage } from "@/lib/functions";
+import { BRAND } from "@/lib/brand";
 
 export interface NexaTurn {
   id: string;
@@ -151,7 +152,7 @@ export function useNexa(accountId: string, person: string) {
       .catch((e: unknown) => {
         starting.current = false;
         toast.error(
-          `A Nexa não conseguiu começar a conversa (${errorMessage(e)}). Feche e abra de novo; se continuar, recarregue a página.`,
+          `A ${BRAND.assistant} não conseguiu começar a conversa (${errorMessage(e)}). Feche e abra de novo; se continuar, recarregue a página.`,
         );
       });
   }, [history, stored.data, accountId, person]);

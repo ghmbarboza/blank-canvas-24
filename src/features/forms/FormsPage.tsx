@@ -99,7 +99,7 @@ function WebchatPanel({ accountId }: { accountId: string }) {
   const v = form ?? {
     name: ch?.name ?? "Chat do site",
     greeting: (cfg["greeting"] as string) ?? "Oi! Como podemos ajudar?",
-    color: (cfg["color"] as string) ?? "#0A1F3B",
+    color: (cfg["color"] as string) ?? "#001F35",
     // a chave que vale é a do canal (a mesma do botão em Canais); chat novo nasce com IA ligada
     ai: ch ? Boolean((ch as { ai_enabled?: boolean }).ai_enabled ?? cfg["ai"]) : true,
     ask_email: cfg["ask_email"] !== false,
@@ -189,9 +189,9 @@ function WebchatPanel({ accountId }: { accountId: string }) {
         <p className="mb-3 text-[13px] text-muted-foreground">
           Cole antes do fechamento do &lt;/body&gt;. Ele registra visitas (sem cookies de
           terceiros), mostra o chat e renderiza formulários em{" "}
-          <code className="font-mono">&lt;div data-nexus-form="ID"&gt;</code>.
+          <code className="font-mono">&lt;div data-vinculo-form="ID"&gt;</code>.
         </p>
-        <pre className="overflow-x-auto rounded-xl bg-[#0A1F3B] p-4 font-mono text-[11px] leading-relaxed text-white/90">
+        <pre className="overflow-x-auto rounded-xl bg-[#001F35] p-4 font-mono text-[11px] leading-relaxed text-white/90">
           {snippet}
         </pre>
         <Button size="sm" variant="outline" className="mt-3" onClick={() => copyText(snippet)}>
@@ -324,7 +324,7 @@ function Attribution({ accountId }: { accountId: string }) {
                 </div>
                 <div className="mt-1 h-2 rounded-full bg-surface-2">
                   <div
-                    className="h-2 rounded-full bg-[#0A1F3B]"
+                    className="h-2 rounded-full bg-[#001F35]"
                     style={{ width: `${(r.leads / max) * 100}%` }}
                   />
                 </div>

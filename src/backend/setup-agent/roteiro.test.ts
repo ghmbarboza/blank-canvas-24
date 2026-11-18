@@ -1,10 +1,19 @@
 import { describe, expect, it } from "vitest";
 
-import { opener, PLACEHOLDER_COMPANY, roteiroState, roteiroText } from "./roteiro";
-import type { Fact, SetupSnapshot } from "./spec";
+import {
+  isDone,
+  MAIN_STEPS,
+  opener,
+  PLACEHOLDER_COMPANY,
+  ROTEIRO,
+  roteiroState,
+  roteiroText,
+} from "./roteiro";
+import { setupSystem, SETUP_TOOLS, type Fact, type SetupSnapshot } from "./spec";
 
 type Opened = ReturnType<typeof opener>;
 const blocksOf = (o: Opened) => o.messages.flatMap((m) => m.blocks);
+const actionsOf = (o: Opened) => o.messages.flatMap((m) => m.actions ?? []);
 const textOf = (o: Opened) => o.messages.map((m) => m.text).join("\n\n");
 
 const base: SetupSnapshot = {
@@ -19,207 +28,212 @@ const base: SetupSnapshot = {
   documents: 0,
   wishes: 0,
   modules: [],
+  rulesOn: 0,
   firstWin: { received: false, replied: false, deal: false },
 };
 const fact = (key: string, category: string): Fact => ({ key, category, label: key, value: "x" });
-const ready = { ...base, company: "Clínica Vita", segment: "clinica" };
-const webchat = [{ platform: "webchat", name: "Chat do site" }];
+const ready = { ...base, company: "Loja Vita", segment: "varejo" };
+const whatsapp = [{ platform: "whatsapp", name: "WhatsApp" }];
+const live = { ...ready, channels: whatsapp };
+const step = (r: ReturnType<typeof roteiroState>, id: string) => r.steps.find((s) => s.id === id)!;
 
-describe("roteiroState", () => {
-  it("conta recém-criada: 2 obrigatórios (empresa e canal) e começa pela empresa", () => {
+describe("roteiro da edição de pós-venda", () => {
+  it("são seis passos principais, nesta ordem, e o resto fica em depois", () => {
+    expect(MAIN_STEPS).toEqual(["empresa", "canal", "conhecimento", "agente", "regras", "teste"]);
+    expect(ROTEIRO.filter((s) => s.later).map((s) => s.id)).toEqual(["equipe", "email"]);
+    expect(ROTEIRO.filter((s) => s.required).map((s) => s.id)).toEqual(["empresa", "canal"]);
+  });
+
+  it("nenhum texto do roteiro fala da marca antiga nem usa travessão", () => {
+    const all = JSON.stringify(ROTEIRO);
+    expect(all).not.toMatch(/Nexa|Nexus|Viver de IA|—/);
+    expect(all).not.toMatch(/não oficia(l|is) de WhatsApp não são suportadas/);
+  });
+
+  it("conta recém-criada: 2 obrigatórios e começa pela empresa", () => {
     const r = roteiroState(base, []);
     expect(r.current?.id).toBe("empresa");
     expect(r.requiredPending).toBe(2);
-    expect(r.steps.filter((s) => s.required).map((s) => s.id)).toEqual(["empresa", "canal"]);
+    expect(r.mainTotal).toBe(6);
+    expect(r.mainDone).toBe(0);
+  });
+});
+
+describe("isDone de cada passo", () => {
+  it("empresa: só com nome de verdade e ramo (o nome provisório não vale)", () => {
+    expect(isDone("empresa", { ...base, segment: "varejo" })).toBe(false);
+    expect(isDone("empresa", { ...base, company: "Loja Vita" })).toBe(false);
+    expect(isDone("empresa", ready)).toBe(true);
   });
 
-  it("empresa só fica pronta com nome de verdade e ramo (o nome provisório não vale)", () => {
-    expect(roteiroState({ ...base, segment: "clinica" }, []).steps[0]?.done).toBe(false);
-    expect(roteiroState(ready, []).steps[0]?.done).toBe(true);
-  });
-
-  it("qualquer canal ligado resolve o canal: o chat do site é a saída sem conta externa", () => {
-    const r = roteiroState({ ...ready, channels: webchat }, []);
-    expect(r.requiredPending).toBe(0);
-    expect(r.current?.id).toBe("recursos");
-  });
-
-  it("depois do mínimo pergunta o que a empresa vai usar; a escolha (ou só o essencial) resolve", () => {
-    const pending = roteiroState({ ...ready, channels: webchat }, []);
-    expect(pending.current?.id).toBe("recursos");
-    const chose = roteiroState({ ...ready, channels: webchat }, [
-      fact("recursos_escolhidos", "outros"),
-    ]);
-    expect(chose.steps.find((st) => st.id === "recursos")?.done).toBe(true);
-    expect(chose.current?.id).toBe("primeira_conversa");
-    const viaAjustes = roteiroState({ ...ready, channels: webchat, modules: ["empresas"] }, []);
-    expect(viaAjustes.steps.find((st) => st.id === "recursos")?.done).toBe(true);
-  });
-
-  it("o bloco de recursos lista os extras e a opção só o essencial, com escolha múltipla", () => {
-    const o = opener({
-      state: roteiroState({ ...ready, channels: webchat }, []),
-      company: "Clínica Vita",
-      person: "",
-    });
-    const choices = blocksOf(o).find((b) => b.kind === "choices");
-    expect(choices?.kind === "choices" && choices.multiple).toBe(true);
-    expect(choices?.kind === "choices" && choices.options.map((x) => x.label)).toContain(
-      "Só o essencial",
+  it("canal: precisa de um WhatsApp conectado; chat do site sozinho não resolve", () => {
+    expect(isDone("canal", { ...ready, channels: [{ platform: "webchat", name: "Chat" }] })).toBe(
+      false,
     );
+    expect(isDone("canal", live)).toBe(true);
+  });
+
+  it("conhecimento: pelo menos um documento lido na base", () => {
+    expect(isDone("conhecimento", live, [fact("servicos", "produtos"), fact("x", "vendas")])).toBe(
+      false,
+    );
+    expect(isDone("conhecimento", { ...live, documents: 1 })).toBe(true);
+  });
+
+  it("agente: só conta atendente ligado (passou na avaliação); supervisor não conta", () => {
+    const draft = { ...live, agents: [{ name: "Pós-venda", status: "draft", role: "post_sale" }] };
+    const sup = { ...live, agents: [{ name: "Supervisor", status: "active", role: "supervisor" }] };
+    const on = { ...live, agents: [{ name: "Pós-venda", status: "active", role: "post_sale" }] };
+    expect(isDone("agente", draft)).toBe(false);
+    expect(isDone("agente", sup)).toBe(false);
+    expect(isDone("agente", on)).toBe(true);
+  });
+
+  it("regras: pelo menos uma regra de pós-venda ligada", () => {
+    expect(isDone("regras", live)).toBe(false);
+    expect(isDone("regras", { ...live, rulesOn: 1 })).toBe(true);
+  });
+
+  it("teste: mensagem recebida e resposta enviada, sem exigir negócio", () => {
+    const got = { ...live, firstWin: { received: true, replied: false, deal: false } };
+    const both = { ...live, firstWin: { received: true, replied: true, deal: false } };
+    expect(isDone("teste", got)).toBe(false);
+    expect(isDone("teste", both)).toBe(true);
+  });
+
+  it("depois: equipe com mais de uma pessoa e e-mail com a integração conectada", () => {
+    expect(isDone("equipe", { ...live, team: 2 })).toBe(true);
+    expect(isDone("email", { ...live, integrations: [{ id: "resend", status: "error" }] })).toBe(
+      false,
+    );
+    expect(
+      isDone("email", { ...live, integrations: [{ id: "resend", status: "connected" }] }),
+    ).toBe(true);
+  });
+});
+
+describe("roteiroState", () => {
+  it("com empresa e WhatsApp o mínimo está pronto e o próximo é a base de conhecimento", () => {
+    const r = roteiroState(live, []);
+    expect(r.requiredPending).toBe(0);
+    expect(r.current?.id).toBe("conhecimento");
+    expect(r.mainDone).toBe(2);
+    expect(r.remaining).toBe(4);
   });
 
   it("pular obrigatório fica gravado, mas o passo continua pendente e na frente", () => {
-    const r = roteiroState(ready, [
-      fact("pulou_canal", "outros"),
-      fact("pulou_conhecimento", "outros"),
-    ]);
-    const canal = r.steps.find((s) => s.id === "canal")!;
-    expect(canal.skipped).toBe(true);
-    expect(canal.resolved).toBe(false);
+    const r = roteiroState(ready, [fact("pulou_canal", "outros")]);
+    expect(step(r, "canal").skipped).toBe(true);
+    expect(step(r, "canal").resolved).toBe(false);
     expect(r.requiredPending).toBe(1);
     expect(r.current?.id).toBe("canal");
   });
 
   it("pular opcional resolve: não volta a ser oferecido", () => {
-    const r = roteiroState({ ...ready, channels: webchat }, [
-      fact("recursos_escolhidos", "outros"),
-      fact("pulou_primeira_conversa", "outros"),
-      fact("pulou_conhecimento", "outros"),
-    ]);
-    expect(r.steps.find((s) => s.id === "conhecimento")?.resolved).toBe(true);
-    expect(r.current?.id).toBe("voz");
+    const r = roteiroState(live, [fact("pulou_conhecimento", "outros")]);
+    expect(step(r, "conhecimento").resolved).toBe(true);
+    expect(r.current?.id).toBe("agente");
   });
 
-  it("agente só conta quando está ativo (passou na avaliação de 90%)", () => {
-    const draft = roteiroState({ ...ready, agents: [{ name: "Ana", status: "draft" }] }, []);
-    const on = roteiroState({ ...ready, agents: [{ name: "Ana", status: "active" }] }, []);
-    expect(draft.steps.find((s) => s.id === "agente")?.done).toBe(false);
-    expect(on.steps.find((s) => s.id === "agente")?.done).toBe(true);
+  it("passos de depois nunca viram o passo atual nem entram na conta", () => {
+    const done = roteiroState(
+      {
+        ...live,
+        documents: 2,
+        rulesOn: 3,
+        agents: [{ name: "Pós-venda", status: "active", role: "post_sale" }],
+        firstWin: { received: true, replied: true, deal: false },
+      },
+      [],
+    );
+    expect(done.current).toBeNull();
+    expect(done.remaining).toBe(0);
+    expect(done.mainDone).toBe(6);
+    expect(step(done, "equipe").done).toBe(false);
+    expect(roteiroText(done)).toContain("Roteiro completo");
+    expect(blocksOf(opener({ state: done, company: "Loja Vita", person: "" }))).toEqual([]);
   });
 });
 
 describe("abertura da conversa", () => {
-  it("primeiro uso: diz que vão configurar juntos, mostra o roteiro e pede nome e ramo", () => {
+  it("primeiro uso: a Vi se apresenta, fala dos 6 passos e pede nome e ramo", () => {
     const o = opener({
       state: roteiroState(base, []),
       company: PLACEHOLDER_COMPANY,
       person: "Ana",
     });
-    expect(textOf(o)).toMatch(/^Oi, Ana! Eu sou a Nexa\./);
-    expect(textOf(o)).toContain("configurar a central juntos, conversando");
-    expect(textOf(o)).toContain("tiro qualquer dúvida");
+    expect(textOf(o)).toMatch(/^Oi, Ana! Eu sou a Vi\./);
+    expect(textOf(o)).toContain("6 passos");
     expect(textOf(o)).toContain("Como se chama a empresa");
-    // duas mensagens curtas: o cumprimento sem bloco e a pergunta só com os cartões do passo.
-    // O roteiro inteiro não entra na conversa (fica na faixa de progresso da Nexa).
     expect(o.messages).toHaveLength(2);
     expect(o.messages[0]!.blocks).toEqual([]);
-    expect(o.messages[0]!.text).not.toContain("?");
     expect(o.messages[1]!.blocks.map((b) => b.kind)).toEqual(["choices"]);
-    expect(blocksOf(o).some((b) => b.kind === "steps" && b.title === "O roteiro")).toBe(false);
   });
 
-  it("veio pelo /bem-vindo com nome: confirma o nome e pergunta só o ramo", () => {
-    const o = opener({
-      state: roteiroState({ ...base, company: "Clínica Vita" }, []),
-      company: "Clínica Vita",
-      person: "",
-    });
-    expect(textOf(o)).toContain("Vi que a empresa é Clínica Vita. Qual é o ramo de vocês?");
-  });
-
-  it("canal pendente oferece WhatsApp, chat do site e e-mail", () => {
-    const o = opener({ state: roteiroState(ready, []), company: "Clínica Vita", person: "" });
-    const choices = blocksOf(o).find((b) => b.kind === "choices");
-    expect(choices?.kind === "choices" && choices.options.map((x) => x.label)).toEqual([
-      "WhatsApp",
-      "Chat do site",
-      "E-mail",
+  it("toda abertura de passo traz o botão que abre a tela dele", () => {
+    const o = opener({ state: roteiroState(ready, []), company: "Loja Vita", person: "" });
+    expect(actionsOf(o)).toEqual([
+      {
+        kind: "open",
+        label: "Fazer pela tela: Conectar o WhatsApp",
+        to: "passo:canal",
+        tool: "abrir_passo",
+      },
     ]);
     expect(textOf(o)).toContain("falta 1 passo obrigatório");
   });
 
-  it("tudo pronto: vira a conversa de ajuste, sem blocos", () => {
-    const done = roteiroState(
-      {
-        ...ready,
-        aiMode: "included",
-        channels: [{ platform: "whatsapp", name: "x" }],
-        agents: [{ name: "Ana", status: "active" }],
-        team: 2,
-        documents: 1,
-        firstWin: { received: true, replied: true, deal: true },
-        integrations: [
-          { id: "resend", status: "connected" },
-          { id: "zadarma", status: "connected" },
-          { id: "elevenlabs", status: "connected" },
-        ],
-      },
-      [fact("tom", "voz"), fact("recursos_escolhidos", "outros")],
-    );
-    expect(blocksOf(opener({ state: done, company: "Clínica Vita", person: "" }))).toEqual([]);
-    expect(roteiroText(done)).toContain("Roteiro completo");
+  it("canal pendente mostra o caminho do QR Code, não a Zernio", () => {
+    const o = opener({ state: roteiroState(ready, []), company: "Loja Vita", person: "" });
+    const steps = blocksOf(o).find((b) => b.kind === "steps");
+    expect(steps?.kind === "steps" && steps.title).toBe("WhatsApp por QR Code");
+    expect(JSON.stringify(o)).not.toContain("Zernio");
+  });
+
+  it("veio pelo /bem-vindo com nome: confirma o nome e pergunta só o ramo", () => {
+    const o = opener({
+      state: roteiroState({ ...base, company: "Loja Vita" }, []),
+      company: "Loja Vita",
+      person: "",
+    });
+    expect(textOf(o)).toContain("Vi que a empresa é Loja Vita. Qual é o ramo de vocês?");
+  });
+
+  it("refazer: recomeça pela empresa", () => {
+    const o = opener({
+      state: roteiroState(live, []),
+      company: "Loja Vita",
+      person: "",
+      restart: true,
+    });
+    expect(textOf(o)).toContain("rever a configuração do começo");
+    expect(actionsOf(o)[0]?.to).toBe("passo:empresa");
   });
 });
 
-describe("e-mail, telefonia e voz", () => {
-  const base = { ...ready, channels: webchat };
-  it("ficam prontos só com a integração conectada de verdade", () => {
-    const off = roteiroState({ ...base, integrations: [{ id: "zadarma", status: "error" }] }, []);
-    expect(off.steps.find((s) => s.id === "telefonia")?.done).toBe(false);
-    const on = roteiroState(
-      {
-        ...base,
-        integrations: [
-          { id: "ses", status: "connected" },
-          { id: "zadarma", status: "connected" },
-          { id: "elevenlabs", status: "connected" },
-        ],
-      },
-      [],
-    );
-    expect(
-      ["email", "telefonia", "voz_ia"].map((id) => on.steps.find((s) => s.id === id)?.done),
-    ).toEqual([true, true, true]);
-  });
-  it("são opcionais e não mexem no indicador do layout", () => {
-    const r = roteiroState(base, []);
-    for (const id of ["email", "telefonia", "voz_ia"])
-      expect(r.steps.find((s) => s.id === id)?.required).toBe(false);
-    expect(r.requiredPending).toBe(0);
-  });
-});
-
-describe("primeira conversa (1ª vitória)", () => {
-  const chosen = [fact("recursos_escolhidos", "outros")];
-  const live = { ...ready, channels: webchat };
-
-  it("vem logo depois do canal e dos recursos, é opcional e não mexe no indicador", () => {
-    const r = roteiroState(live, chosen);
-    expect(r.current?.id).toBe("primeira_conversa");
-    expect(r.requiredPending).toBe(0);
-    expect(r.steps.find((s) => s.id === "primeira_conversa")?.required).toBe(false);
+describe("prompt e ferramentas da Vi", () => {
+  const system = setupSystem({
+    snapshot: live,
+    facts: [],
+    person: "Ana",
+    today: "18/11/2026",
+    stage: true,
+    roteiro: roteiroText(roteiroState(live, [])),
   });
 
-  it("só fica pronta com mensagem recebida, resposta e negócio, lidos do banco", () => {
-    const partial = { ...live, firstWin: { received: true, replied: true, deal: false } };
-    expect(
-      roteiroState(partial, chosen).steps.find((s) => s.id === "primeira_conversa")?.done,
-    ).toBe(false);
-    const full = { ...live, firstWin: { received: true, replied: true, deal: true } };
-    const r = roteiroState(full, chosen);
-    expect(r.steps.find((s) => s.id === "primeira_conversa")?.done).toBe(true);
-    expect(r.current?.id).toBe("conhecimento");
+  it("fala de pós-venda, da marca nova e do QR Code pela Evolution", () => {
+    expect(system).toContain("Você é a Vi");
+    expect(system).toContain("Vínculo");
+    expect(system).toContain("pós-venda");
+    expect(system).toContain("Evolution");
+    expect(system).not.toMatch(/Nexa|Nexus|Viver de IA|—/);
   });
 
-  it("pular resolve, porque é opcional", () => {
-    const r = roteiroState(live, [...chosen, fact("pulou_primeira_conversa", "outros")]);
-    expect(r.current?.id).toBe("conhecimento");
-  });
-
-  it("a abertura mostra as três etapas da vitória", () => {
-    const o = opener({ state: roteiroState(live, chosen), company: "Clínica Vita", person: "" });
-    const steps = blocksOf(o).filter((b) => b.kind === "steps");
-    expect(steps.some((b) => b.title === "A primeira vitória")).toBe(true);
+  it("tem a ferramenta que abre a tela de cada passo principal", () => {
+    const tool = SETUP_TOOLS.find((t) => t.name === "abrir_passo");
+    const passos = (tool?.parameters as { properties: { passo: { enum: string[] } } }).properties
+      .passo.enum;
+    expect(passos).toEqual(MAIN_STEPS);
+    expect(JSON.stringify(SETUP_TOOLS)).not.toMatch(/Nexa|Nexus|Viver de IA|—/);
   });
 });

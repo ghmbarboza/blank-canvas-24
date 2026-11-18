@@ -4,9 +4,9 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 /* ==============================================================
-   Copiado do kit do DS SUBIDO (kit/patterns/Ajuda.tsx). O título e a descrição ficam no
-   PageHeader da rota, como nas outras telas do Nexus.
-   Ajuda (DS SUBIDO · 04-telas §10) — a mesma do My Dashboard
+   Copiado do kit do DS (kit/patterns/Ajuda.tsx). O título e a descrição ficam no
+   PageHeader da rota, como nas outras telas do Vínculo.
+   Ajuda (DS · 04-telas §10) — a mesma do My Dashboard
      · eyebrow (Conta) + título "Ajuda" + descrição do que a pessoa acha aqui;
      · busca que filtra as seções, sem diferenciar acento;
      · 4 atalhos para as perguntas que mais trazem alguém à Ajuda;

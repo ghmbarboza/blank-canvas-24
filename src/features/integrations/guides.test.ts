@@ -18,7 +18,7 @@ describe("roteiro das integrações", () => {
     for (const id of RETIRED_PROVIDERS) expect(GUIDES[id], id).toBeUndefined();
   });
 
-  it("campo gerado pelo Nexus existe no provedor e é segredo (vai para o cofre)", () => {
+  it("campo gerado pelo Vínculo existe no provedor e é segredo (vai para o cofre)", () => {
     for (const p of VISIBLE_PROVIDERS) {
       for (const k of GUIDES[p.id]?.autoFields ?? []) {
         const f = p.fields.find((x) => x.key === k);

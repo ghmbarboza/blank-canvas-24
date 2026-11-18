@@ -18,6 +18,7 @@ const snap: SetupSnapshot = {
   documents: 0,
   wishes: 0,
   modules: [],
+  rulesOn: 0,
   firstWin: { received: false, replied: false, deal: false },
 };
 

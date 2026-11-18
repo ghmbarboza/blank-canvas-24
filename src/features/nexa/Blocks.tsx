@@ -400,7 +400,7 @@ export function ActionList({
 }) {
   if (!actions.length) return null;
   return (
-    <ul className="grid gap-2" aria-label="O que a Nexa fez">
+    <ul className="grid gap-2" aria-label="O que foi feito">
       {actions.map((a, i) => (
         <li
           key={`${a.tool}-${i}`}
@@ -445,7 +445,8 @@ export function ActionList({
               className="rounded-full"
               onClick={() => onOpen(a.to!)}
             >
-              Ir agora <ArrowRight className="size-3.5" />
+              {a.to.startsWith("passo:") ? "Abrir a tela" : "Ir agora"}{" "}
+              <ArrowRight className="size-3.5" />
             </Button>
           ) : null}
         </li>

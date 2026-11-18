@@ -1,7 +1,7 @@
 // Roteiro de cada integração para quem nunca abriu o painel do fornecedor: onde criar a conta, onde
 // fica a chave, o que colar de volta. Usado no assistente de configuração e em Ajustes › Integrações.
 // Provedores retirados (RETIRED_PROVIDERS) não têm roteiro: a tela não oferece mais.
-// Campos "auto" o Nexus gera sozinho (tokens de webhook); URLs saem prontas, com a conta e o token.
+// Campos "auto" o Vínculo gera sozinho (tokens de webhook); URLs saem prontas, com a conta e o token.
 import type { ProviderId } from "./providers";
 
 export interface ProviderGuide {
@@ -13,7 +13,7 @@ export interface ProviderGuide {
   /** Página onde a chave é criada (quando o fornecedor tem link direto). */
   keysUrl?: string;
   steps: string[];
-  /** Campos secretos que o Nexus gera e a pessoa só copia para o painel do fornecedor. */
+  /** Campos secretos que o Vínculo gera e a pessoa só copia para o painel do fornecedor. */
   autoFields?: string[];
   /** Endereços que a pessoa cola no painel do fornecedor. {base}, {account}, {form}, {campo}. */
   urls?: { label: string; template: string; help?: string }[];
@@ -21,14 +21,14 @@ export interface ProviderGuide {
 
 export const GUIDES: Partial<Record<ProviderId, ProviderGuide>> = {
   openai: {
-    what: "Opcional: a IA do Nexus passa a usar a sua conta da OpenAI. Sem chave, a IA inclusa continua funcionando.",
+    what: "Opcional: a IA do Vínculo passa a usar a sua conta da OpenAI. Sem chave, a IA inclusa continua funcionando.",
     cost: "Pago por uso na OpenAI; coloque um limite mensal em Billing › Limits.",
     signupUrl: "https://platform.openai.com/signup",
     keysUrl: "https://platform.openai.com/api-keys",
     steps: [
       "Crie a conta na OpenAI Platform e, em Billing, coloque crédito e um limite de gasto.",
-      "Em API keys, clique em Create new secret key (dê um nome como Nexus) e copie a chave que começa com sk-.",
-      "Cole aqui e clique em Salvar e testar: o Nexus faz uma chamada curta para conferir a chave.",
+      "Em API keys, clique em Create new secret key (dê um nome como Vínculo) e copie a chave que começa com sk-.",
+      "Cole aqui e clique em Salvar e testar: o Vínculo faz uma chamada curta para conferir a chave.",
     ],
   },
   anthropic: {
@@ -39,7 +39,7 @@ export const GUIDES: Partial<Record<ProviderId, ProviderGuide>> = {
     steps: [
       "Crie a conta no Console da Anthropic e, em Plans & Billing, coloque crédito.",
       "Em Settings › API Keys, clique em Create Key e copie a chave que começa com sk-ant-.",
-      "Cole aqui e clique em Salvar e testar: o Nexus faz uma chamada curta para conferir a chave.",
+      "Cole aqui e clique em Salvar e testar: o Vínculo faz uma chamada curta para conferir a chave.",
     ],
   },
   resend: {
@@ -121,7 +121,7 @@ export const GUIDES: Partial<Record<ProviderId, ProviderGuide>> = {
     steps: [
       "Crie a conta na ElevenLabs.",
       "Em Developers › API Keys, crie uma chave com acesso a Agents e Text to Speech.",
-      "Cole a chave aqui. Deixe o segredo do webhook em branco: o Nexus cria e guarda sozinho.",
+      "Cole a chave aqui. Deixe o segredo do webhook em branco: o Vínculo cria e guarda sozinho.",
       "Para a IA ligar: o número da Zadarma vai pela ElevenLabs no tronco SIP, sem importar. Vincule o número ao agente em Ligações › Números.",
     ],
   },
@@ -140,14 +140,14 @@ export const GUIDES: Partial<Record<ProviderId, ProviderGuide>> = {
     urls: [{ label: "Endereço do webhook", template: "{base}/api/public/asaas?a={account}" }],
   },
   flowcrm: {
-    what: "Leva os leads do atendimento para o Flow CRM da Viver de IA e anota lá cada venda ganha ou perdida.",
+    what: "Leva os leads do atendimento para o Flow CRM e anota lá cada venda ganha ou perdida.",
     cost: "Sem custo extra: os dois sistemas são seus.",
     signupUrl: "https://central-de-comando-time-entrega.vercel.app/solucoes",
     steps: [
       "No Flow CRM, abra Configurações › Integrações › Webhooks de entrada.",
       "Copie o endereço do webhook de entrada e crie uma chave (começa com fcrm_).",
       "Cole os dois aqui e clique em Salvar e testar: o Flow CRM responde ao teste.",
-      "Pronto: contato novo no Nexus vira lead lá, e venda ganha ou perdida vira anotação no contato.",
+      "Pronto: contato novo no Vínculo vira lead lá, e venda ganha ou perdida vira anotação no contato.",
     ],
   },
 };

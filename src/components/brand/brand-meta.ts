@@ -1,7 +1,7 @@
 import { BRAND_ICONS, type BrandIcon as BrandGlyph } from "./brand-icons";
 import { TOOL_ICONS } from "./tool-icons";
 
-// Componentes de marca do DS SUBIDO (kit/brand/brand-icon.tsx): toda ferramenta citada como opção
+// Componentes de marca do DS (kit/brand/brand-icon.tsx): toda ferramenta citada como opção
 // ou conexão aparece com o logo oficial. Logo livre (Simple Icons, CC0) vira SVG na cor da marca;
 // marca sem logo livre usa o ícone oficial baixado do site dela, em public/brand/marcas.
 
@@ -19,8 +19,6 @@ export const OFFICIAL_LOGOS: Record<string, { src: string; title: string }> = {
   zapsign: { src: "/brand/marcas/zapsign.png", title: "ZapSign" },
   zadarma: { src: "/brand/marcas/zadarma.svg", title: "Zadarma" },
   microsoftteams: { src: "/brand/marcas/microsoft-teams.png", title: "Microsoft Teams" },
-  // Flow CRM é solução da Viver de IA: a marca dele é o monograma VIA
-  flowcrm: { src: "/brand/via-monogram.png", title: "Flow CRM" },
 };
 
 // Apelidos que o código usa para a mesma marca.

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 212 48" role="img" aria-label="Vínculo">
+  <rect width="48" height="48" rx="11" fill="#001F35"/>
+  <rect x="0.5" y="0.5" width="47" height="47" rx="10.5" fill="none" stroke="#B9915B" stroke-opacity="0.3" stroke-width="1"/>
+  <defs>
+    <clipPath id="vk-up"><circle cx="24" cy="17.74" r="3.5"/></clipPath>
+    <clipPath id="vk-down"><circle cx="24" cy="30.26" r="3.5"/></clipPath>
+    <clipPath id="vk-over"><circle cx="24" cy="30.26" r="4.4"/></clipPath>
+  </defs>
+  <g fill="none" stroke-width="3">
+    <circle cx="18.25" cy="24" r="8.5" stroke="#B9915B"/>
+    <circle cx="29.75" cy="24" r="8.5" stroke="#001F35" stroke-width="5.8" clip-path="url(#vk-up)"/>
+    <circle cx="29.75" cy="24" r="8.5" stroke="#D9BC8C"/>
+    <circle cx="18.25" cy="24" r="8.5" stroke="#001F35" stroke-width="5.8" clip-path="url(#vk-down)"/>
+    <circle cx="18.25" cy="24" r="8.5" stroke="#B9915B" clip-path="url(#vk-over)"/>
+  </g>
+  <text x="62" y="33" font-family="Manrope, Inter, system-ui, sans-serif" font-size="30" font-weight="800" letter-spacing="-0.9" fill="#FFFFFF">Vínculo</text>
+</svg>

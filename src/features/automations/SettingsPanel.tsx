@@ -157,6 +157,7 @@ export function SettingsPanel({ accountId, automation, readOnly, onChange }: Pro
                 <SelectItem value="event">Algo acontece</SelectItem>
                 <SelectItem value="segment">Entra num segmento</SelectItem>
                 <SelectItem value="no_reply">Fica sem responder</SelectItem>
+                <SelectItem value="inactive">Cliente fica sem conversa</SelectItem>
                 <SelectItem value="date">Chega uma data do contato</SelectItem>
               </SelectContent>
             </Select>
@@ -256,6 +257,20 @@ export function SettingsPanel({ accountId, automation, readOnly, onChange }: Pro
                 value={String(t.hours ?? 24)}
                 onChange={(e) =>
                   setTrigger({ hours: Math.max(1, Number(e.target.value.replace(/\D/g, "") || 1)) })
+                }
+                disabled={readOnly}
+              />
+            </div>
+          )}
+          {t.type === "inactive" && (
+            <div className="grid gap-1.5">
+              <Label htmlFor="trg-d">Dias sem conversa com o cliente</Label>
+              <Input
+                id="trg-d"
+                inputMode="numeric"
+                value={String(t.days ?? 30)}
+                onChange={(e) =>
+                  setTrigger({ days: Math.max(1, Number(e.target.value.replace(/\D/g, "") || 1)) })
                 }
                 disabled={readOnly}
               />

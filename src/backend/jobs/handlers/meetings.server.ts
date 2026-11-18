@@ -39,10 +39,10 @@ function emailHtml(o: {
   links?: { label: string; url: string }[];
   cta?: string;
 }) {
-  return `<!doctype html><html lang="pt-BR"><body style="margin:0;background:#f7f8fa;font-family:Geist,Arial,sans-serif;color:#0a1f3b">
+  return `<!doctype html><html lang="pt-BR"><body style="margin:0;background:#f7f8fa;font-family:Manrope,Arial,sans-serif;color:#001f35">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:32px 16px">
 <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:24px;overflow:hidden">
-<tr><td style="background:#0a1f3b;padding:28px 32px;color:#ffffff">
+<tr><td style="background:#001f35;padding:28px 32px;color:#ffffff">
 <p style="margin:0;font-size:12px;letter-spacing:2px;text-transform:uppercase;opacity:.7">${esc(o.company)}</p>
 <h1 style="margin:8px 0 0;font-size:24px;line-height:1.25">${esc(o.heading)}</h1></td></tr>
 <tr><td style="padding:28px 32px">
@@ -50,8 +50,8 @@ function emailHtml(o: {
 <p style="margin:0 0 4px;font-size:13px;color:#5b6576">Quando</p>
 <p style="margin:0 0 16px;font-size:16px;font-weight:600">${esc(o.when)}</p>
 ${o.host ? `<p style="margin:0 0 4px;font-size:13px;color:#5b6576">Com</p><p style="margin:0 0 20px;font-size:16px;font-weight:600">${esc(o.host)}</p>` : ""}
-<a href="${esc(o.url)}" style="display:inline-block;background:#0a1f3b;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:999px;font-weight:600;font-size:15px">${esc(o.cta ?? "Entrar na reunião")}</a>
-${(o.links ?? []).map((l) => `<p style="margin:14px 0 0;font-size:14px"><a href="${esc(l.url)}" style="color:#0a1f3b;font-weight:600">${esc(l.label)}</a></p>`).join("")}
+<a href="${esc(o.url)}" style="display:inline-block;background:#B9915B;color:#001F35;font-weight:700;text-decoration:none;padding:14px 28px;border-radius:10px;font-weight:600;font-size:15px">${esc(o.cta ?? "Entrar na reunião")}</a>
+${(o.links ?? []).map((l) => `<p style="margin:14px 0 0;font-size:14px"><a href="${esc(l.url)}" style="color:#001f35;font-weight:600">${esc(l.label)}</a></p>`).join("")}
 <p style="margin:20px 0 0;font-size:12px;color:#5b6576;line-height:1.5">A sala abre no navegador, sem instalar nada. Se o botão não funcionar, copie: ${esc(o.url)}</p>
 <p style="margin:16px 0 0;font-size:11px;color:#8a93a3;line-height:1.5">${esc(o.notice)}</p>
 </td></tr></table></td></tr></table></body></html>`;

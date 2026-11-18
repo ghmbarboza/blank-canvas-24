@@ -153,7 +153,7 @@ export async function upsertWebhook(
       return false;
     }
   });
-  const body = { name: "Nexus One", url, secret, events: [...events], isActive: true };
+  const body = { name: "Vínculo", url, secret, events: [...events], isActive: true };
   if (mine) {
     await zernio(apiKey, "/v1/webhooks/settings", {
       method: "PUT",

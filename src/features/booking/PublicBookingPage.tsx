@@ -74,7 +74,7 @@ export function PublicBookingPage({ slug }: { slug: string }) {
   return (
     <Frame>
       <div className="grid overflow-hidden rounded-[32px] border border-border bg-surface md:grid-cols-[300px_1fr]">
-        <aside className="relative overflow-hidden bg-[#0A1F3B] p-7 text-white">
+        <aside className="relative overflow-hidden bg-[#001F35] p-7 text-white">
           <div
             className="hero-orb pointer-events-none absolute -top-20 -right-20 size-56 rounded-full bg-white/10 blur-3xl"
             aria-hidden
@@ -306,7 +306,7 @@ function Confirmed({
   }).format(new Date(result.start));
   return (
     <Frame>
-      <div className="relative overflow-hidden rounded-[32px] bg-[#0A1F3B] px-8 py-12 text-center text-white">
+      <div className="relative overflow-hidden rounded-[32px] bg-[#001F35] px-8 py-12 text-center text-white">
         <div
           className="hero-orb pointer-events-none absolute -top-24 left-1/2 size-80 -translate-x-1/2 rounded-full bg-white/10 blur-3xl"
           aria-hidden
@@ -327,7 +327,7 @@ function Confirmed({
           uma hora antes.
         </p>
         {result.joinUrl && (
-          <Button asChild className="relative mt-6 bg-white text-[#0A1F3B] hover:bg-white/90">
+          <Button asChild className="relative mt-6 bg-white text-[#001F35] hover:bg-white/90">
             <a href={result.joinUrl}>Guardar o link da sala</a>
           </Button>
         )}

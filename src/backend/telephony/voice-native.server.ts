@@ -1,6 +1,6 @@
 // Voz com o modelo DENTRO da ElevenLabs (como a Lia da Likes, p50 1,66 s). O Custom LLM fazia
 // cada vez da ligação atravessar até o servidor do Lovable, que às vezes está frio: a ElevenLabs
-// media ~3,3 s até a 1ª palavra e soltava frase de espera em toda vez. Aqui o Nexus só:
+// media ~3,3 s até a 1ª palavra e soltava frase de espera em toda vez. Aqui o Vínculo só:
 //  - monta o prompt (roteiro, persona, base e catálogo), com {{motivo}}, {{assistente}} e
 //    {{ficha}} que a ligação preenche;
 //  - responde às ferramentas por webhook (consultar_base e handoff_to_human).

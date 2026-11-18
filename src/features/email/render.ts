@@ -49,13 +49,13 @@ export function blocksToHtml(
   blocks: EmailBlock[],
   opts: { preheader?: string | null; brand: Brand; marketing: boolean; signature?: string | null },
 ): string {
-  const color = opts.brand.color ?? "#0A1F3B";
+  const color = opts.brand.color ?? "#001F35";
   const rows = blocks
     .map((b) => {
       const align = b.align ?? "left";
       switch (b.type) {
         case "heading":
-          return `<tr><td style="padding:8px 32px 4px;text-align:${align}"><h1 style="margin:0;font-size:24px;line-height:1.25;color:#0A1F3B;font-weight:600">${richText(b.text ?? "")}</h1></td></tr>`;
+          return `<tr><td style="padding:8px 32px 4px;text-align:${align}"><h1 style="margin:0;font-size:24px;line-height:1.25;color:#001F35;font-weight:600">${richText(b.text ?? "")}</h1></td></tr>`;
         case "text":
           return `<tr><td style="padding:8px 32px;text-align:${align};font-size:15px;line-height:1.6;color:#334155">${richText(b.text ?? "")}</td></tr>`;
         case "image": {
@@ -88,7 +88,7 @@ export function blocksToHtml(
   const footer = opts.marketing
     ? `<tr><td style="padding:24px 32px 32px;font-size:12px;line-height:1.5;color:#94a3b8;text-align:center">Você recebe este e-mail de ${escapeHtml(opts.brand.name)}.${opts.brand.address ? `<br>${escapeHtml(opts.brand.address)}` : ""}<br><a href="${UNSUB_TOKEN}" style="color:#64748b">Não quero mais receber estes e-mails</a></td></tr>`
     : `<tr><td style="padding:16px 32px 28px;font-size:12px;color:#94a3b8;text-align:center">${escapeHtml(opts.brand.name)}</td></tr>`;
-  return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title></title></head><body style="margin:0;padding:0;background:#f4f6fa;font-family:Geist,-apple-system,Segoe UI,Helvetica,Arial,sans-serif">${pre}<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f6fa;padding:24px 12px"><tr><td align="center"><table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:20px;overflow:hidden"><tr><td style="height:24px"></td></tr>${rows}${sig}${footer}</table></td></tr></table></body></html>`;
+  return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title></title></head><body style="margin:0;padding:0;background:#f4f6fa;font-family:Manrope,-apple-system,Segoe UI,Helvetica,Arial,sans-serif">${pre}<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f6fa;padding:24px 12px"><tr><td align="center"><table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:20px;overflow:hidden"><tr><td style="height:24px"></td></tr>${rows}${sig}${footer}</table></td></tr></table></body></html>`;
 }
 
 /** Corpo de e-mail 1:1 (texto do vendedor) em HTML simples, sem cara de campanha. */
