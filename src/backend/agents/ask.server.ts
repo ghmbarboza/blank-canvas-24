@@ -1,4 +1,4 @@
-// "Pergunte ao Vínculo": o gestor pergunta em linguagem natural; o modelo usa ferramentas de LEITURA
+// "Pergunte à Central de CS": o gestor pergunta em linguagem natural; o modelo usa ferramentas de LEITURA
 // (RPCs agregadas existentes, chamadas com a sessão do próprio gestor, então a RLS vale) e a busca de
 // conversas com filtros fixos. Nunca SQL livre. Resposta com número, fonte e link.
 import { createClient } from "@supabase/supabase-js";

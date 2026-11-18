@@ -1,5 +1,5 @@
 // Hooks da equipe de IA. Leitura e edição simples vão direto ao banco (RLS por conta); criar,
-// simular, avaliar, Composio e "Pergunte ao Vínculo" passam pela rota /api/agents.
+// simular, avaliar, Composio e "Pergunte à Central de CS" passam pela rota /api/agents.
 import { useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 

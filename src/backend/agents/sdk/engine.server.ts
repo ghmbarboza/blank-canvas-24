@@ -207,7 +207,7 @@ async function buildTeam(
               dry_run: input.dryRun,
               latency_ms: 0,
             });
-          // sem conversa do Vínculo (ligação): quem fica sabendo é o gestor; com conversa, o fluxo
+          // sem conversa da Central de CS (ligação): quem fica sabendo é o gestor; com conversa, o fluxo
           // da conversa já passa para humano e avisa
           if (!input.conversationId && !input.dryRun) {
             const { notifyManagers } = await import("../tools.server");
@@ -357,7 +357,7 @@ function base(o: Partial<SdkOutcome> & Pick<SdkOutcome, "action" | "reply">): Sd
   };
 }
 
-/** Lê o fim de uma rodada do SDK (resposta, humano, pausa) no formato do Vínculo. */
+/** Lê o fim de uma rodada do SDK (resposta, humano, pausa) no formato da Central de CS. */
 async function settle(
   input: {
     accountId: string;

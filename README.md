@@ -1,13 +1,13 @@
-# Vínculo
+# Central de CS
 
 **Pós-venda no WhatsApp.** Central de pós-venda no WhatsApp: atendimento com IA, pesquisa de
-satisfação, saúde da carteira e recompra. A assistente Vi conduz a configuração no primeiro acesso.
+satisfação, saúde da carteira e recompra. A assistente Cris conduz a configuração no primeiro acesso.
 
 ## Como este projeto é entregue
 
-O Vínculo é um projeto Lovable entregue por remix: cada cliente recebe uma cópia do projeto de
+A Central de CS é um projeto Lovable entregue por remix: cada cliente recebe uma cópia do projeto de
 origem, com o próprio banco (Lovable Cloud) e o próprio endereço. A primeira pessoa que se
-cadastra na cópia vira dona da central e é recebida pela Vi.
+cadastra na cópia vira dona da central e é recebida pela Cris.
 
 O nome, a frase e as cores da marca ficam num lugar só: `src/lib/brand.ts`. Os tokens visuais
 (azul-marinho `#001F35`, dourado `#B9915B`, fonte Manrope) ficam em `src/styles.css` e

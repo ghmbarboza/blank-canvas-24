@@ -44,7 +44,7 @@ async function noteError(c: Connection, err: unknown): Promise<void> {
     .eq("id", c.id);
 }
 
-// ── Vínculo → agenda ──────────────────────────────────────────────────────────────
+// ── Central de CS → agenda ──────────────────────────────────────────────────────────────
 
 interface PushMeeting extends MeetingSnapshot {
   account_id: string;
@@ -147,7 +147,7 @@ export async function pushMeeting(meetingId: string): Promise<Record<string, unk
           title: meeting.title,
           start: new Date(meeting.scheduled_start!).toISOString(),
           end: new Date(meeting.scheduled_end!).toISOString(),
-          description: `Reunião no Vínculo${contactName ? ` com ${contactName}` : ""}.\nSala: ${url}`,
+          description: `Reunião na Central de CS${contactName ? ` com ${contactName}` : ""}.\nSala: ${url}`,
           joinUrl: url,
           attendees: [],
         });
@@ -178,7 +178,7 @@ export async function pushMeeting(meetingId: string): Promise<Record<string, unk
   return { done, errors };
 }
 
-// ── agenda → Vínculo ──────────────────────────────────────────────────────────────
+// ── agenda → Central de CS ──────────────────────────────────────────────────────────────
 
 interface PullResult {
   changes: ExternalChange[];
@@ -325,7 +325,7 @@ async function applyMatched(c: Connection, list: MatchedChange[]): Promise<void>
           : `Reunião remarcada pela sua agenda: ${full?.title ?? "reunião"}`,
       _body:
         action.kind === "cancel"
-          ? "O evento foi apagado ou cancelado na sua agenda, então a reunião foi cancelada no Vínculo. Avise o cliente se for o caso."
+          ? "O evento foi apagado ou cancelado na sua agenda, então a reunião foi cancelada na Central de CS. Avise o cliente se for o caso."
           : `Novo horário: ${when}. Os lembretes antigos continuam valendo; confira se o cliente sabe da mudança.`,
       _link: `/reunioes/${meeting.id}`,
     });

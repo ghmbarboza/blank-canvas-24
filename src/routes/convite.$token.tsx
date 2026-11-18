@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { pageHead } from "@/lib/page-head";
 
 export const Route = createFileRoute("/convite/$token")({
-  head: () => pageHead("Convite", "Aceite seu convite para participar de uma equipe no Vínculo."),
+  head: () => pageHead("Convite", "Aceite seu convite para participar de uma equipe na Central de CS."),
   component: Invite,
 });
 

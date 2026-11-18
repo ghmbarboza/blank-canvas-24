@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 /* ==============================================================
    Copiado do kit do DS (kit/patterns/Ajuda.tsx). O título e a descrição ficam no
-   PageHeader da rota, como nas outras telas do Vínculo.
+   PageHeader da rota, como nas outras telas da Central de CS.
    Ajuda (DS · 04-telas §10) — a mesma do My Dashboard
      · eyebrow (Conta) + título "Ajuda" + descrição do que a pessoa acha aqui;
      · busca que filtra as seções, sem diferenciar acento;

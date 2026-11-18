@@ -55,7 +55,7 @@ export const PROVIDERS: ProviderDef[] = [
     name: "OpenAI",
     category: "Inteligência artificial",
     description:
-      "Sua própria chave da OpenAI. A IA do Vínculo passa a usar a sua conta, com o seu limite e a sua fatura.",
+      "Sua própria chave da OpenAI. A IA da Central de CS passa a usar a sua conta, com o seu limite e a sua fatura.",
     docs: "https://platform.openai.com/api-keys",
     testable: true,
     fields: [{ key: "api_key", label: "Chave da API", secret: true, placeholder: "sk-..." }],
@@ -231,7 +231,7 @@ export const PROVIDERS: ProviderDef[] = [
     name: "Meta Lead Ads",
     category: "Captação",
     description:
-      "Leads dos formulários de anúncio do Facebook e Instagram entram direto no Vínculo, com campanha e anúncio.",
+      "Leads dos formulários de anúncio do Facebook e Instagram entram direto na Central de CS, com campanha e anúncio.",
     docs: "https://developers.facebook.com/docs/marketing-api/guides/lead-ads",
     testable: false,
     fields: [
@@ -332,7 +332,7 @@ export const PROVIDERS: ProviderDef[] = [
         key: "site_key",
         label: "Site key",
         placeholder: "0x4AAAA...",
-        help: "Inclua no widget do Turnstile os domínios onde o formulário aparece (o do Vínculo e o do seu site).",
+        help: "Inclua no widget do Turnstile os domínios onde o formulário aparece (o da Central de CS e o do seu site).",
       },
       { key: "secret", label: "Secret key", secret: true },
     ],
@@ -342,7 +342,7 @@ export const PROVIDERS: ProviderDef[] = [
     name: "Google Ads (formulários de lead)",
     category: "Captação",
     description:
-      "Leads dos formulários de anúncio do Google Ads e do YouTube entram direto no Vínculo, com campanha e GCLID.",
+      "Leads dos formulários de anúncio do Google Ads e do YouTube entram direto na Central de CS, com campanha e GCLID.",
     docs: "https://developers.google.com/google-ads/webhook/docs/overview",
     testable: false,
     fields: [
@@ -359,7 +359,7 @@ export const PROVIDERS: ProviderDef[] = [
     name: "Flow CRM",
     category: "CRM",
     description:
-      "Cada contato novo do Vínculo vira lead no Flow CRM, e cada venda ganha ou perdida vira anotação no contato de lá.",
+      "Cada contato novo da Central de CS vira lead no Flow CRM, e cada venda ganha ou perdida vira anotação no contato de lá.",
     docs: "https://central-de-comando-time-entrega.vercel.app/solucoes",
     testable: true,
     fields: [

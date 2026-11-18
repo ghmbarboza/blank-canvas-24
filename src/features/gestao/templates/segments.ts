@@ -180,7 +180,7 @@ const AGENT_LIMITS =
   "Use o histórico do cliente em todos os canais e os dados do CRM antes de responder. Nunca invente preço, prazo ou condição: se não está na base, diga que vai confirmar e passe para uma pessoa. Se perguntarem se é robô, responda com honestidade e siga ajudando.";
 
 // Os funis de VENDA de cada ramo (abaixo, em "pipelines") ficam guardados como referência, mas não
-// são mais aplicados: no Vínculo todo ramo usa a jornada de pós-venda (features/posvenda/journey).
+// são mais aplicados: na Central de CS todo ramo usa a jornada de pós-venda (features/posvenda/journey).
 // Como apply_segment_template acha funil e etapa pelo nome, aplicar um ramo numa conta nova não
 // cria nada por cima do funil "Pós-venda" que ela já tem; numa conta antiga, cria a jornada.
 const SALES_SEGMENTS: SegmentTemplate[] = [

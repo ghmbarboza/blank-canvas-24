@@ -7,7 +7,7 @@ const NAVY = "#001F35";
 const GOLD = "#B9915B";
 const GOLD_LIGHT = "#D9BC8C";
 
-// Símbolo do Vínculo: dois elos dourados entrelaçados sobre azul-marinho. O mesmo desenho de
+// Símbolo da Central de CS: dois elos dourados entrelaçados sobre azul-marinho. O mesmo desenho de
 // public/brand/vinculo-icon.svg (favicon). Funciona em fundo claro e escuro: a placa navy é dele.
 export function Logo({ className, title }: { className?: string; title?: string }) {
   const id = useId();

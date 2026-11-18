@@ -1,6 +1,6 @@
 // Primeiros passos: o passo a passo do primeiro acesso, pensado para a aula ao vivo. À esquerda,
 // os seis passos com o estado de cada um e a barra de progresso; à direita, o formulário do passo
-// escolhido. Tudo se faz por botão; a Vi fica a um clique para tirar dúvida. O estado vem do
+// escolhido. Tudo se faz por botão; a Cris fica a um clique para tirar dúvida. O estado vem do
 // roteiro do servidor (o que está feito é lido da conta, não do que a pessoa clicou).
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useNavigate } from "@tanstack/react-router";
@@ -163,7 +163,7 @@ interface Props {
   /** passo aberto no painel; null = a lista (no celular) ou o próximo passo (na tela larga) */
   step: string | null;
   onStep: (id: string | null) => void;
-  /** troca o passo a passo pela conversa com a Vi */
+  /** troca o passo a passo pela conversa com a Cris */
   onAskVi: () => void;
 }
 

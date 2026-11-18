@@ -76,7 +76,7 @@ async function guestCall<T>(body: Record<string, unknown>): Promise<T> {
   return j as T;
 }
 
-// Sala Vínculo: convidado entra pelo link (?t=) sem login; quem é da equipe entra logado como anfitrião.
+// Sala Central de CS: convidado entra pelo link (?t=) sem login; quem é da equipe entra logado como anfitrião.
 export function RoomPage({ meetingId, token }: { meetingId: string; token: string | null }) {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
@@ -112,7 +112,7 @@ function Shell({ children, wide = false }: { children: React.ReactNode; wide?: b
       />
       <header className="relative z-10 flex items-center gap-3 px-6 py-4">
         <Logo className="w-8" />
-        <span className="text-[13px] font-medium text-white/70">Sala Vínculo</span>
+        <span className="text-[13px] font-medium text-white/70">Sala Central de CS</span>
       </header>
       <main
         className={cn(

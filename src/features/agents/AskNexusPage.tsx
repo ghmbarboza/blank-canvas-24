@@ -54,7 +54,7 @@ function safeHref(href: string): string | null {
   return href.startsWith("/") && !href.startsWith("//") ? href : null;
 }
 
-// Pergunte ao Vínculo: o gestor pergunta em português e a resposta vem dos relatórios, com número e link.
+// Pergunte à Central de CS: o gestor pergunta em português e a resposta vem dos relatórios, com número e link.
 export function AskNexusPage() {
   const { current, isManager } = useAccount();
   const accountId = current!.accountId;
@@ -89,7 +89,7 @@ export function AskNexusPage() {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <PageHeader
-        title="Pergunte ao Vínculo"
+        title="Pergunte à Central de CS"
         description="Pergunte sobre a operação como perguntaria a um analista. A resposta vem dos seus relatórios."
       />
       <div className="grid min-h-0 flex-1 overflow-y-auto lg:grid-cols-[minmax(0,1fr)_320px] lg:overflow-hidden">

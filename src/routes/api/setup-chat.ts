@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-// Implantação (Vi). POST { accountId, action }: (restart = refazer do começo)
+// Implantação (Cris). POST { accountId, action }: (restart = refazer do começo)
 //   send   { text }                → uma rodada da conversa (a IA configura pelas ferramentas)
 //   index  { path, name, mime }    → arquivo já enviado ao bucket kb-docs vira conhecimento
 //   soul   {}                      → a "alma do Nexus" (o que a Nexa aprendeu, versionado)

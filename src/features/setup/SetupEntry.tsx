@@ -1,6 +1,6 @@
 // Indicador fixo do onboarding: enquanto faltar passo, o layout mostra quantos faltam e reabre
 // os Primeiros passos no passo pendente. Com tudo feito, o mesmo botão vira a porta da conversa
-// com a Vi. Tudo lê o roteiro do servidor (useRoteiro).
+// com a Cris. Tudo lê o roteiro do servidor (useRoteiro).
 import { ArrowRight, Bot } from "lucide-react";
 
 import { Button } from "@/components/ui/button";

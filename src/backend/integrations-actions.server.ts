@@ -1,6 +1,6 @@
 import { BRAND } from "@/lib/brand";
 // Salvar e testar integração da conta (config na coluna, segredos no Vault). Usado pela tela
-// (/api/integrations) e pela Vi, a implantação por conversa: o mesmo caminho, as mesmas regras.
+// (/api/integrations) e pela Cris, a implantação por conversa: o mesmo caminho, as mesmas regras.
 import { admin, HttpError, type Caller } from "@/backend/http.server";
 import { providerDef, secretKeyName, type ProviderId } from "@/features/integrations/providers";
 

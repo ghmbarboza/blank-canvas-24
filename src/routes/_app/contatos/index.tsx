@@ -4,6 +4,6 @@ import { ContactsPage } from "@/features/contacts/components/ContactsPage";
 import { pageHead } from "@/lib/page-head";
 
 export const Route = createFileRoute("/_app/contatos/")({
-  head: () => pageHead("Contatos", "Contatos e clientes da sua empresa no Vínculo."),
+  head: () => pageHead("Contatos", "Contatos e clientes da sua empresa na Central de CS."),
   component: ContactsPage,
 });

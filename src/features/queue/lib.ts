@@ -404,7 +404,7 @@ export function maskSensitive(text: string): string {
 
 // ───────────────────────── textos para o cliente ─────────────────────────
 export const DIALING_TERM =
-  "As regras de discagem são escolha e responsabilidade da sua empresa. O Vínculo entrega a ferramenta e aplica exatamente o que estiver ligado aqui; cumprir a regulação de telecomunicações (Anatel, prefixo 0303, Não Me Perturbe e afins) cabe a quem opera as ligações. Todas as regras vêm desligadas.";
+  "As regras de discagem são escolha e responsabilidade da sua empresa. A Central de CS entrega a ferramenta e aplica exatamente o que estiver ligado aqui; cumprir a regulação de telecomunicações (Anatel, prefixo 0303, Não Me Perturbe e afins) cabe a quem opera as ligações. Todas as regras vêm desligadas.";
 
 export const OVERFLOW_LABEL: Record<string, string> = {
   callback: "registra um retorno de ligação",

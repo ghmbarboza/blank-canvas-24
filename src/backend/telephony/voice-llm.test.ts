@@ -9,7 +9,7 @@ vi.mock("@/backend/http.server", () => ({
 
 const { chunk, voiceHistory } = await import("./voice-llm.server");
 
-describe("voz → histórico do Vínculo", () => {
+describe("voz → histórico da Central de CS", () => {
   it("ignora o sistema da ElevenLabs, junta partes e corta vazio", () => {
     const h = voiceHistory([
       { role: "system", content: "prompt da EL" },

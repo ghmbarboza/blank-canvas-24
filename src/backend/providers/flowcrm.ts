@@ -61,7 +61,7 @@ export function saleNote(
     action: "note.create",
     data: {
       contact: { name: c.name, email: c.email, telefone: c.phone },
-      title: `${what} no Vínculo: ${deal.title}${valor}`,
+      title: `${what} na Central de CS: ${deal.title}${valor}`,
       body: deal.status === "lost" && deal.reason ? `Motivo: ${deal.reason}` : null,
     },
   };

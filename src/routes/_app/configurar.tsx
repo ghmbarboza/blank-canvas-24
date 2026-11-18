@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useSetup } from "@/features/setup/SetupWizard";
 import { pageHead } from "@/lib/page-head";
 
-// Link antigo /configurar: a Vi agora é um modal. Abre o modal sobre o Painel.
+// Link antigo /configurar: a Cris agora é um modal. Abre o modal sobre o Painel.
 function OpenNexa() {
   const { openNexa } = useSetup();
   const navigate = useNavigate();
@@ -16,6 +16,6 @@ function OpenNexa() {
 }
 
 export const Route = createFileRoute("/_app/configurar")({
-  head: () => pageHead("Configurar com a Vi", "Configure a central conversando com a Vi."),
+  head: () => pageHead("Configurar com a Cris", "Configure a central conversando com a Cris."),
   component: OpenNexa,
 });

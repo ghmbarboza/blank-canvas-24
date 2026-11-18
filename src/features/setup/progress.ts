@@ -1,6 +1,6 @@
 // O roteiro é a única fonte do onboarding: o passo a passo, o indicador fixo do layout, o cartão
 // do Painel e a abertura automática leem daqui (o servidor calcula pelo estado real da conta).
-// Cada formulário e cada rodada da Vi invalidam ["setup"], então isto se atualiza sozinho.
+// Cada formulário e cada rodada da Cris invalidam ["setup"], então isto se atualiza sozinho.
 import { useQuery } from "@tanstack/react-query";
 
 import { callApi } from "@/lib/api";

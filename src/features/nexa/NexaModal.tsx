@@ -1,4 +1,4 @@
-// A conversa com a Vi (a guia de implantação): uma conversa só, caixa de texto embaixo, e o que
+// A conversa com a Cris (a guia de implantação): uma conversa só, caixa de texto embaixo, e o que
 // ela precisa de clique (opções, formulário, cartões, conexões) dentro da própria resposta.
 // Fala com voz (opcional) e guarda o que aprende. É a ajuda ao lado do passo a passo: os botões
 // "Fazer pela tela" levam de volta ao formulário do passo.

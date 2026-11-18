@@ -1,9 +1,9 @@
 // Onboarding ÚNICO: o roteiro do servidor é a única fonte do que falta. Este provider mostra o
-// passo a passo (Primeiros passos, com formulário e botão em cada passo) e a conversa com a Vi,
+// passo a passo (Primeiros passos, com formulário e botão em cada passo) e a conversa com a Cris,
 // que fica como ajuda ao lado. Ele:
 // - abre o passo a passo sozinho a cada acesso (uma vez por aba) enquanto faltar obrigatório;
 // - expõe openNexa para o indicador do layout, o cartão do Painel e a rota /configurar: enquanto
-//   houver passo pendente ela abre o passo a passo; depois, a conversa com a Vi.
+//   houver passo pendente ela abre o passo a passo; depois, a conversa com a Cris.
 import {
   createContext,
   useCallback,
@@ -26,13 +26,13 @@ import { SetupGuide } from "./SetupGuide";
 import { useSetupSettings } from "./state";
 
 interface SetupCtx {
-  /** abre a configuração: o passo a passo enquanto faltar passo; depois, a conversa com a Vi */
+  /** abre a configuração: o passo a passo enquanto faltar passo; depois, a conversa com a Cris */
   openNexa: () => void;
   /** abre o passo a passo, direto num passo se for o caso */
   openGuide: (step?: string) => void;
-  /** abre a conversa com a Vi */
+  /** abre a conversa com a Cris */
   openVi: () => void;
-  /** "Refazer configuração inicial": a Vi recomeça do primeiro passo, sem apagar nada */
+  /** "Refazer configuração inicial": a Cris recomeça do primeiro passo, sem apagar nada */
   restartNexa: () => Promise<void>;
 }
 const Ctx = createContext<SetupCtx | null>(null);
@@ -72,7 +72,7 @@ export function SetupProvider({ children }: { children: ReactNode }) {
   }, [accountId, isAdmin, roteiro.data, pending]);
 
   const qc = useQueryClient();
-  // a conversa da Vi congela o histórico ao montar: depois de recomeçar, monta de novo
+  // a conversa da Cris congela o histórico ao montar: depois de recomeçar, monta de novo
   const [round, setRound] = useState(0);
 
   const openGuide = useCallback((step?: string) => {

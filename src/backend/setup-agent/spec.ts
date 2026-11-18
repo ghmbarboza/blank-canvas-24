@@ -1,4 +1,4 @@
-// A Vi: guia de implantação do Vínculo (pós-venda no WhatsApp). Conduz os passos do roteiro, faz
+// A Cris: guia de implantação da Central de CS (pós-venda no WhatsApp). Conduz os passos do roteiro, faz
 // o trabalho pelas ferramentas e nunca perde o que já foi dito (estado e fatos entram no sistema
 // a cada rodada). Puro: especificação das ferramentas e montagem do prompt, testados sem rede.
 import type { ToolSpec } from "@/backend/agents/tool-loop";
@@ -49,7 +49,7 @@ export const OPENABLE = [
 
 const str = (description: string) => ({ type: "string", description }) as const;
 
-/** A fala da Vi para a pessoa. Chamar encerra a rodada (o modelo é obrigado a usar ferramenta). */
+/** A fala da Cris para a pessoa. Chamar encerra a rodada (o modelo é obrigado a usar ferramenta). */
 export const REPLY: ToolSpec = {
   name: "responder",
   description:

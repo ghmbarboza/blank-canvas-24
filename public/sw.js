@@ -1,4 +1,4 @@
-// Service worker do Vínculo: só recebe Web Push e abre o link ao clicar. Não faz cache de nada.
+// Service worker da Central de CS: só recebe Web Push e abre o link ao clicar. Não faz cache de nada.
 self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", (event) => event.waitUntil(self.clients.claim()));
 
@@ -7,9 +7,9 @@ self.addEventListener("push", (event) => {
   try {
     data = event.data ? event.data.json() : {};
   } catch {
-    data = { title: event.data ? event.data.text() : "Vínculo" };
+    data = { title: event.data ? event.data.text() : "Central de CS" };
   }
-  const title = data.title || "Vínculo";
+  const title = data.title || "Central de CS";
   event.waitUntil(
     self.registration.showNotification(title, {
       body: data.body || "",

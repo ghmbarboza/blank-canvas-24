@@ -274,7 +274,7 @@ export function ProposalPublicPage({ token, print = false }: { token: string; pr
       </main>
       {!print && (
         <footer className="no-print pb-10 text-center text-[11px] text-subtle">
-          Proposta enviada por {seller.name} pelo Vínculo · aceite eletrônico com registro de data,
+          Proposta enviada por {seller.name} pela Central de CS · aceite eletrônico com registro de data,
           IP e navegador
         </footer>
       )}

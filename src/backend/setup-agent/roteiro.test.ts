@@ -207,13 +207,13 @@ describe("roteiroState", () => {
 });
 
 describe("abertura da conversa", () => {
-  it("primeiro uso: a Vi se apresenta, fala dos 6 passos e pede nome e ramo", () => {
+  it("primeiro uso: a Cris se apresenta, fala dos 6 passos e pede nome e ramo", () => {
     const o = opener({
       state: roteiroState(base, []),
       company: PLACEHOLDER_COMPANY,
       person: "Ana",
     });
-    expect(textOf(o)).toMatch(/^Oi, Ana! Eu sou a Vi\./);
+    expect(textOf(o)).toMatch(/^Oi, Ana! Eu sou a Cris\./);
     expect(textOf(o)).toContain("6 passos");
     expect(textOf(o)).toContain("Como se chama a empresa");
     expect(o.messages).toHaveLength(2);
@@ -262,7 +262,7 @@ describe("abertura da conversa", () => {
   });
 });
 
-describe("prompt e ferramentas da Vi", () => {
+describe("prompt e ferramentas da Cris", () => {
   const system = setupSystem({
     snapshot: live,
     facts: [],
@@ -273,8 +273,8 @@ describe("prompt e ferramentas da Vi", () => {
   });
 
   it("fala de pós-venda, da marca nova e do QR Code pela Evolution", () => {
-    expect(system).toContain("Você é a Vi");
-    expect(system).toContain("Vínculo");
+    expect(system).toContain("Você é a Cris");
+    expect(system).toContain("Central de CS");
     expect(system).toContain("pós-venda");
     expect(system).toContain("Evolution");
     expect(system).not.toMatch(/Nexa|Nexus|Viver de IA|—/);

@@ -74,9 +74,9 @@ export function AgentsPage() {
             )}
             {askOn && (
               <Button asChild variant="ghost" size="sm" className="max-sm:hidden">
-                <Link to="/pergunte" aria-label="Pergunte ao Vínculo">
+                <Link to="/pergunte" aria-label="Pergunte à Central de CS">
                   <MessageSquareText aria-hidden />{" "}
-                  <span className="hidden md:inline">Pergunte ao Vínculo</span>
+                  <span className="hidden md:inline">Pergunte à Central de CS</span>
                 </Link>
               </Button>
             )}

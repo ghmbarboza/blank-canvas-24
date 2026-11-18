@@ -32,7 +32,7 @@ export function PublicShell({
       >
         {children}
       </main>
-      <footer className="pb-8 text-center text-[11px] text-subtle">Atendimento com Vínculo</footer>
+      <footer className="pb-8 text-center text-[11px] text-subtle">Atendimento com Central de CS</footer>
     </div>
   );
 }

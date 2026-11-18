@@ -66,12 +66,12 @@ const GROUPS: Group[] = [
   {
     id: "empresa",
     label: "Empresa",
-    description: "Quem é a sua empresa, como o Vínculo aparece para a equipe e o que vocês vendem.",
+    description: "Quem é a sua empresa, como a Central de CS aparece para a equipe e o que vocês vendem.",
   },
   {
     id: "equipe",
     label: "Equipe",
-    description: "Quem entra no Vínculo e o que cada pessoa pode fazer.",
+    description: "Quem entra na Central de CS e o que cada pessoa pode fazer.",
   },
   {
     id: "canais",

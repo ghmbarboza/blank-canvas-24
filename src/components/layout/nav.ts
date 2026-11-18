@@ -184,7 +184,7 @@ export const NAV_GROUPS: NavGroup[] = [
       },
     ],
   },
-  // Só existe para quem também capta cliente novo pelo Vínculo (recurso "Captação de leads").
+  // Só existe para quem também capta cliente novo pela Central de CS (recurso "Captação de leads").
   {
     label: "Captação",
     items: [

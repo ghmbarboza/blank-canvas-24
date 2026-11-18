@@ -8,7 +8,7 @@ export const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1";
 
 /**
  * reply: o agente respondendo o cliente em qualquer canal, campanha e e-mail gerado.
- * deep:  raciocínio longo (Vi, construtor de agente, avaliação, ata).
+ * deep:  raciocínio longo (Cris, construtor de agente, avaliação, ata).
  * fast:  classificar, extrair, pontuar, resumir curto (muito volume, pouca latência).
  * voice: ligação ao vivo (cada segundo pensando é silêncio).
  */

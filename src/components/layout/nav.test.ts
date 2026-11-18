@@ -89,7 +89,7 @@ describe("menu da central", () => {
 
   it("nenhum texto do menu fala o nome do produto antigo", () => {
     for (const i of NAV) expect(i.label).not.toMatch(/nexus|nexa/i);
-    expect(groupLabelFor("/rota-que-nao-existe")).toBe("Vínculo");
+    expect(groupLabelFor("/rota-que-nao-existe")).toBe("Central de CS");
   });
 
   it("extras ficam fora até o gestor ligar; ligados, aparecem", () => {

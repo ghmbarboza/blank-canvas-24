@@ -24,7 +24,7 @@ function GestaoRoute() {
   const navigate = useNavigate();
   return (
     <GestaoPage
-      // No Vínculo o menu chama esta tela de "Saúde da carteira": abre direto nessa aba.
+      // Na Central de CS o menu chama esta tela de "Saúde da carteira": abre direto nessa aba.
       tab={aba ?? "clientes"}
       onTabChange={(t) =>
         void navigate({ to: "/gestao", search: t === "clientes" ? {} : { aba: t }, replace: true })

@@ -21,7 +21,7 @@ import { useUpdateTicket, type TicketRow } from "./api";
 
 const NONE = "__none__";
 
-// Vínculos do chamado: pai/filho, negócio, pedido e incidente (o artigo da base tem cartão próprio).
+// Central de CSs do chamado: pai/filho, negócio, pedido e incidente (o artigo da base tem cartão próprio).
 export function TicketLinks({ accountId, ticket: t }: { accountId: string; ticket: TicketRow }) {
   const { isManager } = useAccount();
   const update = useUpdateTicket(accountId);
@@ -112,7 +112,7 @@ export function TicketLinks({ accountId, ticket: t }: { accountId: string; ticke
   return (
     <section
       className="mb-5 grid gap-2 rounded-2xl border border-border bg-surface p-3 text-[12px]"
-      aria-label="Vínculos"
+      aria-label="Central de CSs"
     >
       <div className="flex flex-wrap items-center gap-2">
         <GitBranch className="size-3.5 text-muted-foreground" aria-hidden />
@@ -121,7 +121,7 @@ export function TicketLinks({ accountId, ticket: t }: { accountId: string; ticke
             Filho de #{parent.data?.number ?? "…"} {parent.data?.subject}
             <button
               type="button"
-              onClick={() => patch({ parent_ticket_id: null }, "Vínculo removido")}
+              onClick={() => patch({ parent_ticket_id: null }, "Central de CS removido")}
               aria-label="Desligar do chamado pai"
             >
               <X className="size-3" />

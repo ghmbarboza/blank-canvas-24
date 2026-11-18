@@ -1,4 +1,4 @@
-// "Pergunte ao Vínculo", parte pura: as ferramentas de leitura que o modelo pode usar. Cada uma
+// "Pergunte à Central de CS", parte pura: as ferramentas de leitura que o modelo pode usar. Cada uma
 // mapeia para uma RPC agregada que já existe (relatórios e painéis), chamada com a sessão do
 // gestor (RLS vale). Nada de SQL livre: o modelo só escolhe a ferramenta e o período.
 import type { ToolSpec } from "./tool-loop";
@@ -229,7 +229,7 @@ export function askTools(canCreateAgent: boolean): ToolSpec[] {
 
 export function askSystem(company: string, today: string): string {
   return [
-    `Você é o "Pergunte ao Vínculo", analista da operação da empresa ${company}. Hoje é ${today}.`,
+    `Você é o "Pergunte à Central de CS", analista da operação da empresa ${company}. Hoje é ${today}.`,
     "Responda só com dados das ferramentas. Toda resposta tem número e diz de onde veio (qual relatório e período).",
     "Se nenhuma ferramenta tem o dado, diga isso claramente e onde ele não foi encontrado; não estime.",
     "Para listar casos, use buscar_conversas e inclua os links (href começando por /inbox/).",

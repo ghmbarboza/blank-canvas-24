@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_app/canais")({
     }
     return out;
   },
-  head: () => pageHead("Canais", "Conexões de atendimento da sua empresa no Vínculo."),
+  head: () => pageHead("Canais", "Conexões de atendimento da sua empresa na Central de CS."),
   component: ChannelsRoute,
 });
 

@@ -1,4 +1,4 @@
-/* Tokens do design system do Vínculo (kit/css/tokens.css), só as variáveis --via-*.
+/* Tokens do design system da Central de CS (kit/css/tokens.css), só as variáveis --via-*.
    As regras de elemento do kit (html, body, h1–h4, a) ficam de fora: o app já tem a própria base
    (src/styles.css) aprovada. O tema escuro do app é pela classe .dark. */
 :root {
@@ -121,7 +121,7 @@
   --via-ink-3: #525c72; /* terciário · timestamps · 224 usos · mais legível (era #5F6981) */
 
   /* ========== ACCENT (dourado sobre navy) ==========
-     Paleta do Vínculo (visual G4): navy #001F35 + dourado #B9915B.
+     Paleta da Central de CS (visual G4): navy #001F35 + dourado #B9915B.
      O acento é o dourado; como TEXTO sobre branco use --via-gold-text.
      ============================================================ */
   --via-accent: var(--via-gold); /* dourado · CTA · destaque */

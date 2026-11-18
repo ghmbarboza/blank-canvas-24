@@ -3,7 +3,7 @@ import { ChevronRight } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { nextStepId, progressOf, useRoteiro } from "@/features/setup/progress";
 
-// Faixa de progresso da configuração, no topo da conversa com a Vi (o passo a passo fica fora da
+// Faixa de progresso da configuração, no topo da conversa com a Cris (o passo a passo fica fora da
 // conversa, a conversa faz uma pergunta por vez). Conta os seis passos principais. Clicar abre o
 // passo a passo.
 export function RoteiroStrip({ accountId, onOpen }: { accountId: string; onOpen: () => void }) {

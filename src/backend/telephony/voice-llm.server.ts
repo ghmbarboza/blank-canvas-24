@@ -37,7 +37,7 @@ interface ChatMessage {
   content: unknown;
 }
 
-/** O que a ElevenLabs manda vira o histórico do Vínculo (o prompt de sistema dela é ignorado). */
+/** O que a ElevenLabs manda vira o histórico da Central de CS (o prompt de sistema dela é ignorado). */
 export function voiceHistory(messages: ChatMessage[]): Turn[] {
   const text = (c: unknown): string =>
     typeof c === "string"

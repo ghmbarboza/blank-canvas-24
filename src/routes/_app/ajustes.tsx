@@ -13,7 +13,7 @@ export const Route = createFileRoute("/_app/ajustes")({
     const aba = search["aba"];
     return isSettingsTab(aba) ? { aba } : {};
   },
-  head: () => pageHead("Ajustes", "Preferências e configurações da empresa no Vínculo."),
+  head: () => pageHead("Ajustes", "Preferências e configurações da empresa na Central de CS."),
   component: SettingsRoute,
 });
 

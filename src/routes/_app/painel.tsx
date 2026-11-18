@@ -5,6 +5,6 @@ import { pageHead } from "@/lib/page-head";
 
 // Toda conta começa aqui, gestor ou atendente.
 export const Route = createFileRoute("/_app/painel")({
-  head: () => pageHead("Painel", "Indicadores de atendimento e vendas no Vínculo."),
+  head: () => pageHead("Painel", "Indicadores de atendimento e vendas na Central de CS."),
   component: DashboardPage,
 });

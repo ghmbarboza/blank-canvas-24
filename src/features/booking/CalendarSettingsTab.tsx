@@ -18,14 +18,14 @@ export function CalendarSettingsTab() {
   return (
     <div className="space-y-6">
       <SettingsCard
-        title="Sala de reunião Vínculo"
+        title="Sala de reuniãa Central de CS"
         description="Vídeo próprio da plataforma, com transcrição ao vivo, coach e ata."
       >
         <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-border p-4">
           <BrandTile id="livekit" size={32} />
           <p className="min-w-0 flex-1 text-[13px]">
             {lkOk
-              ? "Conectada. As reuniões abrem na sala Vínculo."
+              ? "Conectada. As reuniões abrem na sala Central de CS."
               : "Ainda não conectada. Um administrador liga o LiveKit em Integrações."}
           </p>
           <Button size="sm" variant="outline" asChild>

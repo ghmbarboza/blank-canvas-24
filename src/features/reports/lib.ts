@@ -201,7 +201,7 @@ export function reportEmailHtml(
 <h1 style="font-size:22px;margin:4px 0 4px">${esc(name)}</h1>
 <p style="color:#5b6b80;font-size:13px;margin:0 0 18px">${esc(ENTITY_LABEL[config.entity])} · ${esc(metricLabel)} por ${esc(groupLabel.toLowerCase())}</p>
 <table style="width:100%;border-collapse:collapse;font-size:13px">${body || '<tr><td style="padding:12px;color:#5b6b80">Nada neste período.</td></tr>'}</table>
-<p style="margin:24px 0"><a href="${link}" style="background:#B9915B;color:#001F35;font-weight:700;padding:10px 20px;border-radius:10px;text-decoration:none">Abrir no Vínculo</a></p></div>`;
+<p style="margin:24px 0"><a href="${link}" style="background:#B9915B;color:#001F35;font-weight:700;padding:10px 20px;border-radius:10px;text-decoration:none">Abrir na Central de CS</a></p></div>`;
 }
 
 export function monthRange(d = new Date()): { from: string; to: string } {

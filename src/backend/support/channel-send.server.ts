@@ -164,7 +164,7 @@ async function dispatch(
     return sendZadarmaSms(accountId, ch, to, p.text, p.contactId);
   }
   if (ch.platform === "sms")
-    throw new Error("Este canal de SMS saiu do Vínculo. Conecte o SMS pela Zadarma em Canais.");
+    throw new Error("Este canal de SMS saiu da Central de CS. Conecte o SMS pela Zadarma em Canais.");
   throw new Error(`O canal ${ch.provider} ainda não envia pelo servidor`);
 }
 

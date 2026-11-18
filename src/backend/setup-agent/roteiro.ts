@@ -57,7 +57,7 @@ export interface RoteiroStep {
   required: boolean;
   /** "Depois, se quiser": fora da barra de progresso, nunca bloqueia */
   later: boolean;
-  /** o que a Vi precisa conseguir neste passo, e com qual ferramenta */
+  /** o que a Cris precisa conseguir neste passo, e com qual ferramenta */
   goal: string;
   /** a pergunta com que ela abre o passo */
   ask: string;

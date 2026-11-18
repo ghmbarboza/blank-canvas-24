@@ -1,6 +1,6 @@
 // Agenda nos dois sentidos, parte pura (sem rede nem banco).
-// - Vínculo → agenda: o que fazer com o evento externo de cada agenda conectada (criar, atualizar, apagar).
-// - Agenda → Vínculo: o que uma mudança externa (Google events.list / Graph calendarView delta)
+// - Central de CS → agenda: o que fazer com o evento externo de cada agenda conectada (criar, atualizar, apagar).
+// - Agenda → Central de CS: o que uma mudança externa (Google events.list / Graph calendarView delta)
 //   significa para a reunião nossa que gerou aquele evento (remarcar, cancelar ou nada).
 import type { CalendarProvider } from "./state";
 
@@ -77,7 +77,7 @@ export function upsertLink(links: readonly ExternalLink[], link: ExternalLink): 
   return [...links.filter((l) => l.connection_id !== link.connection_id), link];
 }
 
-// ── agenda → Vínculo ──────────────────────────────────────────────────────────────
+// ── agenda → Central de CS ──────────────────────────────────────────────────────────────
 
 /** Evento do Google Agenda (events.list). Dia inteiro não tem horário: fica sem início/fim. */
 export function normalizeGoogleEvent(e: unknown): ExternalChange | null {
@@ -175,7 +175,7 @@ export function applyAction(meeting: MeetingSnapshot, action: MatchedChange["act
     : { ...meeting, scheduled_start: action.start, scheduled_end: action.end };
 }
 
-// ── Vínculo → agenda ──────────────────────────────────────────────────────────────
+// ── Central de CS → agenda ──────────────────────────────────────────────────────────────
 
 /** Para cada agenda conectada do anfitrião: criar, atualizar, apagar ou nada. */
 export function planPush(meeting: MeetingSnapshot, connectionIds: readonly string[]): PushOp[] {

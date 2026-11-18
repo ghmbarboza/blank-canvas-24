@@ -108,13 +108,13 @@ describe("Primeiros passos", () => {
     expect(navigate).toHaveBeenCalledWith({ to: "/pos-venda" });
   });
 
-  it("clicar num passo abre o formulário dele; a Vi fica a um clique", () => {
+  it("clicar num passo abre o formulário dele; a Cris fica a um clique", () => {
     current = view(["empresa"]);
     const { onStep, onAskVi } = open();
     expect(screen.getByText("form whatsapp")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: /Base de conhecimento/ }));
     expect(onStep).toHaveBeenCalledWith("conhecimento");
-    fireEvent.click(screen.getByRole("button", { name: /Perguntar para a Vi/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Perguntar para a Cris/ }));
     expect(onAskVi).toHaveBeenCalled();
   });
 

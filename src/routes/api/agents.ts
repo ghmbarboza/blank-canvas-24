@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { parseAgentChannel } from "@/features/agents/catalog";
 
 // Equipe de IA: criar a partir de modelo ou por conversa, simulador, suíte e avaliação (com custo
-// antes de rodar), Composio (chave do cliente, conectar, ações) e "Pergunte ao Vínculo".
+// antes de rodar), Composio (chave do cliente, conectar, ações) e "Pergunte à Central de CS".
 // Leitura e edição simples (persona, regras, ferramentas, ligar/desligar) vão direto ao banco com RLS.
 export const Route = createFileRoute("/api/agents")({
   server: {

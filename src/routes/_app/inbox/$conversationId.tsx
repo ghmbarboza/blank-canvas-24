@@ -5,7 +5,7 @@ import { ConversationView } from "@/features/inbox/components/ConversationView";
 import { pageHead } from "@/lib/page-head";
 
 export const Route = createFileRoute("/_app/inbox/$conversationId")({
-  head: () => pageHead("Conversa", "Atendimento de uma conversa no Vínculo."),
+  head: () => pageHead("Conversa", "Atendimento de uma conversa na Central de CS."),
   component: ConversationPage,
 });
 

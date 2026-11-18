@@ -1,5 +1,5 @@
 // WhatsApp por QR Code (Evolution), tudo na mesma tela: endereço e chave do servidor, botão
-// Conectar, QR Code e, quando o celular lê, "Conectado". É o caminho principal do Vínculo: o
+// Conectar, QR Code e, quando o celular lê, "Conectado". É o caminho principal da Central de CS: o
 // passo "Conectar o WhatsApp" do primeiro acesso e a primeira opção em Canais usam este bloco.
 import { useEffect, useId, useMemo, useState, type FormEvent } from "react";
 import { CheckCircle2, CircleAlert, Loader2, QrCode } from "lucide-react";

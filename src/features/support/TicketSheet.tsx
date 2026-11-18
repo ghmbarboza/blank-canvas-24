@@ -315,8 +315,8 @@ export function TicketSheet({ accountId, ticketId, onClose }: Props) {
                   </ol>
                 )}
               </section>
-              <section aria-label="Vínculos">
-                <h3 className="eyebrow mb-2">Vínculos</h3>
+              <section aria-label="Central de CSs">
+                <h3 className="eyebrow mb-2">Central de CSs</h3>
                 <TicketLinks accountId={accountId} ticket={t} />
               </section>
             </div>

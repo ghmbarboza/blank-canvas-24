@@ -386,7 +386,7 @@ function NumbersCard({
               <DialogTitle>Registrar número na ElevenLabs</DialogTitle>
               <DialogDescription>
                 A senha SIP da Zadarma vai direto para a ElevenLabs (tronco de saída). Ela não fica
-                guardada no Vínculo.
+                guardada na Central de CS.
               </DialogDescription>
             </DialogHeader>
             <Input

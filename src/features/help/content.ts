@@ -1,4 +1,4 @@
-// Central de ajuda de quem opera o Vínculo (dono, gestor, atendente, vendedor).
+// Central de ajuda de quem opera a Central de CS (dono, gestor, atendente, vendedor).
 // Não confundir com /ajuda/$slug, que é a central pública que o cliente final da empresa vê.
 // Texto conferido contra as telas desta versão: ao mudar um caminho de tela, ajuste aqui.
 import type { LinkProps } from "@tanstack/react-router";
@@ -56,7 +56,7 @@ export const faq: FaqItem[] = [
   {
     pergunta: "Onde coloco as chaves?",
     resposta:
-      "Só pelas telas do Vínculo, em Canais: o endereço e a chave do servidor do WhatsApp no cartão WhatsApp por QR Code, e a chave da Zernio no cartão Instagram. Ajustes › Integrações mostra se cada uma está funcionando. A chave vai direto para o cofre da conta e não aparece de novo na tela. Nunca peça para guardar chave pelo chat do Lovable nem em Secrets do projeto: o Vínculo não lê chave de lá.",
+      "Só pelas telas da Central de CS, em Canais: o endereço e a chave do servidor do WhatsApp no cartão WhatsApp por QR Code, e a chave da Zernio no cartão Instagram. Ajustes › Integrações mostra se cada uma está funcionando. A chave vai direto para o cofre da conta e não aparece de novo na tela. Nunca peça para guardar chave pelo chat do Lovable nem em Secrets do projeto: a Central de CS não lê chave de lá.",
   },
   {
     pergunta: "Por que a IA não respondeu uma conversa?",
@@ -69,19 +69,19 @@ export const faq: FaqItem[] = [
       "Ela só responde bem sobre o que leu. Abra Chamados › Base de conhecimento e acrescente um artigo com a informação que faltou (prazo, troca, garantia, preço). Depois teste a mesma pergunta em Equipe de IA, na aba Testar do agente.",
   },
   {
-    pergunta: "O Vínculo já tem IA ou preciso contratar?",
+    pergunta: "A Central de CS já tem IA ou preciso contratar?",
     resposta:
       "Já tem. O atendente de IA responde no WhatsApp usando a IA inclusa do Lovable, sem chave nenhuma. O uso consome o crédito do workspace do Lovable onde a sua cópia mora.",
   },
   {
     pergunta: "Pulei a configuração inicial. Como volto?",
     resposta:
-      "O botão Configurar no menu lateral (dono e administrador) mostra quantas configurações faltam e reabre a Vi no passo pendente. Para começar do zero, use Ajustes › Recursos extras › Refazer configuração inicial: a Vi volta ao primeiro passo, oferece de novo o que você tinha pulado e nada do que já foi salvo é apagado.",
+      "O botão Configurar no menu lateral (dono e administrador) mostra quantas configurações faltam e reabre a Cris no passo pendente. Para começar do zero, use Ajustes › Recursos extras › Refazer configuração inicial: a Cris volta ao primeiro passo, oferece de novo o que você tinha pulado e nada do que já foi salvo é apagado.",
   },
   {
     pergunta: "Acabei de fazer a minha cópia (remix). Quem é o dono?",
     resposta:
-      "A primeira pessoa que se cadastra num Vínculo novo vira dona da central e cai direto na configuração com a Vi. Quem chega depois entra só por convite, criado pelo dono ou por um administrador em Ajustes › Pessoas e acessos.",
+      "A primeira pessoa que se cadastra numa Central de CS novo vira dona da central e cai direto na configuração com a Cris. Quem chega depois entra só por convite, criado pelo dono ou por um administrador em Ajustes › Pessoas e acessos.",
   },
   {
     pergunta: "Qual a diferença entre os papéis?",
@@ -91,7 +91,7 @@ export const faq: FaqItem[] = [
   {
     pergunta: "A tradução automática do navegador atrapalha?",
     resposta:
-      "Pode atrapalhar: ao colar uma chave com a tradução ligada, o navegador às vezes troca letras e a chave para de funcionar. Mantenha a página em português original (recuse a tradução) na tela de Canais. Os campos de chave do Vínculo já pedem ao navegador para não traduzir.",
+      "Pode atrapalhar: ao colar uma chave com a tradução ligada, o navegador às vezes troca letras e a chave para de funcionar. Mantenha a página em português original (recuse a tradução) na tela de Canais. Os campos de chave da Central de CS já pedem ao navegador para não traduzir.",
   },
   {
     pergunta: "Algumas telas do menu não aparecem. Por quê?",
@@ -121,7 +121,7 @@ export const guias: HelpGuide[] = [
     passos: [
       "O Instagram da empresa precisa ser uma conta profissional.",
       "Crie a conta em zernio.com e copie a chave de API. A Zernio é o serviço que liga o Instagram à central.",
-      "No Vínculo, abra Configuração › Canais. No cartão Instagram, cole a chave da Zernio e salve. Faz uma vez só.",
+      "Na Central de CS, abra Configuração › Canais. No cartão Instagram, cole a chave da Zernio e salve. Faz uma vez só.",
       "Clique em Conectar o Instagram, entre na conta da empresa na página do Instagram e autorize.",
       "Ao voltar, o canal aparece como Conectado e as mensagens diretas novas chegam na Caixa de entrada.",
     ],
@@ -136,7 +136,7 @@ export const guias: HelpGuide[] = [
       "No menu, abra Chamados e clique em Base de conhecimento.",
       "Clique em Novo artigo, dê um título claro (por exemplo, Política de troca) e escreva ou cole o texto.",
       "Salve e repita para cada assunto. Artigo curto, com um assunto só, funciona melhor.",
-      "Tem o material em PDF? No botão Configurar do menu lateral, a Vi recebe o arquivo no passo da base de conhecimento.",
+      "Tem o material em PDF? No botão Configurar do menu lateral, a Cris recebe o arquivo no passo da base de conhecimento.",
     ],
     link: { to: "/atendimento/base", label: "Abrir Base de conhecimento" },
   },
@@ -149,7 +149,7 @@ export const guias: HelpGuide[] = [
       "Abra o agente e, em Configurar, ajuste o nome, o jeito de falar e quando passar para uma pessoa.",
       "Na aba Testar, faça uma pergunta cuja resposta está na base de conhecimento. Por exemplo: qual é o prazo de troca?",
       "Se a resposta vier genérica, acrescente o assunto na Base de conhecimento e teste de novo.",
-      "Para ajustar conversando, use o botão Configurar no menu lateral e fale com a Vi.",
+      "Para ajustar conversando, use o botão Configurar no menu lateral e fale com a Cris.",
     ],
     link: { to: "/equipe-ia", label: "Abrir Equipe de IA" },
   },

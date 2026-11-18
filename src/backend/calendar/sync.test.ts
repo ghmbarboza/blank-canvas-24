@@ -98,7 +98,7 @@ describe("normalização", () => {
   });
 });
 
-describe("planChange (agenda → Vínculo)", () => {
+describe("planChange (agenda → Central de CS)", () => {
   const c = (over = {}) => ({ id: "e1", canceled: false, start: START, end: END, ...over });
 
   it("cancelado lá cancela aqui", () => {
@@ -167,7 +167,7 @@ describe("matchChanges", () => {
   });
 });
 
-describe("planPush (Vínculo → agenda)", () => {
+describe("planPush (Central de CS → agenda)", () => {
   it("reunião nova sem link: cria em cada agenda conectada", () => {
     expect(planPush(meeting(), ["c1", "c2"])).toEqual([
       { kind: "create", connectionId: "c1" },
@@ -186,7 +186,7 @@ describe("planPush (Vínculo → agenda)", () => {
     ).toEqual([]);
   });
 
-  it("remarcada no Vínculo: atualiza só a agenda desatualizada", () => {
+  it("remarcada na Central de CS: atualiza só a agenda desatualizada", () => {
     const m = meeting({
       scheduled_start: "2026-10-26T13:00:00.000Z",
       scheduled_end: "2026-10-26T13:30:00.000Z",

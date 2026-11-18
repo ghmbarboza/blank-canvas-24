@@ -49,7 +49,7 @@ describe("notificationEmail", () => {
   it("sem link não tem botão", () => {
     expect(
       notificationEmail({ title: "Oi", body: null, link: null }, "https://app.x").html,
-    ).not.toContain("Abrir no Vínculo");
+    ).not.toContain("Abrir na Central de CS");
   });
 });
 

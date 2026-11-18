@@ -5,7 +5,7 @@ import { InboxEmpty } from "@/features/inbox/components/InboxEmpty";
 import { pageHead } from "@/lib/page-head";
 
 export const Route = createFileRoute("/_app/inbox/")({
-  head: () => pageHead("Caixa de entrada", "Conversas de todos os seus canais no Vínculo."),
+  head: () => pageHead("Caixa de entrada", "Conversas de todos os seus canais na Central de CS."),
   component: InboxIndex,
 });
 

@@ -108,7 +108,7 @@ export function notificationEmail(
   const html = `<div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;color:#001F35">
 <p style="font-size:16px;font-weight:bold;margin:0 0 8px">${title}</p>
 ${body ? `<p style="font-size:14px;line-height:1.5;margin:0 0 16px;color:#334155">${body}</p>` : ""}
-${url ? `<p><a href="${escapeHtml(url)}" style="display:inline-block;background:#B9915B;color:#001F35;font-weight:700;padding:10px 18px;border-radius:10px;text-decoration:none;font-size:14px">Abrir no Vínculo</a></p>` : ""}
+${url ? `<p><a href="${escapeHtml(url)}" style="display:inline-block;background:#B9915B;color:#001F35;font-weight:700;padding:10px 18px;border-radius:10px;text-decoration:none;font-size:14px">Abrir na Central de CS</a></p>` : ""}
 <p style="font-size:11px;color:#94a3b8;margin-top:24px">Você recebe este aviso porque ligou o e-mail para este tipo em Ajustes, Notificações.</p>
 </div>`;
   const text = [noVars(n.title), n.body ? noVars(n.body) : null, url].filter(Boolean).join("\n\n");

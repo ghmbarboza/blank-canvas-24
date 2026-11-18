@@ -1,4 +1,4 @@
-// Ferramentas da Vi. Cada uma faz pelo mesmo caminho da tela (mesmas regras e permissões) e
+// Ferramentas da Cris. Cada uma faz pelo mesmo caminho da tela (mesmas regras e permissões) e
 // devolve, além do texto para a IA, uma ação para a tela desenhar (botão, link, "feito").
 import { admin, HttpError, type Caller } from "@/backend/http.server";
 import type { Json } from "@/integrations/supabase/types";
@@ -251,7 +251,7 @@ async function insertOpener(
 
 /**
  * "Refazer configuração inicial": esquece o que a pessoa pulou e a escolha de recursos (para a
- * Vi oferecer de novo) e abre uma rodada nova do começo. Não apaga empresa, canais, agentes,
+ * Cris oferecer de novo) e abre uma rodada nova do começo. Não apaga empresa, canais, agentes,
  * conhecimento nem a conversa anterior.
  */
 export async function restartConversation(caller: Caller, person: string) {
@@ -276,7 +276,7 @@ export async function restartConversation(caller: Caller, person: string) {
   return insertOpener(caller.accountId, o.messages);
 }
 
-/** O que a Vi aprendeu, para o painel "o que já sei": estado + fatos + biblioteca + sonhos. */
+/** O que a Cris aprendeu, para o painel "o que já sei": estado + fatos + biblioteca + sonhos. */
 export async function loadSoul(accountId: string): Promise<Soul> {
   const db = admin();
   const [snapshot, facts, docs, wishes] = await Promise.all([
@@ -366,7 +366,7 @@ async function upsertFact(
   if (error) throw new Error(error.message);
 }
 
-/** Passo "Sua empresa": o mesmo caminho para a ferramenta da Vi e para o formulário da tela. */
+/** Passo "Sua empresa": o mesmo caminho para a ferramenta da Cris e para o formulário da tela. */
 export async function saveCompany(
   caller: Caller,
   p: { name?: string; segment?: string; sells?: string; tone?: string; source?: string },

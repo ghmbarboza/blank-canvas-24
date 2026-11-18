@@ -51,8 +51,8 @@ export function SuperviseDialog({ agent, onClose }: { agent: LiveAgent; onClose:
           </DialogDescription>
         </DialogHeader>
         <p className="text-[13px] text-muted-foreground">
-          A Zadarma não deixa o Vínculo entrar sozinho numa ligação em andamento. Por isso a escuta
-          sai do seu ramal: o Vínculo liga o modo supervisor e mostra o código para discar.
+          A Zadarma não deixa a Central de CS entrar sozinho numa ligação em andamento. Por isso a escuta
+          sai do seu ramal: a Central de CS liga o modo supervisor e mostra o código para discar.
         </p>
         <div role="radiogroup" aria-label="Modo" className="grid grid-cols-3 gap-2">
           {MODES.map((m) => (

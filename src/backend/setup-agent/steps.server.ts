@@ -1,5 +1,5 @@
-// Passo a passo do onboarding pela TELA (formulário e botão), sem depender da conversa com a Vi.
-// Cada função faz o mesmo que a ferramenta equivalente da Vi faria, pelo mesmo caminho do banco.
+// Passo a passo do onboarding pela TELA (formulário e botão), sem depender da conversa com a Cris.
+// Cada função faz o mesmo que a ferramenta equivalente da Cris faria, pelo mesmo caminho do banco.
 import { admin, HttpError, type Caller } from "@/backend/http.server";
 
 import { saveCompany } from "./tools.server";

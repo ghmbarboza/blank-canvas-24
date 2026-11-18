@@ -124,7 +124,7 @@ export async function handleWebhook(
     .eq("account_id", accountId)
     .eq("signature_doc_id", ev.token)
     .maybeSingle();
-  if (!p) return { ignored: "documento de fora do Vínculo" };
+  if (!p) return { ignored: "documento de fora da Central de CS" };
 
   const type = ev.event_type ?? "";
   const signed = type === "doc_signed" || ev.status === "signed";

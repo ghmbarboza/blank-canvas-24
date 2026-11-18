@@ -27,7 +27,7 @@ interface Props {
   label?: string;
 }
 
-// "Iniciar reunião": abre a sala Vínculo do evento (ou cria uma agora) e leva o vendedor para dentro.
+// "Iniciar reunião": abre a sala Central de CS do evento (ou cria uma agora) e leva o vendedor para dentro.
 function StartMeetingButtonImpl({
   eventId,
   contactId,

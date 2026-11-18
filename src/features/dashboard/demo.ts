@@ -163,7 +163,7 @@ export function demoGerencial(days: Period): Gerencial {
         open: 9,
       },
       {
-        name: "IA Vínculo",
+        name: "IA Central de CS",
         role: "agent",
         replies: 302,
         frt: 9,

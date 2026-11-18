@@ -467,7 +467,7 @@ export function BookingPageDialog({
                   <SelectContent>
                     {((hasChannel("video") && meetOn !== false) || f.location === "nexus_meet") && (
                       <SelectItem value="nexus_meet">
-                        Sala Vínculo (vídeo, transcrição e coach)
+                        Sala Central de CS (vídeo, transcrição e coach)
                       </SelectItem>
                     )}
                     {(hasChannel("phone") || f.location === "phone") && (

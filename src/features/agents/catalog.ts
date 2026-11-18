@@ -457,7 +457,7 @@ export const BASE_EVALS: EvalSeed[] = [
 ];
 
 export const TEMPLATES: AgentTemplate[] = [
-  // O primeiro e o recomendado: o Vínculo é uma central de pós-venda.
+  // O primeiro e o recomendado: a Central de CS é uma central de pós-venda.
   {
     key: "post_sale",
     role: "post_sale",

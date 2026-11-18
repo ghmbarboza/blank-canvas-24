@@ -162,13 +162,13 @@ describe("transcrição em turnos", () => {
     expect(
       transcriptTurns(
         [
-          { speaker: "agent", text: "Olá, aqui é a Vi.", at: 2 },
+          { speaker: "agent", text: "Olá, aqui é a Cris.", at: 2 },
           { speaker: "user", text: "Quero remarcar.", at: 8 },
         ],
         null,
       ),
     ).toEqual([
-      { who: "agent", text: "Olá, aqui é a Vi.", at: 2 },
+      { who: "agent", text: "Olá, aqui é a Cris.", at: 2 },
       { who: "customer", text: "Quero remarcar.", at: 8 },
     ]);
   });

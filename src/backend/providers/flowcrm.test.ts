@@ -21,10 +21,10 @@ describe("Flow CRM: contrato do webhook-inbound", () => {
   it("venda vira anotação com valor em reais e motivo da perda", () => {
     const won = saleNote(c, { title: "Plano anual", value: 4500, status: "won" });
     expect(won.action).toBe("note.create");
-    expect(won.data.title).toContain("Venda ganha no Vínculo: Plano anual");
+    expect(won.data.title).toContain("Venda ganha na Central de CS: Plano anual");
     expect(won.data.title).toContain("4.500,00");
     const lost = saleNote(c, { title: "Plano", value: null, status: "lost", reason: "Preço" });
-    expect(lost.data.title).toBe("Venda perdida no Vínculo: Plano");
+    expect(lost.data.title).toBe("Venda perdida na Central de CS: Plano");
     expect(lost.data.body).toBe("Motivo: Preço");
   });
 

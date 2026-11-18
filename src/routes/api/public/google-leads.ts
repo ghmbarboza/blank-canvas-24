@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 // Webhook dos formulários de lead do Google Ads:
-// /api/public/google-leads?account=<conta>&form=<formulário do Vínculo que recebe>
+// /api/public/google-leads?account=<conta>&form=<formulário da Central de CS que recebe>
 // O Google manda a "chave" do formulário em google_key; ela tem de bater com a chave salva em
 // Integrações › Google Ads (formulários de lead). Lead de teste (is_test) só confirma a ligação.
 export const Route = createFileRoute("/api/public/google-leads")({
@@ -46,7 +46,7 @@ export const Route = createFileRoute("/api/public/google-leads")({
             .eq("account_id", account)
             .maybeSingle();
           if (!form)
-            throw new h.HttpError(404, "Formulário do Vínculo não encontrado", "not_found");
+            throw new h.HttpError(404, "Formulário da Central de CS não encontrado", "not_found");
           const fields = (form.fields as unknown as { key: string; map: string | null }[]) ?? [];
           const result = await cap.submitForm(
             form.id,

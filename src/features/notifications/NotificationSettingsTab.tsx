@@ -36,10 +36,10 @@ const CHANNELS: { id: keyof Channels; label: string }[] = [
 
 const PUSH_TEXT = {
   unsupported:
-    "Este navegador não aceita avisos. No iPhone, adicione o Vínculo à tela inicial primeiro.",
+    "Este navegador não aceita avisos. No iPhone, adicione a Central de CS à tela inicial primeiro.",
   denied:
     "Os avisos estão bloqueados neste navegador. Libere nas configurações do site e volte aqui.",
-  off: "Receba avisos mesmo com o Vínculo fechado ou em outra aba.",
+  off: "Receba avisos mesmo com a Central de CS fechado ou em outra aba.",
   on: "Este navegador está recebendo avisos.",
 } as const;
 
