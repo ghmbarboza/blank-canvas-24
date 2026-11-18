@@ -67,4 +67,31 @@ describe("buildAttention", () => {
     );
     expect(r.map((i) => i.ref)).toEqual(["b", "c"]);
   });
+
+  it("reclamação aberta no Reclame Aqui entra antes de cliente em risco e não repete o cliente", () => {
+    const r = buildAttention(
+      {
+        ...empty,
+        risk: [risk("k1", 40), risk("k2", 55)],
+        complaints: [
+          { contact_id: "k1", name: "Cliente k1", at: "2026-10-20" },
+          { contact_id: "k9", name: "Dona Rita", at: "2026-10-12" },
+        ],
+      },
+      NOW,
+    );
+    expect(r.map((i) => i.kind)).toEqual(["complaint", "complaint", "client_risk"]);
+    // a mais antiga primeiro
+    expect(r[0]).toMatchObject({
+      title: "Reclamação aberta no Reclame Aqui: Dona Rita",
+      ref: "k9",
+    });
+    expect(r[0]!.reason).toContain("12/10/2026");
+    // k1 já apareceu pela reclamação: em risco sobra só k2
+    expect(r[2]!.ref).toBe("k2");
+  });
+
+  it("sem reclamação registrada nada muda", () => {
+    expect(buildAttention({ ...empty, complaints: [] }, NOW)).toEqual([]);
+  });
 });

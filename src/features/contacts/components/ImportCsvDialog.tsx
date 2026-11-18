@@ -89,7 +89,9 @@ export function ImportCsvDialog({ accountId, open, onOpenChange }: Props) {
           <DialogTitle>Importar contatos</DialogTitle>
           <DialogDescription>
             Planilha CSV com as colunas {CSV_HEADERS.join(", ")}. Tags separadas por “|”. Quem já
-            existe (mesmo telefone ou e-mail) é ignorado.
+            existe (mesmo telefone ou e-mail) é ignorado. Com data_compra preenchida (dia/mês/ano) a
+            pessoa entra como cliente e os prazos de arrependimento, garantia e recompra contam
+            dessa data, sem mandar mensagem de boas-vindas.
           </DialogDescription>
         </DialogHeader>
 

@@ -16,8 +16,16 @@ import { ACCOUNT_QUERY_KEY } from "@/lib/account";
 
 import { AT_RISK_STAGE, findStage } from "./journey";
 import {
+  hasReviewLinkVar,
+  withAvaliacoes,
+  withPrazos,
+  type AvaliacoesConfig,
+  type Prazos,
+} from "./moment";
+import {
   RULE_KEYS,
   buildRuleAutomation,
+  readRuleOptions,
   ruleKeyOf,
   withDailyCap,
   withRuleFlag,
@@ -165,5 +173,67 @@ export function useSaveDailyCap(accountId: string) {
         (cur) => withDailyCap(cur as Record<string, unknown>, cap) as typeof cur,
       ),
     onSuccess: () => qc.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY }),
+  });
+}
+
+/**
+ * Grava os prazos da conta. As duas regras contadas da data da compra (fim do arrependimento e fim
+ * da garantia) acompanham o prazo novo, sem perder a mensagem que o dono escreveu.
+ */
+export function useSavePrazos(accountId: string) {
+  const qc = useQueryClient();
+  const save = useSaveAutomation(accountId);
+  return useMutation({
+    mutationFn: async (p: { prazos: Prazos; rows: Partial<Record<RuleKey, RuleRow>> }) => {
+      await patchAccountSettings(
+        accountId,
+        (cur) => withPrazos(cur as Record<string, unknown>, p.prazos) as typeof cur,
+      );
+      for (const key of ["fim_arrependimento", "fim_garantia"] as const) {
+        const row = p.rows[key];
+        if (!row) continue;
+        const o = readRuleOptions(key, row);
+        const v = buildRuleAutomation(key, {
+          ...(o.message ? { message: o.message } : {}),
+          ...(o.days ? { days: o.days } : {}),
+          prazos: p.prazos,
+        });
+        await save.mutateAsync({ id: row.id, name: row.name, trigger: v.trigger, graph: v.graph });
+      }
+    },
+    onSettled: () => {
+      void qc.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
+      void qc.invalidateQueries({ queryKey: automationKeys.all(accountId) });
+    },
+  });
+}
+
+/**
+ * Grava os links de avaliação. Com o link do Google preenchido, a regra "Nota alta pede indicação"
+ * que já existia ganha a variável {{link_avaliacao}} no fim da mensagem (quem escreveu o próprio
+ * texto com a variável não é tocado).
+ */
+export function useSaveAvaliacoes(accountId: string) {
+  const qc = useQueryClient();
+  const save = useSaveAutomation(accountId);
+  return useMutation({
+    mutationFn: async (p: { links: AvaliacoesConfig; rows: Partial<Record<RuleKey, RuleRow>> }) => {
+      await patchAccountSettings(
+        accountId,
+        (cur) => withAvaliacoes(cur as Record<string, unknown>, p.links) as typeof cur,
+      );
+      const row = p.rows.nota_alta_indicacao;
+      if (!row || !p.links.google_url.trim()) return;
+      const o = readRuleOptions("nota_alta_indicacao", row);
+      if (!o.message || hasReviewLinkVar(o.message)) return;
+      const v = buildRuleAutomation("nota_alta_indicacao", {
+        message: `${o.message.trim()} {{link_avaliacao}}`.slice(0, 1000),
+      });
+      await save.mutateAsync({ id: row.id, name: row.name, trigger: v.trigger, graph: v.graph });
+    },
+    onSettled: () => {
+      void qc.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
+      void qc.invalidateQueries({ queryKey: automationKeys.all(accountId) });
+    },
   });
 }

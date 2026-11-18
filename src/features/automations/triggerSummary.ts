@@ -39,8 +39,12 @@ export function triggerSummary(t: Trigger): string {
       return `Sem resposta há ${t.hours ?? 24} h`;
     case "inactive":
       return `Cliente sem conversa há ${t.days ?? 30} dia(s)`;
-    case "date":
-      return `${t.days_before ?? 0} dia(s) antes de ${t.field?.replace(/^custom\./, "") ?? "uma data"}`;
+    case "date": {
+      const key = t.field?.replace(/^custom\./, "");
+      const field = key === "ultima_compra" ? "data da compra" : (key ?? "uma data");
+      const n = t.days_before ?? 0;
+      return n < 0 ? `${-n} dia(s) depois de ${field}` : `${n} dia(s) antes de ${field}`;
+    }
     default:
       return "Inscrição manual";
   }

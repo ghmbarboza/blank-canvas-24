@@ -1,3 +1,4 @@
+import type { MomentKey } from "@/features/posvenda/moment";
 import { normalizePhone } from "@/features/telephony/lib";
 import type { SegmentFilter } from "@/features/segments/rules";
 import type { Tables } from "@/integrations/supabase/types";
@@ -28,6 +29,7 @@ export function lifecycleLabel(v: string | null | undefined): string {
 const SOURCE_LABEL: Record<string, string> = {
   manual: "Cadastro manual",
   csv: "Importação",
+  import_csv: "Importação",
 };
 
 export function isPlatformSource(source: string | null | undefined): source is string {
@@ -49,6 +51,8 @@ export interface ContactFilters {
   onlyMine: boolean;
   segment: SegmentFilter | null;
   segmentId: string | null;
+  /** Momento do pós-venda (calculado na tela; vira uma lista de ids na consulta). */
+  moment: MomentKey | "all";
 }
 
 export const DEFAULT_CONTACT_FILTERS: ContactFilters = {
@@ -59,6 +63,7 @@ export const DEFAULT_CONTACT_FILTERS: ContactFilters = {
   onlyMine: false,
   segment: null,
   segmentId: null,
+  moment: "all",
 };
 
 export type ContactSortColumn =

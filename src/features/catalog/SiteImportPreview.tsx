@@ -106,7 +106,12 @@ export function SiteImportPreview({
 
   const visible = showAll ? items : items.slice(0, SHOWN);
   return (
-    <section className={cn("rounded-2xl border border-border bg-surface", className)}>
+    <section
+      className={cn(
+        "w-full max-w-full min-w-0 overflow-hidden rounded-2xl border border-border bg-surface",
+        className,
+      )}
+    >
       <header className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-3">
         <Globe className="size-4 shrink-0 text-muted-foreground" aria-hidden />
         <p className="min-w-0 flex-1 truncate text-[13.5px] font-semibold">{host}</p>

@@ -5,6 +5,13 @@ import { admin } from "@/backend/http.server";
 import { sendWhatsApp } from "@/backend/messaging.server";
 import { applySegment, isSegmentFilter } from "@/features/segments/rules";
 import { triggerMatches, type Trigger } from "@/features/automations/engine";
+import {
+  PURCHASE_KEY,
+  dayOfInstant,
+  purchaseDateOf,
+  todayIso,
+  withCustomDate,
+} from "@/features/posvenda/moment";
 import type { Json } from "@/integrations/supabase/types";
 
 import type { JobPayloads } from "../contract";
@@ -174,6 +181,23 @@ const WAKE_TYPES = new Set([
   "form.submitted",
 ]);
 
+/**
+ * Virou cliente e ninguém informou a data da compra: vale o dia em que virou cliente. É dessa data
+ * (contacts.custom.ultima_compra) que saem o prazo de arrependimento, a garantia e a recompra.
+ * Nunca troca uma data que já está lá.
+ */
+async function stampPurchaseDate(contactId: string, at: string | null) {
+  const db = admin();
+  const { data: c } = await db.from("contacts").select("custom").eq("id", contactId).maybeSingle();
+  if (!c || purchaseDateOf(c.custom)) return;
+  const day = dayOfInstant(at) ?? todayIso();
+  const { error } = await db
+    .from("contacts")
+    .update({ custom: withCustomDate(c.custom, PURCHASE_KEY, day) as Json })
+    .eq("id", contactId);
+  if (error) console.error("[posvenda] data da compra não gravada", error.message);
+}
+
 onDomainEvents(async (events) => {
   const db = admin();
   const accounts = [...new Set(events.map((e) => e.account_id))];
@@ -190,6 +214,7 @@ onDomainEvents(async (events) => {
       (ev.entity === "contact" ? ev.entity_id : null);
     if (!contactId) continue;
     if (WAKE_TYPES.has(ev.type)) await wakeContactRuns(contactId);
+    if (ev.type === "customer.new") await stampPurchaseDate(contactId, ev.created_at);
     for (const a of (autos ?? []).filter((x) => x.account_id === ev.account_id)) {
       if (!triggerMatches(a.trigger as unknown as Trigger, { type: ev.type, payload })) continue;
       await enroll(a, [contactId], {

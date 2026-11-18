@@ -5,6 +5,15 @@ import { admin, type Caller } from "@/backend/http.server";
 import type { Graph, Trigger } from "@/features/automations/engine";
 import { AT_RISK_STAGE, findStage } from "@/features/posvenda/journey";
 import {
+  PRAZO_LIMITS,
+  avaliacoesOf,
+  cleanUrl,
+  prazosOf,
+  withAvaliacoes,
+  withPrazos,
+  type Prazos,
+} from "@/features/posvenda/moment";
+import {
   MAX_DAILY_CAP,
   RULES,
   RULE_KEYS,
@@ -56,7 +65,23 @@ const ALIASES: Record<string, RuleKey> = {
   parado: "cliente_parado",
   inativo: "cliente_parado",
   em_risco: "cliente_parado",
+  fim_arrependimento: "fim_arrependimento",
+  arrependimento: "fim_arrependimento",
+  desistencia: "fim_arrependimento",
+  fim_garantia: "fim_garantia",
+  garantia: "fim_garantia",
 };
+
+const PRAZO_ARGS: [keyof Prazos, string][] = [
+  ["arrependimento_dias", "prazo de arrependimento"],
+  ["garantia_dias", "garantia"],
+  ["renovacao_aviso_dias", "aviso de renovação"],
+];
+
+async function accountSettings(accountId: string): Promise<Record<string, unknown>> {
+  const { data } = await admin().from("accounts").select("settings").eq("id", accountId).single();
+  return (data?.settings ?? {}) as Record<string, unknown>;
+}
 
 export function ruleKeyFrom(raw: string): RuleKey | null {
   const k = raw
@@ -116,7 +141,14 @@ interface Change {
   days?: number | undefined;
 }
 
-async function applyChange(caller: Caller, c: Change, row: Row | undefined): Promise<Row> {
+async function applyChange(
+  caller: Caller,
+  c: Change,
+  row: Row | undefined,
+  prazos: Prazos,
+  /** true = os prazos da conta mudaram: regrava o gatilho mesmo sem mensagem ou dias novos. */
+  rebuild = false,
+): Promise<Row> {
   const db = admin();
   const engine = await import("@/features/automations/engine");
   const def = ruleDef(c.key);
@@ -127,6 +159,7 @@ async function applyChange(caller: Caller, c: Change, row: Row | undefined): Pro
     ...(message ? { message } : {}),
     ...(days ? { days } : {}),
     atRiskStage: c.key === "cliente_parado" ? await atRiskStage(caller.accountId) : null,
+    prazos,
   });
   const content = {
     trigger: spec.trigger as unknown as Json,
@@ -153,7 +186,7 @@ async function applyChange(caller: Caller, c: Change, row: Row | undefined): Pro
       .single();
     if (error || !data) throw new Error(`regra ${def.title}: ${error?.message ?? "não criou"}`);
     current = data as Row;
-  } else if (c.message !== undefined || c.days !== undefined) {
+  } else if (c.message !== undefined || c.days !== undefined || rebuild) {
     const { error } = await db
       .from("automations")
       .update(content)
@@ -191,7 +224,7 @@ async function applyChange(caller: Caller, c: Change, row: Row | undefined): Pro
         await rt.scheduleStep(caller.accountId, r.id, r.step_seq, new Date());
       }
     }
-    if (spec.trigger.type === "inactive")
+    if (spec.trigger.type === "inactive" || spec.trigger.type === "date")
       await db.rpc("enqueue_job", {
         _account: caller.accountId,
         _kind: "automation.scan",
@@ -224,6 +257,8 @@ async function describe(accountId: string) {
     db.from("accounts").select("settings").eq("id", accountId).single(),
   ]);
   const cap = dailyCapOf(acc.data?.settings);
+  const prazos = prazosOf(acc.data?.settings);
+  const links = avaliacoesOf(acc.data?.settings);
   const lines = RULES.map((def) => {
     const row = rows[def.key];
     const on = row?.status === "active";
@@ -236,7 +271,7 @@ async function describe(accountId: string) {
       message: o.message,
     };
   });
-  return { lines, cap, rows };
+  return { lines, cap, rows, prazos, links };
 }
 
 export const RULES_RUNNERS: Record<string, Runner> = {
@@ -249,6 +284,8 @@ export const RULES_RUNNERS: Record<string, Runner> = {
             `- ${l.title} (${l.key}): ${l.on ? "LIGADA" : "desligada"}. ${l.when}${l.message ? ` Mensagem: "${l.message}"` : " (não manda mensagem ao cliente)"}`,
         ),
         `Teto de envios por dia: ${d.cap === 0 ? "sem teto" : d.cap}.`,
+        `Prazos do pós-venda (contados da data da compra): arrependimento ${d.prazos.arrependimento_dias} dias, garantia ${d.prazos.garantia_dias} dias, aviso de renovação ${d.prazos.renovacao_aviso_dias} dias antes.`,
+        `Link de avaliação no Google: ${d.links.google_url || "não cadastrado"}. Perfil no Reclame Aqui: ${d.links.reclame_aqui_url || "não cadastrado"}.`,
       ].join("\n"),
       block: {
         kind: "steps",
@@ -269,6 +306,37 @@ export const RULES_RUNNERS: Record<string, Runner> = {
       a["teto_diario"] === undefined || a["teto_diario"] === ""
         ? null
         : intArg(a["teto_diario"], 0, MAX_DAILY_CAP);
+    // prazos do pós-venda e links de avaliação (accounts.settings.posvenda)
+    const prazosArg = (a["prazos"] && typeof a["prazos"] === "object" ? a["prazos"] : {}) as Record<
+      string,
+      unknown
+    >;
+    const newPrazos: Partial<Prazos> = {};
+    for (const [k, label] of PRAZO_ARGS) {
+      const raw = prazosArg[k];
+      if (raw === undefined || raw === null || raw === "") continue;
+      const n = intArg(raw, 0, 100_000);
+      const lim = PRAZO_LIMITS[k];
+      if (n === null || n < lim.min || n > lim.max)
+        throw new Error(`${label}: use de ${lim.min} a ${lim.max} dias`);
+      newPrazos[k] = n;
+    }
+    const linkArgs: [string, "google_url" | "reclame_aqui_url", string][] = [
+      ["link_avaliacao_google", "google_url", "link de avaliação no Google"],
+      ["link_reclame_aqui", "reclame_aqui_url", "perfil no Reclame Aqui"],
+    ];
+    const newLinks: { google_url?: string; reclame_aqui_url?: string } = {};
+    for (const [arg, key, label] of linkArgs) {
+      const raw = s(a[arg], 500);
+      if (!raw) continue;
+      const url = cleanUrl(raw);
+      if (!url) throw new Error(`${label}: preciso do endereço completo, começando com https://`);
+      newLinks[key] = url;
+    }
+    const prazosChanged = Object.keys(newPrazos).length > 0;
+    const linksChanged = Object.keys(newLinks).length > 0;
+    const prazos = prazosOf(withPrazos(await accountSettings(ctx.caller.accountId), newPrazos));
+
     const changes = new Map<RuleKey, Change>();
     if (all === "ligar" || all === "desligar")
       for (const k of RULE_KEYS) changes.set(k, { key: k, on: all === "ligar" });
@@ -306,8 +374,10 @@ export const RULES_RUNNERS: Record<string, Runner> = {
       throw new Error(
         `regra desconhecida: ${unknown.join(", ")}. As regras são: ${RULES.map((r) => `${r.key} (${r.title})`).join(", ")}`,
       );
-    if (!changes.size && cap === null)
-      throw new Error("diga qual regra mudar (ligar, desligar, mensagem ou dias) ou o teto diário");
+    if (!changes.size && cap === null && !prazosChanged && !linksChanged)
+      throw new Error(
+        "diga qual regra mudar (ligar, desligar, mensagem ou dias), o teto diário, um prazo do pós-venda ou um link de avaliação",
+      );
 
     const rows = await loadRows(ctx.caller.accountId);
     // regra que depende de outra: ligar "nota baixa" ou "nota alta" liga a pesquisa junto
@@ -326,7 +396,7 @@ export const RULES_RUNNERS: Record<string, Runner> = {
     for (const c of changes.values()) {
       const def = ruleDef(c.key);
       try {
-        rows[c.key] = await applyChange(ctx.caller, c, rows[c.key]);
+        rows[c.key] = await applyChange(ctx.caller, c, rows[c.key], prazos);
         const bits = [
           c.on === true ? "ligada" : c.on === false ? "desligada" : "",
           c.days !== undefined ? `${c.days} dias` : "",
@@ -337,6 +407,17 @@ export const RULES_RUNNERS: Record<string, Runner> = {
         failed.push(err instanceof Error ? err.message : String(err));
       }
     }
+    // prazo novo: as duas regras contadas da data da compra acompanham (sem mexer no liga/desliga)
+    if (prazosChanged)
+      for (const k of ["fim_arrependimento", "fim_garantia"] as const) {
+        const row = rows[k];
+        if (!row || changes.has(k)) continue;
+        try {
+          rows[k] = await applyChange(ctx.caller, { key: k }, row, prazos, true);
+        } catch (err) {
+          failed.push(err instanceof Error ? err.message : String(err));
+        }
+      }
     // o resumo no settings reflete o estado real de TODAS as regras (contrato com o passo a passo)
     const { data: acc } = await db
       .from("accounts")
@@ -348,6 +429,16 @@ export const RULES_RUNNERS: Record<string, Runner> = {
     if (cap !== null) {
       settings = withDailyCap(settings, cap);
       done.push(`teto de envios por dia: ${cap === 0 ? "sem teto" : cap}`);
+    }
+    if (prazosChanged) {
+      settings = withPrazos(settings, newPrazos);
+      done.push(
+        `prazos: arrependimento ${prazos.arrependimento_dias} dias, garantia ${prazos.garantia_dias} dias, aviso de renovação ${prazos.renovacao_aviso_dias} dias antes`,
+      );
+    }
+    if (linksChanged) {
+      settings = withAvaliacoes(settings, newLinks);
+      done.push("links de avaliação salvos");
     }
     const { error } = await db
       .from("accounts")

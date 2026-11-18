@@ -10,7 +10,12 @@ import {
   type Trigger,
 } from "@/features/automations/engine";
 
-/** Contrato fixo com o onboarding: accounts.settings.posvenda.rules = { chave: boolean }. */
+import { DEFAULT_PRAZOS, PURCHASE_KEY, type Prazos } from "./moment";
+
+/**
+ * Contrato fixo com o onboarding: accounts.settings.posvenda.rules = { chave: boolean }.
+ * As sete primeiras chaves não mudam; as duas últimas (prazos da compra) entraram depois.
+ */
 export const RULE_KEYS = [
   "boas_vindas",
   "checkin_7d",
@@ -19,6 +24,8 @@ export const RULE_KEYS = [
   "nota_alta_indicacao",
   "recompra",
   "cliente_parado",
+  "fim_arrependimento",
+  "fim_garantia",
 ] as const;
 export type RuleKey = (typeof RULE_KEYS)[number];
 
@@ -80,7 +87,7 @@ export const RULES: readonly RuleDef[] = [
     what: "Nota 9 ou 10 recebe um agradecimento com pedido de avaliação ou indicação.",
     when: "Na hora em que o cliente responde a pesquisa com nota alta.",
     message:
-      "{{primeiro_nome}}, obrigado pela nota! Se conhecer alguém que também ia gostar, pode indicar a gente? Uma avaliação sua ajuda muito.",
+      "{{primeiro_nome}}, obrigado pela nota! Se conhecer alguém que também ia gostar, pode indicar a gente? Uma avaliação sua ajuda muito. {{link_avaliacao}}",
     days: null,
     needs: "pesquisa",
   },
@@ -100,6 +107,24 @@ export const RULES: readonly RuleDef[] = [
     when: "Quando o cliente fica {dias} dias sem conversa.",
     message: null,
     days: { label: "Dias sem conversa", value: 60, min: 7, max: 365 },
+  },
+  {
+    key: "fim_arrependimento",
+    title: "Fim do prazo de arrependimento",
+    what: "Um dia antes de o prazo de arrependimento vencer, pergunta se está tudo certo com a compra.",
+    when: "Um dia antes de vencer o prazo de arrependimento, contado da data da compra.",
+    message:
+      "Oi {{primeiro_nome}}, tudo certo com a sua compra? Se ficou alguma dúvida ou algo não saiu como você esperava, me conta por aqui que eu resolvo.",
+    days: null,
+  },
+  {
+    key: "fim_garantia",
+    title: "Garantia perto do fim",
+    what: "Avisa o cliente que a garantia está acabando e oferece ajuda antes de vencer.",
+    when: "{dias} dias antes de a garantia vencer, contados da data da compra.",
+    message:
+      "Oi {{primeiro_nome}}! A garantia da sua compra vai até {{fim_garantia}}. Está tudo funcionando bem? Se precisar de algo, é só chamar por aqui.",
+    days: { label: "Dias antes de a garantia vencer", value: 7, min: 1, max: 60 },
   },
 ];
 
@@ -186,6 +211,8 @@ export interface RuleOptions {
   days?: number;
   /** Etapa "Em risco" do funil padrão, quando existe (regra cliente_parado). */
   atRiskStage?: { id: string; name: string } | null;
+  /** Prazos da conta (regras fim_arrependimento e fim_garantia). Sem valor, vale o padrão. */
+  prazos?: Prazos;
 }
 
 export interface RuleAutomation {
@@ -220,6 +247,34 @@ function chain(nodes: Omit<AutoNode, "position">[]): Graph {
 }
 
 const END: Omit<AutoNode, "position"> = { id: "end", type: "end", config: {} };
+
+/** Campo que o gatilho por data lê: a data da última compra do cliente. */
+export const PURCHASE_FIELD = `custom.${PURCHASE_KEY}`;
+
+/**
+ * Gatilho "N dias depois da compra". O motor já tem o gatilho por data ("X dias antes de um campo");
+ * dias negativos viram "depois", então nada muda no motor.
+ */
+function afterPurchase(days: number): Trigger {
+  return { type: "date", field: PURCHASE_FIELD, days_before: days === 0 ? 0 : -Math.max(0, days) };
+}
+
+// A varredura por data olha o dia inteiro: a espera segura a inscrição aberta até o dia passar,
+// para o cliente não entrar duas vezes na mesma data. Nova compra (nova data) entra de novo.
+const HOLD: Omit<AutoNode, "position"> = {
+  id: "hold",
+  type: "wait",
+  config: { minutes: 2 * 1440 },
+  next: "end",
+};
+
+/** Quantos dias antes do fim da garantia a regra fim_garantia avisa (cabe dentro da garantia). */
+export function garantiaLead(days: number | undefined, prazos: Prazos): number {
+  const def = RULES.find((r) => r.key === "fim_garantia")!.days!;
+  const n = Math.round(Number(days));
+  const lead = Number.isFinite(n) && n > 0 ? Math.max(def.min, Math.min(def.max, n)) : def.value;
+  return Math.max(0, Math.min(lead, prazos.garantia_dias - 1));
+}
 const NEW_CUSTOMER: Trigger = { type: "event", event: "customer.new" };
 
 function clampDays(def: RuleDef, days: number | undefined): number {
@@ -368,6 +423,28 @@ export function buildRuleAutomation(key: RuleKey, opts: RuleOptions = {}): RuleA
         graph: chain([tag, ...move, task, END]),
       };
     }
+    case "fim_arrependimento": {
+      const prazos = opts.prazos ?? DEFAULT_PRAZOS;
+      return {
+        ...base,
+        kind: "journey",
+        // um dia antes de vencer: prazo de 7 dias, fala no 6º dia depois da compra
+        trigger: afterPurchase(prazos.arrependimento_dias - 1),
+        reentry: "after_exit",
+        graph: chain([{ ...send(), next: "hold" }, HOLD, END]),
+      };
+    }
+    case "fim_garantia": {
+      const prazos = opts.prazos ?? DEFAULT_PRAZOS;
+      const lead = garantiaLead(opts.days, prazos);
+      return {
+        ...base,
+        kind: "journey",
+        trigger: afterPurchase(prazos.garantia_dias - lead),
+        reentry: "after_exit",
+        graph: chain([{ ...send({ lead_days: lead }), next: "hold" }, HOLD, END]),
+      };
+    }
   }
 }
 
@@ -382,9 +459,11 @@ export function readRuleOptions(
   const days =
     key === "cliente_parado"
       ? Number(a.trigger.days)
-      : Number.isFinite(waitMin)
-        ? waitMin / DAY
-        : NaN;
+      : key === "fim_garantia"
+        ? Number(a.graph.nodes["msg"]?.config?.["lead_days"])
+        : Number.isFinite(waitMin)
+          ? waitMin / DAY
+          : NaN;
   return {
     message:
       def.message === null ? null : typeof msg === "string" && msg.trim() ? msg : def.message,

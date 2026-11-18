@@ -33,6 +33,8 @@ import { ContactFormDialog } from "../ContactFormDialog";
 import { EmailComposerDialog } from "@/features/email/EmailComposerDialog";
 import { hasChannel } from "@/lib/edition";
 import { NewTicketDialog } from "@/features/support/NewTicketDialog";
+import { useMomentMap } from "@/features/posvenda/moment-api";
+import { MomentBadge, ReviewsLog } from "@/features/posvenda/moment-ui";
 import { HealthChip, useHealthMap } from "../../customer-health";
 import { ContactAiPanel } from "./ContactAiPanel";
 import { ContactProfileCard } from "./ContactProfileCard";
@@ -54,6 +56,7 @@ export function ContactDetailPage({ contactId }: Props) {
   const conversations = useContactConversations(accountId, contactId);
   const classify = useClassifyContact(accountId);
   const health = useHealthMap(accountId).map.get(contactId);
+  const moment = useMomentMap(accountId).map.get(contactId);
   const [editing, setEditing] = useState(false);
   const [emailing, setEmailing] = useState(false);
   const [ticketing, setTicketing] = useState(false);
@@ -133,6 +136,7 @@ export function ContactDetailPage({ contactId }: Props) {
                 {lifecycleLabel(c.lifecycle)}
               </span>
               {health && <HealthChip level={health.result.level} score={health.result.score} />}
+              {moment && <MomentBadge moment={moment} />}
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -213,6 +217,18 @@ export function ContactDetailPage({ contactId }: Props) {
           >
             <p className="eyebrow mb-4">Jornada do cliente</p>
             <OpportunityBlock accountId={accountId} contact={c} />
+          </section>
+          <section
+            className="rounded-xl border border-border bg-surface p-4"
+            aria-labelledby="reviews-heading"
+          >
+            <h2
+              id="reviews-heading"
+              className="mb-3 text-[11px] font-medium tracking-widest text-subtle uppercase"
+            >
+              Avaliações públicas
+            </h2>
+            <ReviewsLog accountId={accountId} contactId={c.id} custom={c.custom} />
           </section>
           <ContactCompanyCard accountId={accountId} contact={c} />
           <ContactProfileCard accountId={accountId} contact={c} />

@@ -1,10 +1,19 @@
 import { useMemo } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Hand, HeartPulse, LifeBuoy, Loader2, MessageCircle, type LucideIcon } from "lucide-react";
+import {
+  Hand,
+  HeartPulse,
+  LifeBuoy,
+  Loader2,
+  Megaphone,
+  MessageCircle,
+  type LucideIcon,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useHealthMap } from "@/features/contacts/customer-health";
+import { useMomentMap } from "@/features/posvenda/moment-api";
 import { useAccountId } from "@/lib/account";
 import { errorMessage } from "@/lib/functions";
 import { cn } from "@/lib/utils";
@@ -23,6 +32,7 @@ const ICON: Record<AttentionKind, LucideIcon> = {
   ticket_due: LifeBuoy,
   waiting: MessageCircle,
   handoff: Hand,
+  complaint: Megaphone,
   client_risk: HeartPulse,
 };
 
@@ -31,13 +41,16 @@ const CONTEXT: Record<AttentionKind, string> = {
   ticket_due: "Atendimento",
   waiting: "Caixa de entrada",
   handoff: "Passagem da IA",
+  complaint: "Avaliações públicas",
   client_risk: "Saúde da carteira",
 };
 
 // O que precisa de você hoje: até 5 pendências reais, cada uma com o motivo e um botão que resolve.
 export function AttentionCard({ className }: { className?: string }) {
   const sources = useAttentionSources(true);
-  const health = useHealthMap(useAccountId());
+  const accountId = useAccountId();
+  const health = useHealthMap(accountId);
+  const moments = useMomentMap(accountId);
   const items = useMemo(() => {
     if (!sources.data) return [];
     const risk = [...health.map.values()]
@@ -49,8 +62,17 @@ export function AttentionCard({ className }: { className?: string }) {
         reason: h.result.factors.find((f) => f.points < 0)?.label ?? null,
         next_action: h.result.nextAction,
       }));
-    return buildAttention({ ...sources.data, risk });
-  }, [sources.data, health.map]);
+    const complaints = [...moments.reviews.entries()].flatMap(([id, list]) =>
+      list
+        .filter((e) => e.kind === "reclame_aqui" && e.status === "aberta")
+        .map((e) => ({
+          contact_id: id,
+          name: moments.names.get(id) ?? "Cliente sem nome",
+          at: e.at,
+        })),
+    );
+    return buildAttention({ ...sources.data, risk, complaints });
+  }, [sources.data, health.map, moments.reviews, moments.names]);
 
   return (
     <section
@@ -88,7 +110,7 @@ export function AttentionCard({ className }: { className?: string }) {
       ) : items.length === 0 ? (
         <EmptyNote>
           Nada pendente agora. Cliente esperando resposta, passagem da IA sem dono, chamado perto do
-          prazo e cliente em risco aparecem aqui.
+          prazo, reclamação aberta no Reclame Aqui e cliente em risco aparecem aqui.
         </EmptyNote>
       ) : (
         <ol className="space-y-3">
@@ -165,6 +187,7 @@ function Action({ item, primary }: { item: AttentionItem; primary: boolean }) {
           </Link>
         </Button>
       );
+    case "complaint":
     case "client_risk":
       return (
         <Button asChild size="sm" variant={variant}>

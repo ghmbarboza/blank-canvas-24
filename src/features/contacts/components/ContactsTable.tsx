@@ -11,6 +11,8 @@ import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import { useAccountId } from "@/lib/account";
 import { cn } from "@/lib/utils";
 
+import { useMomentMap } from "@/features/posvenda/moment-api";
+
 import { useHealthMap } from "../customer-health";
 import type { ContactRow, ContactSort, ContactSortColumn, TeamMember } from "../types";
 import { buildContactColumns, contactTableFeatures } from "./contactColumns";
@@ -58,11 +60,13 @@ export function ContactsTable({
   onOpen,
   footer,
 }: Props) {
-  const { map: health } = useHealthMap(useAccountId());
+  const accountId = useAccountId();
+  const { map: health } = useHealthMap(accountId);
+  const { map: moments } = useMomentMap(accountId);
   const memberMap = useMemo(() => new Map(members.map((m) => [m.userId, m])), [members]);
   const columns = useMemo(
-    () => buildContactColumns(memberMap, channels, health, onOpen),
-    [memberMap, channels, health, onOpen],
+    () => buildContactColumns(memberMap, channels, health, moments, onOpen),
+    [memberMap, channels, health, moments, onOpen],
   );
   const sorting = useMemo<SortingState>(() => [{ id: sort.column, desc: sort.desc }], [sort]);
 
@@ -186,6 +190,7 @@ export function ContactsTable({
       </table>
       <ContactsMobileList
         health={health}
+        moments={moments}
         rows={rows}
         selection={selection}
         onSelectionChange={onSelectionChange}

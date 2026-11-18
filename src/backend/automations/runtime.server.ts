@@ -18,6 +18,17 @@ import {
   type Guards,
   type StepAction,
 } from "@/features/automations/engine";
+import {
+  addDays,
+  avaliacoesOf,
+  fillReviewLink,
+  formatDay,
+  hasReviewLinkVar,
+  prazosOf,
+  purchaseDateOf,
+  todayIso,
+  withReview,
+} from "@/features/posvenda/moment";
 import { dailyCapOf } from "@/features/posvenda/rules";
 import type { Json, Tables } from "@/integrations/supabase/types";
 
@@ -276,6 +287,45 @@ export function fillVars(text: string, c: Contact, ownerName: string | null): st
   return text.replace(/\{\{\s*([a-z_]+)\s*\}\}/gi, (m, k: string) => map[k.toLowerCase()] ?? m);
 }
 
+const POSVENDA_VAR = /\{\{\s*(link_avaliacao|fim_garantia)\s*\}\}/i;
+
+/** Variáveis de pós-venda: link de avaliação no Google e data em que a garantia do cliente vence. */
+async function fillPosvendaVars(
+  text: string,
+  accountId: string,
+  contact: Contact,
+): Promise<{ text: string; askedReview: boolean }> {
+  const { data } = await admin()
+    .from("accounts")
+    .select("settings")
+    .eq("id", accountId)
+    .maybeSingle();
+  const google = avaliacoesOf(data?.settings).google_url;
+  const purchase = purchaseDateOf(contact.custom);
+  const end = purchase
+    ? formatDay(addDays(purchase, prazosOf(data?.settings).garantia_dias))
+    : "o fim do prazo";
+  const asked = hasReviewLinkVar(text) && Boolean(google);
+  const out = fillReviewLink(text, google).replace(/\{\{\s*fim_garantia\s*\}\}/gi, end);
+  return { text: out, askedReview: asked };
+}
+
+/** "Pedimos avaliação em dd/mm" no registro do cliente, quando a mensagem saiu com o link. */
+async function logReviewRequest(contact: Contact) {
+  const today = todayIso();
+  const custom = withReview(contact.custom, {
+    id: `pedido-${today}`,
+    kind: "pedido",
+    at: today,
+    via: "regra",
+  });
+  const { error } = await admin()
+    .from("contacts")
+    .update({ custom: custom as Json })
+    .eq("id", contact.id);
+  if (error) console.error("[posvenda] pedido de avaliação não registrado", error.message);
+}
+
 function escapeHtml(s: string) {
   return s.replace(
     /[&<>"']/g,
@@ -389,6 +439,13 @@ async function applyAction(
             ? waText.replace(/\{\{\s*link_pesquisa\s*\}\}/gi, link)
             : `${waText} ${link}`;
         }
+        // Pós-venda: {{link_avaliacao}} vira o link do Google da empresa e {{fim_garantia}} a data.
+        let askedReview = false;
+        if (waText && POSVENDA_VAR.test(waText)) {
+          const filled = await fillPosvendaVars(waText, run.account_id, contact);
+          waText = filled.text;
+          askedReview = filled.askedReview;
+        }
         await enqueue(run.account_id, "whatsapp.send", {
           contact_id: contact.id,
           text: waText,
@@ -410,6 +467,7 @@ async function applyAction(
                 : "marketing",
           automation_run_id: run.id,
         });
+        if (askedReview) await logReviewRequest(contact);
         return "WhatsApp enfileirado";
       }
       if (a.channel === "sms") {

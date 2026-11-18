@@ -20,6 +20,8 @@ import {
   useToggleRule,
   useWhatsAppConnected,
 } from "./api";
+import { avaliacoesOf, prazosOf } from "./moment";
+import { AvaliacoesBlock, PrazosBlock } from "./PrazosBlock";
 import { RuleCard } from "./RuleCard";
 import {
   MAX_DAILY_CAP,
@@ -31,12 +33,17 @@ import {
   type RuleOptions,
 } from "./rules";
 
-// A jornada em três momentos, na ordem em que o cliente vive cada um.
+// A jornada em quatro momentos, na ordem em que o cliente vive cada um.
 const MOMENTS: { title: string; lead: string; keys: RuleKey[] }[] = [
   {
     title: "Chegada",
     lead: "Os primeiros dias depois da compra.",
     keys: ["boas_vindas", "checkin_7d"],
+  },
+  {
+    title: "Prazos da compra",
+    lead: "Falar com o cliente antes de o prazo de arrependimento e a garantia vencerem.",
+    keys: ["fim_arrependimento", "fim_garantia"],
   },
   {
     title: "Escuta",
@@ -67,12 +74,15 @@ export function PosVendaPage() {
   const save = useSaveRule(accountId);
   const [busy, setBusy] = useState<RuleKey | null>(null);
   const [saving, setSaving] = useState<RuleKey | null>(null);
+  const prazos = prazosOf(current?.settings);
 
   const isOn = (k: RuleKey) => rules.byRule[k]?.status === "active";
   const onCount = RULES.filter((r) => isOn(r.key)).length;
 
   function withStage(key: RuleKey, opts: RuleOptions): RuleOptions {
-    return key === "cliente_parado" ? { ...opts, atRiskStage: stage.data ?? null } : opts;
+    if (key === "cliente_parado") return { ...opts, atRiskStage: stage.data ?? null };
+    // as duas regras contadas da compra seguem os prazos da conta
+    return key === "fim_arrependimento" || key === "fim_garantia" ? { ...opts, prazos } : opts;
   }
 
   function onToggle(def: RuleDef, on: boolean, opts: RuleOptions) {
@@ -113,6 +123,10 @@ export function PosVendaPage() {
   function hintFor(def: RuleDef): string | undefined {
     if (def.needs && isOn(def.key) && !isOn(def.needs))
       return `Só dispara com a regra "${ruleDef(def.needs).title}" ligada.`;
+    if (def.key === "fim_arrependimento")
+      return `Com o prazo de ${prazos.arrependimento_dias} dias, a mensagem sai ${prazos.arrependimento_dias - 1} ${prazos.arrependimento_dias - 1 === 1 ? "dia" : "dias"} depois da compra. Vale para quem tem data da compra na ficha.`;
+    if (def.key === "fim_garantia")
+      return `Garantia de ${prazos.garantia_dias} dias (ajuste em Prazos do pós-venda). Vale para quem tem data da compra na ficha.`;
     if (def.key === "cliente_parado" && stage.isSuccess && !stage.data)
       return 'Sua Carteira não tem a etapa "Em risco": a regra marca o cliente com a etiqueta "em risco" e cria a tarefa.';
     return undefined;
@@ -133,6 +147,18 @@ export function PosVendaPage() {
       />
       <div className="flex-1 overflow-y-auto">
         <div className="mx-auto w-full max-w-4xl space-y-8 p-4 sm:p-6 lg:p-8">
+          <PrazosBlock
+            accountId={accountId}
+            prazos={prazos}
+            rows={rules.byRule}
+            canEdit={isAdmin}
+          />
+          <AvaliacoesBlock
+            accountId={accountId}
+            links={avaliacoesOf(current?.settings)}
+            rows={rules.byRule}
+            canEdit={isAdmin}
+          />
           <VolumeNote
             accountId={accountId}
             cap={dailyCapOf(current?.settings)}

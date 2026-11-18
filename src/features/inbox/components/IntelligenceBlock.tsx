@@ -2,6 +2,7 @@ import { Bot, Loader2, RefreshCw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { CustomerHealthBlock } from "@/features/contacts/customer-health";
+import { MomentBlock } from "@/features/posvenda/moment-ui";
 import { formatRelative } from "@/lib/format";
 import { useClassifyContact } from "../api";
 import type { Contact } from "../types";
@@ -16,6 +17,11 @@ export function IntelligenceBlock({ accountId, contact }: { accountId: string; c
   return (
     <div>
       <CustomerHealthBlock accountId={accountId} contactId={contact.id} />
+      <MomentBlock
+        accountId={accountId}
+        contactId={contact.id}
+        className="mt-4 border-t border-border pt-3"
+      />
       <div className="mt-4 border-t border-border pt-3">
         <p className="flex items-center gap-1.5 text-[11px] font-medium tracking-widest text-subtle uppercase">
           <Bot className="size-3.5 text-foreground" aria-hidden /> Resumo da IA

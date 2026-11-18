@@ -14,6 +14,9 @@ import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import type { TeamMember } from "@/features/contacts/types";
 
 import { stageKind, type BoardDeal, type Stage } from "../types";
+import { MomentMapContext, useMomentMap } from "@/features/posvenda/moment-api";
+import { useAccountId } from "@/lib/account";
+
 import { DealCard } from "./DealCard";
 import { KanbanColumn } from "./KanbanColumn";
 import { LostReasonDialog } from "./LostReasonDialog";
@@ -35,6 +38,8 @@ const SCREEN_READER = {
 export function KanbanBoard({ stages, deals, members, onOpenDeal, onMove }: Props) {
   const [pendingLost, setPendingLost] = useState<DropResult | null>(null);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  // o momento de cada cliente é calculado uma vez aqui e lido pelos cartões
+  const { map: moments } = useMomentMap(useAccountId());
 
   const { columns, activeDeal, dealById, handlers, settle } = useKanbanDnd({
     stages,
@@ -73,61 +78,63 @@ export function KanbanBoard({ stages, deals, members, onOpenDeal, onMove }: Prop
   );
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCorners}
-      accessibility={{ announcements, screenReaderInstructions: SCREEN_READER }}
-      {...handlers}
-    >
-      <div
-        className="flex min-h-0 flex-1 snap-x snap-mandatory items-stretch gap-4 overflow-x-auto overflow-y-hidden p-4 md:snap-none md:p-6"
-        role="region"
-        aria-label="Quadro da carteira"
+    <MomentMapContext.Provider value={moments}>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCorners}
+        accessibility={{ announcements, screenReaderInstructions: SCREEN_READER }}
+        {...handlers}
       >
-        {ordered.map((stage) => {
-          const closed = stageKind(stage) !== "open";
-          const ids = columns[stage.id] ?? [];
-          const list = ids
-            .map((id) => dealById.get(id))
-            .filter((d): d is BoardDeal => d !== undefined);
-          return (
-            <KanbanColumn
-              key={stage.id}
-              stage={stage}
-              deals={list}
-              members={members}
-              onOpen={onOpenDeal}
-              collapsible={closed}
-              collapsed={closed && !expanded[stage.id]}
-              onToggleCollapsed={() => setExpanded((e) => ({ ...e, [stage.id]: !e[stage.id] }))}
+        <div
+          className="flex min-h-0 flex-1 snap-x snap-mandatory items-stretch gap-4 overflow-x-auto overflow-y-hidden p-4 md:snap-none md:p-6"
+          role="region"
+          aria-label="Quadro da carteira"
+        >
+          {ordered.map((stage) => {
+            const closed = stageKind(stage) !== "open";
+            const ids = columns[stage.id] ?? [];
+            const list = ids
+              .map((id) => dealById.get(id))
+              .filter((d): d is BoardDeal => d !== undefined);
+            return (
+              <KanbanColumn
+                key={stage.id}
+                stage={stage}
+                deals={list}
+                members={members}
+                onOpen={onOpenDeal}
+                collapsible={closed}
+                collapsed={closed && !expanded[stage.id]}
+                onToggleCollapsed={() => setExpanded((e) => ({ ...e, [stage.id]: !e[stage.id] }))}
+              />
+            );
+          })}
+        </div>
+        <DragOverlay dropAnimation={{ duration: 180, easing: "cubic-bezier(0.16, 1, 0.3, 1)" }}>
+          {activeDeal ? (
+            <DealCard
+              deal={activeDeal}
+              owner={activeDeal.owner_user_id ? members.get(activeDeal.owner_user_id) : undefined}
+              overlay
+              className="w-[280px]"
             />
-          );
-        })}
-      </div>
-      <DragOverlay dropAnimation={{ duration: 180, easing: "cubic-bezier(0.16, 1, 0.3, 1)" }}>
-        {activeDeal ? (
-          <DealCard
-            deal={activeDeal}
-            owner={activeDeal.owner_user_id ? members.get(activeDeal.owner_user_id) : undefined}
-            overlay
-            className="w-[280px]"
-          />
-        ) : null}
-      </DragOverlay>
-      <LostReasonDialog
-        open={pendingLost !== null}
-        dealTitle={pendingLost?.deal.title ?? ""}
-        onCancel={() => {
-          setPendingLost(null);
-          settle(null);
-        }}
-        onConfirm={(reason) => {
-          if (!pendingLost) return;
-          const drop = pendingLost;
-          setPendingLost(null);
-          settle(onMove({ ...drop, lostReason: reason }));
-        }}
-      />
-    </DndContext>
+          ) : null}
+        </DragOverlay>
+        <LostReasonDialog
+          open={pendingLost !== null}
+          dealTitle={pendingLost?.deal.title ?? ""}
+          onCancel={() => {
+            setPendingLost(null);
+            settle(null);
+          }}
+          onConfirm={(reason) => {
+            if (!pendingLost) return;
+            const drop = pendingLost;
+            setPendingLost(null);
+            settle(onMove({ ...drop, lostReason: reason }));
+          }}
+        />
+      </DndContext>
+    </MomentMapContext.Provider>
   );
 }

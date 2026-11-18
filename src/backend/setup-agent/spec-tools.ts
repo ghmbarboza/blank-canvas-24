@@ -97,7 +97,7 @@ export const WORK_TOOLS: ToolSpec[] = [
   },
   {
     name: "configurar_regras",
-    description: `Liga, desliga e ajusta as regras de pós-venda (as mensagens que saem sozinhas no WhatsApp). 'Liga tudo' = todas: ligar. 'Desliga tudo' = todas: desligar. Para mudar uma regra, mande em regras: a chave, e só o que muda (ligada, mensagem, dias). Regras: ${RULE_LIST}. Na mensagem, {{primeiro_nome}} vira o nome do cliente. teto_diario é o máximo de mensagens automáticas por dia (0 = sem teto).`,
+    description: `Liga, desliga e ajusta as regras de pós-venda (as mensagens que saem sozinhas no WhatsApp). 'Liga tudo' = todas: ligar. 'Desliga tudo' = todas: desligar. Para mudar uma regra, mande em regras: a chave, e só o que muda (ligada, mensagem, dias). Regras: ${RULE_LIST}. Na mensagem, {{primeiro_nome}} vira o nome do cliente. teto_diario é o máximo de mensagens automáticas por dia (0 = sem teto). prazos muda os prazos do pós-venda, contados da data da compra: arrependimento_dias (padrão 7, compras feitas fora da loja física), garantia_dias (padrão 90) e renovacao_aviso_dias (padrão 30). link_avaliacao_google e link_reclame_aqui guardam os links públicos da empresa; o do Google entra na mensagem da regra nota_alta_indicacao pela variável {{link_avaliacao}}. Não dê orientação jurídica: os prazos são os que a empresa decidiu.`,
     parameters: {
       type: "object",
       properties: {
@@ -116,6 +116,19 @@ export const WORK_TOOLS: ToolSpec[] = [
           },
         },
         teto_diario: { type: "number", description: "máximo de envios por dia (0 a 500)" },
+        prazos: {
+          type: "object",
+          properties: {
+            arrependimento_dias: { type: "number", description: "prazo de arrependimento em dias" },
+            garantia_dias: { type: "number", description: "garantia em dias" },
+            renovacao_aviso_dias: {
+              type: "number",
+              description: "dias de antecedência do alerta de renovação",
+            },
+          },
+        },
+        link_avaliacao_google: str("link para o cliente avaliar a empresa no Google (https://...)"),
+        link_reclame_aqui: str("link do perfil da empresa no Reclame Aqui (https://...)"),
       },
     },
   },

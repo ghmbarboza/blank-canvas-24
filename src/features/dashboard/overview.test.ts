@@ -43,7 +43,7 @@ describe("regras de pós-venda no painel", () => {
       ({ status, stats: { total, active: 0, done: 0, exited: 0, converted: 0 } }) as RuleRow;
     const s = rulesSummary({ boas_vindas: row("active", 12), pesquisa: row("paused", 3) });
     expect(s.on).toBe(1);
-    expect(s.total).toBe(7);
+    expect(s.total).toBe(9);
     expect(s.reached).toBe(15);
     expect(s.lines.find((l) => l.key === "pesquisa")).toMatchObject({ on: false, reached: 3 });
     expect(s.lines.find((l) => l.key === "recompra")).toMatchObject({ on: false, reached: 0 });

@@ -10,6 +10,7 @@ import type { Tables } from "@/integrations/supabase/types";
 import { asksIfRobot, startsWithGreeting, stripRepeatedGreeting, toneHints } from "./humanize";
 import { kbQuery } from "./kb-query";
 import { callTools } from "./llm-tools.server";
+import { momentLines } from "./moment.server";
 import {
   buildSystemPrompt,
   controlTools,
@@ -496,12 +497,15 @@ async function contactFicha(contactId: string | null, conversationId?: string): 
         ]
       : [];
   });
+  // pós-venda: em que momento o cliente está (arrependimento, garantia, renovação, risco)
+  const moment = await momentLines(contactId);
   return [
     `Nome: ${c.name ?? "?"}${c.company ? ` · ${c.company}` : ""}`,
     `Estágio: ${c.lifecycle ?? "lead"}${c.temperature ? ` · ${c.temperature}` : ""}${c.score !== null ? ` · pontuação ${c.score}` : ""}`,
     c.email ? `E-mail: ${c.email}` : "",
     c.tags?.length ? `Etiquetas: ${c.tags.join(", ")}` : "",
     c.ai_summary ? `Resumo anterior: ${c.ai_summary}` : "",
+    ...moment,
     deals?.length
       ? `Negócios abertos: ${deals.map((d) => `${d.title} (R$ ${Number(d.value).toFixed(0)})`).join("; ")}`
       : "",

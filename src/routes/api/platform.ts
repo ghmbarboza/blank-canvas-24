@@ -87,9 +87,7 @@ export const Route = createFileRoute("/api/platform")({
           // já restringe endereço vazio ao dono, e na hospedagem do Lovable o servidor nem sempre
           // consegue chamar o próprio /api/health (sem isso o agendador nunca começava a rodar).
           const firstOrigin =
-            empty &&
-            caller.role !== "owner" &&
-            !(await bu.originServesProject(origin, ownProject))
+            empty && caller.role !== "owner" && !(await bu.originServesProject(origin, ownProject))
               ? null
               : origin;
           const { data, error } = await ensure(false, firstOrigin);
@@ -112,13 +110,15 @@ export const Route = createFileRoute("/api/platform")({
             stored &&
             caller.role === "owner"
           ) {
-            const reclaim =
-              bu.shouldReclaimBase({
-                originMismatch: true,
-                originAccepted: result["origin_accepted"] === true,
-                ownProject,
-                storedProject: await bu.probeProject(stored),
-              }) && (await bu.originServesProject(origin, ownProject));
+            // Sem exigir que o servidor chame o próprio endereço (na hospedagem do Lovable isso falha):
+            // basta o endereço gravado não responder mais como este projeto, e quem pede ser o dono.
+            // Cobre o caso de publicar com um nome e depois trocar: o endereço antigo sai do ar.
+            const reclaim = bu.shouldReclaimBase({
+              originMismatch: true,
+              originAccepted: result["origin_accepted"] === true,
+              ownProject,
+              storedProject: await bu.probeProject(stored),
+            });
             if (reclaim) {
               const changed = await changeBase();
               if (changed) result = { ...changed, reclaimed: stored };

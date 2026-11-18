@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { PURCHASE_KEY, isoDay, purchaseDateOf, todayIso } from "@/features/posvenda/moment";
+
 import type { ContactDraft } from "./api";
 import {
   LIFECYCLE_LABEL,
@@ -18,6 +20,7 @@ export const CSV_HEADERS = [
   "cargo",
   "cidade",
   "tags",
+  "data_compra",
 ] as const;
 type CsvHeader = (typeof CSV_HEADERS)[number];
 
@@ -71,7 +74,11 @@ function normalizeHeader(h: string): string {
     .toLowerCase()
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "")
-    .replace(/^e-mail$/, "email");
+    .replace(/^e-mail$/, "email")
+    .replace(
+      /^(data[ _](da[ _])?(ultima[ _])?compra|ultima[ _]compra|comprou[ _]em)$/,
+      "data_compra",
+    );
 }
 
 const rowSchema = z
@@ -83,12 +90,19 @@ const rowSchema = z
     cargo: z.string().trim().max(120),
     cidade: z.string().trim().max(120),
     tags: z.string(),
+    data_compra: z.string().trim(),
   })
   .refine((r) => r.nome || r.telefone || r.email, {
     message: "Linha sem nome, telefone nem e-mail",
   })
   .refine((r) => !r.telefone || onlyDigits(r.telefone).length >= 8, {
     message: "Telefone inválido",
+  })
+  .refine((r) => !r.data_compra || isoDay(r.data_compra) !== null, {
+    message: "Data da compra inválida (use dia/mês/ano, ex.: 05/11/2026)",
+  })
+  .refine((r) => !r.data_compra || (isoDay(r.data_compra) ?? "") <= todayIso(), {
+    message: "Data da compra no futuro",
   });
 
 export interface ParsedImport {
@@ -122,7 +136,13 @@ export function buildImport(text: string): ParsedImport {
       return;
     }
     const r = parsed.data;
+    // Com data da compra a linha já entra como cliente, com origem de importação: quem comprou
+    // antes não recebe boas-vindas atrasada, mas o prazo de garantia e a recompra passam a contar.
+    const purchase = isoDay(r.data_compra);
     valid.push({
+      ...(purchase
+        ? { lifecycle: "customer", source: "import_csv", custom: { [PURCHASE_KEY]: purchase } }
+        : { source: "csv" }),
       name: r.nome || null,
       phone: normalizePhone(r.telefone),
       email: r.email ? r.email.toLowerCase() : null,
@@ -133,7 +153,6 @@ export function buildImport(text: string): ParsedImport {
         .split(/[|;,]/)
         .map((t) => t.trim())
         .filter(Boolean),
-      source: "csv",
     });
   });
   return { missingHeaders, valid, invalid, preview: records.slice(0, 5) };
@@ -164,6 +183,7 @@ export function contactsToCsv(rows: ContactRow[]): string {
       c.job_title ?? "",
       c.city ?? "",
       c.tags.join("|"),
+      purchaseDateOf(c.custom) ?? "",
       c.temperature ?? "",
       c.score === null ? "" : String(c.score),
       isLifecycle(c.lifecycle) ? LIFECYCLE_LABEL[c.lifecycle] : c.lifecycle,

@@ -3,7 +3,8 @@ import { slaState } from "@/features/support/constants";
 
 // "O que precisa de você hoje": pendências reais do pós-venda, cada uma com motivo e uma ação.
 // Ordem por urgência: prazo estourado, cliente esperando, passagem da IA, prazo perto, cliente em risco.
-export type AttentionKind = "ticket_late" | "waiting" | "handoff" | "ticket_due" | "client_risk";
+export type AttentionKind =
+  "ticket_late" | "waiting" | "handoff" | "ticket_due" | "complaint" | "client_risk";
 
 export interface AttentionItem {
   key: string;
@@ -20,7 +21,8 @@ const RANK: Record<AttentionKind, number> = {
   waiting: 1,
   handoff: 2,
   ticket_due: 3,
-  client_risk: 4,
+  complaint: 4,
+  client_risk: 5,
 };
 
 export const ATTENTION_ACTION: Record<AttentionKind, string> = {
@@ -28,6 +30,7 @@ export const ATTENTION_ACTION: Record<AttentionKind, string> = {
   waiting: "Responder agora",
   handoff: "Assumir conversa",
   ticket_due: "Abrir chamado",
+  complaint: "Ver cliente",
   client_risk: "Ver cliente",
 };
 
@@ -67,11 +70,22 @@ export interface TicketRow {
   resolution_due_at: string | null;
 }
 
+/** Reclamação aberta no Reclame Aqui, registrada à mão na ficha do cliente. */
+export interface ComplaintRow {
+  contact_id: string;
+  name: string;
+  /** Dia do registro, "AAAA-MM-DD". */
+  at: string;
+}
+/** Quantas reclamações abertas entram na lista (as mais antigas). */
+export const COMPLAINT_MAX = 2;
+
 export interface AttentionSources {
   waiting: WaitingRow[];
   handoffs: HandoffRow[];
   risk: RiskRow[];
   tickets: TicketRow[];
+  complaints?: ComplaintRow[];
 }
 
 export function buildAttention(src: AttentionSources, now = Date.now()): AttentionItem[] {
@@ -109,8 +123,26 @@ export function buildAttention(src: AttentionSources, now = Date.now()): Attenti
       at: new Date(now + (sla.minutesLeft ?? 0) * 60_000).toISOString(),
     });
   }
+  // Reclamação pública aberta: a mais antiga primeiro. Quem já entrou aqui não repete como "em risco".
+  const complained = new Set<string>();
+  for (const c of [...(src.complaints ?? [])]
+    .sort((a, b) => a.at.localeCompare(b.at))
+    .slice(0, COMPLAINT_MAX)) {
+    complained.add(c.contact_id);
+    items.push({
+      key: `complaint-${c.contact_id}`,
+      kind: "complaint",
+      title: `Reclamação aberta no Reclame Aqui: ${c.name}`,
+      reason: `Registrada em ${c.at.split("-").reverse().join("/")}. Responda no Reclame Aqui e fale com o cliente; depois atualize a situação na ficha.`,
+      ref: c.contact_id,
+      at: c.at,
+    });
+  }
   // Pior saúde primeiro: a nota entra na âncora para ordenar dentro do tipo.
-  for (const r of [...src.risk].sort((a, b) => a.score - b.score).slice(0, RISK_MAX)) {
+  for (const r of [...src.risk]
+    .filter((x) => !complained.has(x.contact_id))
+    .sort((a, b) => a.score - b.score)
+    .slice(0, RISK_MAX)) {
     items.push({
       key: `risk-${r.contact_id}`,
       kind: "client_risk",

@@ -10,6 +10,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  MOMENT_FILTERS,
+  MOMENT_LABEL,
+  isMomentKey,
+  type MomentCounts,
+} from "@/features/posvenda/moment";
 import { cn } from "@/lib/utils";
 
 import {
@@ -55,6 +61,8 @@ type Props = {
   sources: string[];
   // Pílulas de segmento, à esquerda da busca.
   segments?: ReactNode;
+  /** Quantos clientes em cada momento do pós-venda (aparece ao lado de cada opção). */
+  momentCounts?: MomentCounts | undefined;
 };
 
 export function ContactsFilters({
@@ -64,6 +72,7 @@ export function ContactsFilters({
   onSearchChange,
   sources,
   segments,
+  momentCounts,
 }: Props) {
   const set = <K extends keyof ContactFilters>(key: K, value: ContactFilters[K]) =>
     onChange({ ...filters, [key]: value });
@@ -115,6 +124,29 @@ export function ContactsFilters({
             {LIFECYCLES.map((l) => (
               <SelectItem key={l} value={l}>
                 {LIFECYCLE_LABEL[l]}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select
+          value={filters.moment}
+          onValueChange={(v) => set("moment", isMomentKey(v) ? v : "all")}
+        >
+          <SelectTrigger
+            className={cn(
+              "h-7 w-auto gap-1.5 rounded-full border-transparent bg-transparent px-3 text-[12px] shadow-none hover:bg-surface-2",
+              filters.moment !== "all" && "border-primary-line bg-primary-soft",
+            )}
+            aria-label="Momento no pós-venda"
+          >
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todo momento</SelectItem>
+            {MOMENT_FILTERS.map((k) => (
+              <SelectItem key={k} value={k}>
+                {MOMENT_LABEL[k]}
+                {momentCounts ? ` (${momentCounts[k]})` : ""}
               </SelectItem>
             ))}
           </SelectContent>

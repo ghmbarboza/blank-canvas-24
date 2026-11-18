@@ -16,7 +16,7 @@ import { readRuleOptions, whenText, type RuleDef, type RuleOptions } from "./rul
 
 type Props = {
   def: RuleDef;
-  /** Posição na jornada (1 a 7). */
+  /** Posição na jornada (1 a 9). */
   step: number;
   row: RuleRow | undefined;
   canEdit: boolean;
@@ -194,7 +194,11 @@ export function RuleCard({
                         {messageValid
                           ? def.key === "pesquisa"
                             ? "{{primeiro_nome}} vira o nome do cliente e {{link_pesquisa}} vira o link para dar a nota."
-                            : "{{primeiro_nome}} vira o nome do cliente."
+                            : def.key === "nota_alta_indicacao"
+                              ? "{{primeiro_nome}} vira o nome do cliente e {{link_avaliacao}} vira o seu link de avaliação no Google (sem link cadastrado, a mensagem sai sem ele)."
+                              : def.key === "fim_garantia"
+                                ? "{{primeiro_nome}} vira o nome do cliente e {{fim_garantia}} vira o dia em que a garantia dele vence."
+                                : "{{primeiro_nome}} vira o nome do cliente."
                           : "Escreva a mensagem antes de salvar."}
                       </p>
                     </div>

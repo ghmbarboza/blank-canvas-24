@@ -2,6 +2,8 @@ import { ArrowRight, Bot, HeartPulse } from "lucide-react";
 
 import { formatRelative } from "@/lib/format";
 
+import { MomentBlock } from "@/features/posvenda/moment-ui";
+
 import { CustomerHealthBlock } from "../../customer-health";
 import type { ContactRow } from "../../types";
 
@@ -22,6 +24,11 @@ export function ContactAiPanel({ accountId, contact }: Props) {
         <HeartPulse className="size-3.5 text-primary" aria-hidden /> Saúde do cliente
       </h2>
       <CustomerHealthBlock accountId={accountId} contactId={contact.id} maxFactors={5} />
+      <MomentBlock
+        accountId={accountId}
+        contactId={contact.id}
+        className="mt-4 border-t border-border pt-3"
+      />
 
       <div className="mt-4 border-t border-border pt-3">
         <div className="mb-2 flex items-center justify-between">

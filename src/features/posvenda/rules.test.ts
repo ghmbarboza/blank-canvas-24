@@ -22,8 +22,10 @@ import {
   POS_VENDA_STAGES,
   findStage,
 } from "./journey";
+import { DEFAULT_PRAZOS, fillReviewLink } from "./moment";
 import {
   DEFAULT_DAILY_CAP,
+  PURCHASE_FIELD,
   RULES,
   RULE_KEYS,
   buildRuleAutomation,
@@ -43,8 +45,8 @@ const MIGRATION = readFileSync(
 );
 
 describe("regras de pós-venda → automação", () => {
-  it("as sete chaves do contrato com o onboarding, nessa ordem", () => {
-    expect([...RULE_KEYS]).toEqual([
+  it("as sete chaves do contrato com o onboarding, nessa ordem, e as duas de prazo depois", () => {
+    expect([...RULE_KEYS].slice(0, 7)).toEqual([
       "boas_vindas",
       "checkin_7d",
       "pesquisa",
@@ -53,6 +55,7 @@ describe("regras de pós-venda → automação", () => {
       "recompra",
       "cliente_parado",
     ]);
+    expect([...RULE_KEYS].slice(7)).toEqual(["fim_arrependimento", "fim_garantia"]);
     expect(RULES.map((r) => r.key)).toEqual([...RULE_KEYS]);
   });
 
@@ -289,5 +292,93 @@ describe("conta nova de pós-venda (migration x código)", () => {
     // nenhum UPDATE ou DELETE sem WHERE
     for (const stmt of MIGRATION.split(";").filter((x) => /^\s*(update|delete)\s/im.test(x)))
       expect(stmt).toMatch(/\swhere\s/i);
+  });
+});
+
+describe("regras contadas da data da compra", () => {
+  it("fim do arrependimento fala um dia antes de o prazo vencer", () => {
+    const a = buildRuleAutomation("fim_arrependimento");
+    // prazo padrão de 7 dias: a mensagem sai 6 dias depois da compra (gatilho por data, dias negativos)
+    expect(a.trigger).toEqual({ type: "date", field: PURCHASE_FIELD, days_before: -6 });
+    expect(PURCHASE_FIELD).toBe("custom.ultima_compra");
+    expect(validateGraph(a.graph)).toEqual([]);
+    expect(a.graph.start).toBe("msg");
+    expect(a.graph.nodes["msg"]?.type).toBe("whatsapp");
+    // a espera segura a inscrição até o dia passar: a varredura não inscreve duas vezes na mesma data
+    expect(a.graph.nodes["msg"]?.next).toBe("hold");
+    expect(Number(a.graph.nodes["hold"]?.config["minutes"])).toBeGreaterThanOrEqual(1440);
+    // nova compra (nova data) entra de novo
+    expect(a.reentry).toBe("after_exit");
+  });
+
+  it("fim do arrependimento segue o prazo da conta", () => {
+    const p = { ...DEFAULT_PRAZOS, arrependimento_dias: 15 };
+    expect(buildRuleAutomation("fim_arrependimento", { prazos: p }).trigger.days_before).toBe(-14);
+    // prazo de 1 dia: fala no próprio dia da compra, sem "menos zero"
+    const one = buildRuleAutomation("fim_arrependimento", {
+      prazos: { ...DEFAULT_PRAZOS, arrependimento_dias: 1 },
+    });
+    expect(Object.is(one.trigger.days_before, 0)).toBe(true);
+  });
+
+  it("fim da garantia avisa N dias antes, com a garantia da conta", () => {
+    const def = buildRuleAutomation("fim_garantia");
+    // garantia de 90 dias, aviso 7 dias antes: 83 dias depois da compra
+    expect(def.trigger).toEqual({ type: "date", field: PURCHASE_FIELD, days_before: -83 });
+    expect(validateGraph(def.graph)).toEqual([]);
+    expect(String(def.graph.nodes["msg"]?.config["text"])).toContain("{{fim_garantia}}");
+
+    const custom = buildRuleAutomation("fim_garantia", {
+      days: 15,
+      prazos: { ...DEFAULT_PRAZOS, garantia_dias: 365 },
+    });
+    expect(custom.trigger.days_before).toBe(-350);
+    // o aviso lido de volta é o que o dono escolheu, não a conta do gatilho
+    expect(readRuleOptions("fim_garantia", custom).days).toBe(15);
+    expect(
+      whenText(
+        RULES.find((r) => r.key === "fim_garantia")!,
+        15,
+      ),
+    ).toBe("15 dias antes de a garantia vencer, contados da data da compra.");
+  });
+
+  it("o aviso da garantia nunca cai antes da compra", () => {
+    const short = buildRuleAutomation("fim_garantia", {
+      days: 30,
+      prazos: { ...DEFAULT_PRAZOS, garantia_dias: 10 },
+    });
+    // garantia de 10 dias com aviso de 30: avisa 1 dia depois da compra
+    expect(short.trigger.days_before).toBe(-1);
+  });
+
+  it("mensagem editada volta igual e o prazo de dias só existe em fim_garantia", () => {
+    const a = buildRuleAutomation("fim_arrependimento", { message: "Tudo certo com o pedido?" });
+    expect(readRuleOptions("fim_arrependimento", a)).toEqual({
+      message: "Tudo certo com o pedido?",
+      days: null,
+    });
+    expect(RULES.find((r) => r.key === "fim_arrependimento")!.days).toBeNull();
+  });
+
+  it("as duas regras novas entram no resumo do settings sem mexer nas sete", () => {
+    let s: Record<string, unknown> = { posvenda: { rules: { boas_vindas: true } } };
+    s = withRuleFlag(s, "fim_garantia", true);
+    expect(ruleFlags(s)).toEqual({ boas_vindas: true, fim_garantia: true });
+  });
+
+  it("nota alta leva o link do Google quando existe e sai limpa quando não existe", () => {
+    const text = String(
+      buildRuleAutomation("nota_alta_indicacao").graph.nodes["msg"]?.config["text"],
+    );
+    expect(text).toContain("{{link_avaliacao}}");
+    expect(fillReviewLink(text, "https://g.page/r/abc/review")).toMatch(
+      /ajuda muito\. https:\/\/g\.page\/r\/abc\/review$/,
+    );
+    const semLink = fillReviewLink(text, "");
+    expect(semLink).not.toContain("link_avaliacao");
+    expect(semLink.endsWith("ajuda muito.")).toBe(true);
+    // quem escreveu a mensagem sem a variável não muda
+    expect(fillReviewLink("Obrigado pela nota!", "https://g.page/x")).toBe("Obrigado pela nota!");
   });
 });

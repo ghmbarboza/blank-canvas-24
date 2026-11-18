@@ -27,8 +27,13 @@ const EXPORT_PAGE_SIZE = 1000;
 
 export const contactKeys = {
   all: (accountId: string) => ["contacts", accountId] as const,
-  list: (accountId: string, filters: ContactFilters, sort: ContactSort, userId: string | null) =>
-    ["contacts", accountId, "list", filters, sort, userId] as const,
+  list: (
+    accountId: string,
+    filters: ContactFilters,
+    sort: ContactSort,
+    userId: string | null,
+    ids: readonly string[] | null = null,
+  ) => ["contacts", accountId, "list", filters, sort, userId, ids] as const,
   detail: (accountId: string, contactId: string) =>
     ["contacts", accountId, "detail", contactId] as const,
   search: (accountId: string, term: string) => ["contacts", accountId, "search", term] as const,
@@ -96,11 +101,23 @@ const LIST_COLUMNS =
 type FilterOp =
   | { op: "eq"; column: "temperature" | "lifecycle" | "source" | "owner_user_id"; value: string }
   | { op: "isNull"; column: "temperature" }
+  | { op: "ids"; value: string[] }
   | { op: "or"; value: string };
 
+/** Teto de ids num filtro por momento (a lista vai na URL da consulta). */
+export const MOMENT_FILTER_MAX = 200;
+const NO_MATCH = "00000000-0000-0000-0000-000000000000";
+
 // Filtros viram uma lista de operações aplicada em cada consulta (lista, exportação).
-function filterOps(filters: ContactFilters, userId: string | null): FilterOp[] {
+function filterOps(
+  filters: ContactFilters,
+  userId: string | null,
+  ids: readonly string[] | null = null,
+): FilterOp[] {
   const ops: FilterOp[] = [];
+  // filtro por momento do pós-venda: a tela calcula quem está no momento e manda os ids
+  if (ids)
+    ops.push({ op: "ids", value: ids.length ? ids.slice(0, MOMENT_FILTER_MAX) : [NO_MATCH] });
   if (filters.temperature === "none") ops.push({ op: "isNull", column: "temperature" });
   else if (filters.temperature !== "all")
     ops.push({ op: "eq", column: "temperature", value: filters.temperature });
@@ -138,22 +155,25 @@ export function useContactsList(
   filters: ContactFilters,
   sort: ContactSort,
   userId: string | null,
+  ids: readonly string[] | null = null,
 ) {
   return useInfiniteQuery({
-    queryKey: contactKeys.list(accountId, filters, sort, userId),
+    queryKey: contactKeys.list(accountId, filters, sort, userId, ids),
     initialPageParam: 0,
     queryFn: async ({ pageParam }): Promise<ContactsPage> => {
       let q = supabase
         .from("contacts")
         .select(LIST_COLUMNS, { count: "exact" })
         .eq("account_id", accountId);
-      for (const f of filterOps(filters, userId)) {
+      for (const f of filterOps(filters, userId, ids)) {
         q =
           f.op === "eq"
             ? q.eq(f.column, f.value)
             : f.op === "isNull"
               ? q.is(f.column, null)
-              : q.or(f.value);
+              : f.op === "ids"
+                ? q.in("id", f.value)
+                : q.or(f.value);
       }
       const { data, error, count } = await q
         .order(sort.column, { ascending: !sort.desc, nullsFirst: false })
@@ -175,17 +195,20 @@ export async function fetchAllFilteredContacts(
   filters: ContactFilters,
   sort: ContactSort,
   userId: string | null,
+  ids: readonly string[] | null = null,
 ): Promise<ContactRow[]> {
   const out: ContactRow[] = [];
   for (let offset = 0; ; offset += EXPORT_PAGE_SIZE) {
     let q = supabase.from("contacts").select(LIST_COLUMNS).eq("account_id", accountId);
-    for (const f of filterOps(filters, userId)) {
+    for (const f of filterOps(filters, userId, ids)) {
       q =
         f.op === "eq"
           ? q.eq(f.column, f.value)
           : f.op === "isNull"
             ? q.is(f.column, null)
-            : q.or(f.value);
+            : f.op === "ids"
+              ? q.in("id", f.value)
+              : q.or(f.value);
     }
     const { data, error } = await q
       .order(sort.column, { ascending: !sort.desc, nullsFirst: false })

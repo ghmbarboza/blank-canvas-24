@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import type { RowSelectionState } from "@tanstack/react-table";
 import { Download, Loader2, Plus, SearchX, Upload, Users } from "lucide-react";
 import { toast } from "sonner";
@@ -8,12 +8,20 @@ import { EmptyState } from "@/components/common/EmptyState";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  MOMENT_LABEL,
+  MOMENT_PRIORITY,
+  isMomentKey,
+  momentCounts,
+} from "@/features/posvenda/moment";
+import { useMomentMap } from "@/features/posvenda/moment-api";
 import { useAccountId } from "@/lib/account";
 import { useAuth } from "@/lib/auth";
 import { errorMessage } from "@/lib/functions";
 import { formatNumber } from "@/lib/format";
 
 import {
+  MOMENT_FILTER_MAX,
   fetchAllFilteredContacts,
   useContactChannels,
   useContactSources,
@@ -43,7 +51,12 @@ export function ContactsPage() {
   const userId = user?.id ?? null;
   const navigate = useNavigate();
 
-  const [baseFilters, setBaseFilters] = useState<ContactFilters>(DEFAULT_CONTACT_FILTERS);
+  // o Painel abre a lista já num momento: /contatos?momento=arrependimento
+  const initialMoment = (useSearch({ strict: false }) as { momento?: unknown }).momento;
+  const [baseFilters, setBaseFilters] = useState<ContactFilters>(() => ({
+    ...DEFAULT_CONTACT_FILTERS,
+    moment: isMomentKey(initialMoment) ? initialMoment : "all",
+  }));
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounced(search);
   const filters = useMemo(
@@ -58,7 +71,24 @@ export function ContactsPage() {
   const [openId, setOpenId] = useState<string | null>(null);
   const openContact = useCallback((id: string) => setOpenId(id), []);
 
-  const list = useContactsList(accountId, filters, sort, userId);
+  const moments = useMomentMap(accountId);
+  const counts = useMemo(() => momentCounts(moments.map.values()), [moments.map]);
+  // quem está no momento escolhido, do mais urgente (selo principal) para o menos
+  const momentIds = useMemo(() => {
+    if (filters.moment === "all") return null;
+    const key = filters.moment;
+    return [...moments.map.entries()]
+      .filter(([, m]) => m.keys.includes(key))
+      .sort(
+        ([, a], [, b]) =>
+          MOMENT_PRIORITY.indexOf(a.primary.key) - MOMENT_PRIORITY.indexOf(b.primary.key),
+      )
+      .map(([id]) => id);
+  }, [filters.moment, moments.map]);
+  const momentOverflow = (momentIds?.length ?? 0) > MOMENT_FILTER_MAX;
+  const listIds = filters.moment !== "all" && moments.isPending ? [] : momentIds;
+
+  const list = useContactsList(accountId, filters, sort, userId, listIds);
   const team = useTeamMembers(accountId);
   const sources = useContactSources(accountId);
 
@@ -83,6 +113,7 @@ export function ContactsPage() {
     filters.lifecycle !== "all" ||
     filters.source !== "all" ||
     filters.onlyMine ||
+    filters.moment !== "all" ||
     Boolean(filters.segment);
 
   function changeFilters(next: ContactFilters) {
@@ -93,7 +124,7 @@ export function ContactsPage() {
   async function exportCsv() {
     setExporting(true);
     try {
-      const all = await fetchAllFilteredContacts(accountId, filters, sort, userId);
+      const all = await fetchAllFilteredContacts(accountId, filters, sort, userId, listIds);
       downloadText(`contatos-${new Date().toISOString().slice(0, 10)}.csv`, contactsToCsv(all));
       toast.success(`${formatNumber(all.length)} contatos exportados`);
     } catch (err) {
@@ -171,6 +202,7 @@ export function ContactsPage() {
           setSelection({});
         }}
         sources={sources.data ?? []}
+        momentCounts={moments.isPending ? undefined : counts}
         segments={
           <SegmentPills
             accountId={accountId}
@@ -186,6 +218,19 @@ export function ContactsPage() {
           />
         }
       />
+      {filters.moment !== "all" && (
+        <p
+          role="status"
+          className="border-b border-border bg-surface-2 px-4 py-2 text-[12px] text-muted-foreground md:px-6"
+        >
+          <span className="font-medium text-foreground">{MOMENT_LABEL[filters.moment]}:</span>{" "}
+          {moments.isPending
+            ? "calculando o momento de cada cliente…"
+            : momentOverflow
+              ? `mostrando os ${MOMENT_FILTER_MAX} mais urgentes de ${formatNumber(momentIds?.length ?? 0)} clientes neste momento.`
+              : "contado pela data da compra de cada cliente e pelos prazos em Regras de pós-venda."}
+        </p>
+      )}
       {selectedIds.length > 0 && (
         <ContactsBulkBar
           accountId={accountId}

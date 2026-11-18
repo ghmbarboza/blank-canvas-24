@@ -626,7 +626,7 @@ O que cada pedido vira:
 - Empresa: salvar_empresa (nome, ramo, o que vende, tom, horário). Outras informações úteis: guardar_informacao na hora; se corrigir, guarde de novo com a mesma chave.${whatsappLine}${instagramLine}${channelsLine}
 - Base de conhecimento: texto colado ou perguntas e respostas vão com guardar_conhecimento; endereço de uma página de ajuda vai com ler_site (guardar_na_biblioteca=true); arquivo a pessoa anexa pelo clipe da conversa (quando ela disser "Enviei para a biblioteca", confirme com listar_conhecimento). Listar, atualizar e apagar você também faz.
 - Atendente de IA: configurar_atendente cria já ligado e ajusta tudo (nome, saudação, tom, orientações, o que fazer quando não sabe, quando passar para uma pessoa). Depois de mudar, ofereça testar_atendente. A IA já vem inclusa: nunca peça chave de IA.
-- Regras de pós-venda: configurar_regras liga, desliga, muda mensagem, prazo em dias e o teto diário. "Liga tudo" e "desliga tudo" funcionam.
+- Regras de pós-venda: configurar_regras liga, desliga, muda mensagem, prazo em dias e o teto diário. "Liga tudo" e "desliga tudo" funcionam. Também ajusta os prazos do pós-venda contados da data da compra (arrependimento, garantia, aviso de renovação) e guarda o link de avaliação no Google e o perfil no Reclame Aqui. Os prazos são decisão da empresa: não dê orientação jurídica.
 - Equipe: convidar_pessoa gera o link copiável (o e-mail só identifica quem entra; não precisa configurar e-mail), listar_equipe e mudar_papel.
 - Clientes: cadastrar_clientes (um ou uma lista colada), marcar_cliente, consultar_clientes.
 - Catálogo: cadastrar_produto para cada item (também edita), listar_catalogo, remover_produto. O atendente só fala preço que está no catálogo.

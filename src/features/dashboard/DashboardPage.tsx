@@ -11,6 +11,7 @@ import { useHealthMap } from "@/features/contacts/customer-health";
 import { portfolio } from "@/features/gestao/health";
 import { NowStrip } from "@/features/my-day/NowStrip";
 import { useRuleRows } from "@/features/posvenda/api";
+import { useMomentMap } from "@/features/posvenda/moment-api";
 import { SetupProgressCard } from "@/features/setup/SetupEntry";
 import { useSacMetrics } from "@/features/support/api";
 import { SacMetricsStrip } from "@/features/support/SacMetricsStrip";
@@ -25,6 +26,8 @@ import { isEmptyAccount, useGerencial, type Period } from "./gerencial";
 import { Heatmap } from "./Heatmap";
 import { Hero } from "./Hero";
 import { JourneyCard } from "./JourneyCard";
+import { MomentsCard } from "./MomentsCard";
+import { ReviewsCard } from "./ReviewsCard";
 import { rulesSummary } from "./overview";
 import { PortfolioCard } from "./PortfolioCard";
 import { RulesCard } from "./RulesCard";
@@ -56,6 +59,7 @@ export function DashboardPage() {
   const health = useHealthMap(accountId);
   const sac = useSacMetrics(accountId, days);
   const ruleRows = useRuleRows(accountId);
+  const moments = useMomentMap(accountId);
 
   const healthRows = useMemo(() => [...health.map.values()], [health.map]);
   const rules = useMemo(() => rulesSummary(ruleRows.byRule), [ruleRows.byRule]);
@@ -143,6 +147,21 @@ export function DashboardPage() {
               isPending={health.isPending}
               isError={health.isError}
               canOpenHealth={canOpenHealth}
+              className="lg:col-span-5"
+            />
+            <MomentsCard
+              moments={moments.map}
+              names={moments.names}
+              isPending={moments.isPending}
+              isError={moments.isError}
+              truncated={moments.truncated}
+              className="lg:col-span-7"
+            />
+            <ReviewsCard
+              reviews={moments.reviews}
+              names={moments.names}
+              isPending={moments.isPending}
+              isError={moments.isError}
               className="lg:col-span-5"
             />
             <JourneyCard stages={data.funnel} className="lg:col-span-7" />

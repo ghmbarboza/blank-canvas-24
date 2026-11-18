@@ -9,6 +9,9 @@ import { ContactAvatar } from "@/components/common/ContactAvatar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { formatRelative } from "@/lib/format";
 
+import type { MomentResult } from "@/features/posvenda/moment";
+import { MomentBadge } from "@/features/posvenda/moment-ui";
+
 import { HealthChip, type CustomerHealth } from "../customer-health";
 import { isPlatformSource, lifecycleLabel, type ContactRow, type TeamMember } from "../types";
 import { ChannelBadges } from "./ChannelBadges";
@@ -23,6 +26,7 @@ export function buildContactColumns(
   members: Map<string, TeamMember>,
   channels: Map<string, string[]>,
   health: Map<string, CustomerHealth>,
+  moments: Map<string, MomentResult>,
   onOpen: (id: string) => void,
 ) {
   return helper.columns([
@@ -96,6 +100,20 @@ export function buildContactColumns(
           <HealthChip level={h.result.level} score={h.result.score} />
         ) : (
           <span className="text-[12px] text-subtle">{lifecycleLabel(row.original.lifecycle)}</span>
+        );
+      },
+    }),
+    helper.display({
+      id: "moment",
+      header: "Momento",
+      cell: ({ row }) => {
+        const m = moments.get(row.original.id);
+        return m ? (
+          <MomentBadge moment={m} />
+        ) : (
+          <span className="text-[12px] text-subtle" aria-label="Sem momento: ainda não é cliente">
+            ·
+          </span>
         );
       },
     }),

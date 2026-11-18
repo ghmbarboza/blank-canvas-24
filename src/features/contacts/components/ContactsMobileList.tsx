@@ -4,6 +4,9 @@ import { ContactAvatar } from "@/components/common/ContactAvatar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { formatRelative } from "@/lib/format";
 
+import type { MomentResult } from "@/features/posvenda/moment";
+import { MomentBadge } from "@/features/posvenda/moment-ui";
+
 import { HealthChip, type CustomerHealth } from "../customer-health";
 import { isPlatformSource, type ContactRow } from "../types";
 import { ChannelBadges } from "./ChannelBadges";
@@ -14,6 +17,7 @@ type Props = {
   onSelectionChange: (next: RowSelectionState) => void;
   channels: Map<string, string[]>;
   health: Map<string, CustomerHealth>;
+  moments: Map<string, MomentResult>;
   onOpen: (id: string) => void;
 };
 
@@ -24,6 +28,7 @@ export function ContactsMobileList({
   onSelectionChange,
   channels,
   health,
+  moments,
   onOpen,
 }: Props) {
   function toggle(id: string, checked: boolean) {
@@ -68,6 +73,7 @@ export function ContactsMobileList({
                     score={health.get(c.id)!.result.score}
                   />
                 )}
+                {moments.get(c.id) && <MomentBadge moment={moments.get(c.id)!} />}
                 <ChannelBadges contact={c} platforms={channels.get(c.id)} />
               </span>
               {c.company && (

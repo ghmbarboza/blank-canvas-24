@@ -44,8 +44,12 @@ export function triggerPhrase(t: Trigger): string {
     case "inactive":
       return `Quando o cliente fica ${t.days ?? 30} dias sem conversa`;
     case "date": {
-      const field = t.field?.replace(/^custom\./, "") ?? "uma data";
-      return `${t.days_before ?? 0} dia${t.days_before === 1 ? "" : "s"} antes de ${field}`;
+      const key = t.field?.replace(/^custom\./, "");
+      const field = key === "ultima_compra" ? "data da compra" : (key ?? "uma data");
+      const n = t.days_before ?? 0;
+      // dias negativos = depois da data (regras de pós-venda contadas da compra)
+      if (n < 0) return `${-n} dia${n === -1 ? "" : "s"} depois de ${field}`;
+      return `${n} dia${n === 1 ? "" : "s"} antes de ${field}`;
     }
     default:
       return "Quando você inscreve alguém";

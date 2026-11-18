@@ -7,6 +7,7 @@ import { PLATFORM_LABEL } from "@/components/brand/platform-label";
 import { formatMoney } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { OwnerAvatar } from "@/features/contacts/components/OwnerAvatar";
+import { ContactMomentBadge } from "@/features/posvenda/moment-ui";
 import type { TeamMember } from "@/features/contacts/types";
 
 import type { BoardDeal } from "../types";
@@ -82,6 +83,10 @@ export const DealCard = forwardRef<HTMLDivElement, Props>(function DealCard(
         <p className="mt-0.5 text-[14px] tabular-nums" title="Valor do contrato">
           {formatMoney(deal.value)}
         </p>
+      )}
+
+      {deal.status !== "lost" && (
+        <ContactMomentBadge contactId={deal.contact_id} className="mt-2 flex" />
       )}
 
       {deal.nextStep && deal.status === "open" && (
