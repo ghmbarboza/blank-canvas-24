@@ -42,7 +42,7 @@ describe("troca do endereço pelo dono (R2): o destino prova que é deste projet
     );
     const [url, init] = f.mock.calls[0] as unknown as [string, RequestInit];
     expect(url).toBe("https://app.cliente.com/api/health");
-    expect(init.redirect).toBe("error");
+    expect(init.redirect).toBe("manual");
   });
   it("recusa outro projeto, resposta de erro, falha de rede e endereço interno ou http", async () => {
     vi.stubGlobal("fetch", health({ project: "outroprojetoabc" }));
