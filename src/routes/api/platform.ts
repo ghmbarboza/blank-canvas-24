@@ -83,8 +83,15 @@ export const Route = createFileRoute("/api/platform")({
           const empty = !String(
             (status.data as { app_base_url?: unknown } | null)?.app_base_url ?? "",
           );
+          // O DONO grava o primeiro endereço sem essa prova: é o primeiro acesso do remix, o banco
+          // já restringe endereço vazio ao dono, e na hospedagem do Lovable o servidor nem sempre
+          // consegue chamar o próprio /api/health (sem isso o agendador nunca começava a rodar).
           const firstOrigin =
-            empty && !(await bu.originServesProject(origin, ownProject)) ? null : origin;
+            empty &&
+            caller.role !== "owner" &&
+            !(await bu.originServesProject(origin, ownProject))
+              ? null
+              : origin;
           const { data, error } = await ensure(false, firstOrigin);
           if (error)
             throw new h.HttpError(500, "Não deu para preparar a plataforma", "ensure_failed");
