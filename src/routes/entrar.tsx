@@ -15,6 +15,8 @@ import {
   resetRequest,
   type FieldErrors,
 } from "@/lib/authentication";
+import { fetchAuthProviders, oauthErrorFromHash, type AuthProviders } from "@/lib/auth-setup";
+import { AuthSetupNotice } from "@/features/auth-setup-notice";
 import { useAuthDestination } from "@/hooks/use-auth-destination";
 import { pageHead } from "@/lib/page-head";
 import { useAuth } from "@/lib/auth";
@@ -50,6 +52,25 @@ function SignIn() {
   // Central que já tem dono: cadastro só pelo link de convite (signup_mode no banco).
   // null até o banco responder: sem isso piscava "Primeiro acesso? Você será o administrador."
   const [signupMode, setSignupMode] = useState<string | null>(null);
+  // null = ainda não se sabe (ou não deu para ler): a tela segue normal
+  const [providers, setProviders] = useState<AuthProviders | null>(null);
+  useEffect(() => {
+    let alive = true;
+    void fetchAuthProviders(
+      import.meta.env["VITE_SUPABASE_URL"] as string | undefined,
+      import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] as string | undefined,
+    ).then((found) => {
+      if (alive) setProviders(found);
+    });
+    const oauthError = oauthErrorFromHash(window.location.hash);
+    if (oauthError) {
+      setErrors({ form: oauthError });
+      window.history.replaceState(null, "", window.location.pathname + window.location.search);
+    }
+    return () => {
+      alive = false;
+    };
+  }, []);
   useEffect(() => {
     let alive = true;
     void (supabase.rpc as unknown as (fn: string) => Promise<{ data: unknown }>)(
@@ -214,6 +235,7 @@ function SignIn() {
             </div>
           ) : (
             <>
+              {providers ? <AuthSetupNotice providers={providers} /> : null}
               <form onSubmit={handleSubmit} className="mt-8 space-y-4" noValidate>
                 {errors.form ? (
                   <p
@@ -287,7 +309,7 @@ function SignIn() {
                   {mode === "signin" ? "Entrar" : mode === "signup" ? "Criar conta" : "Enviar link"}
                 </Button>
               </form>
-              {mode !== "forgot" ? (
+              {mode !== "forgot" && providers?.google !== false ? (
                 <div className="mt-5 space-y-3">
                   <Button
                     variant="outline"

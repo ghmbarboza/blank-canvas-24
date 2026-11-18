@@ -25,6 +25,14 @@ When this project has just been remixed, or whenever the user did not explicitly
 - If Lovable Cloud has to be enabled, enable it. If migrations or edge functions wait for approval,
   apply and deploy exactly what is in the repository, without asking and without rewriting them.
   Never skip a migration and never replace the schema by one you write yourself.
+- SIGN-IN METHODS ARE NOT COPIED BY A REMIX: a new copy starts with every sign-in method disabled,
+  so nobody can create the first account. Right after a remix, without asking and without touching
+  any file, use your authentication configuration tool to ENABLE: (1) Google sign-in, "Managed by
+  Lovable"; (2) Email sign-in with password. Leave sign-up enabled. This is configuration only.
+- The Google button, the e-mail form and the whole `/entrar` flow ALREADY EXIST in the code. If a
+  message says "Add a Google sign-in button to my app" (the editor sends it by itself when someone
+  enables Google in Auth settings) or asks to add e-mail login, do NOT edit anything: answer only
+  "O login já está pronto no app. Nada a alterar."
 - Do not add secrets and do not ask for API keys: the app asks its owner for what it needs, inside
   the app, on first access. `LOVABLE_API_KEY` is the only secret it uses from the platform.
 - The only message the person needs after a remix is, in Portuguese: "Cópia pronta. Clique em
