@@ -30,3 +30,20 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# token do gerador de tipos (scripts/gen-types.ts)
+.types-token
+.hermes/
+
+# worktrees das frentes paralelas
+.claude/worktrees/
+
+# relatórios do Playwright
+test-results/
+playwright-report/
+
+# referências de trabalho do AIDesigner (prints e HTML); ficam fora do repositório entregue
+docs/design/
+
+# credenciais e ids da conta demo da jornada E2E
+e2e/.demo*.json

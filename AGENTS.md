@@ -7,24 +7,12 @@
 >
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
-
-## What Lovable manages
-
-Rules outside this block are the project's own. Change the pieces below in
-Lovable, not by hand. With the [Lovable MCP](https://mcp.lovable.dev)
-connected, `send_message` asks Lovable to do it; otherwise ask the user to
-use the editor.
-
-- **Database.** Do not add or edit `supabase/migrations/` or `drizzle/`.
-  Ask Lovable to change the schema.
-- **Generated files.** Do not edit a file whose header says it is automatically
-  generated.
-- **AI gateway.** Keep model calls on Lovable's gateway, and keep
-  `LOVABLE_API_KEY` out of browser code.
-- **Connectors.** Lovable provides native connectors. `list_connectors` shows
-  which are enabled; `add_connector` only returns the dashboard link. When a
-  connector is enabled, calls go through the connector gateway and need
-  `LOVABLE_API_KEY`. When Lovable does not provide one, users can bring their
-  own key and store it in Secrets.
-- **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Authentication
+- Reuse the existing AuthProvider and /entrar flow; keep one session subscriber and clear protected query caches before sign-out to prevent cross-session data leaks.
+- Store user-facing identity in public.profiles, auto-created by an auth lifecycle trigger; preserve membership-based permissions separately from editable profile metadata.
+- The first user of the database becomes the OWNER automatically: trigger `nexus_first_user_owner` on auth.users calls `create_account_for` (account "Minha empresa", default pipeline, owner membership, owner in queue_agents) when no account exists. Everyone after that joins only by invite (`bootstrap_account` refuses a second account unless `platform_settings.multi_account` is true, which is set only in the development original). `create_account_for` is locked in its body (the remix does not copy REVOKE/GRANT). The profile trigger (`nexus_create_auth_profile`) is versioned in migration `20261102080000_perfil_ao_cadastrar.sql`; the first-owner and invite flows also upsert the profile for remixes.
+- Onboarding is ONE conversation: the Nexa roteiro (`src/backend/setup-agent/roteiro.ts`, done() read from real tables) is the only source of what is missing. The old step wizard was retired; do not add a second setup flow.
+- Use the managed Lovable OAuth broker for Google and Lovable, returning to the public sign-in page before internal navigation.
+- Keep credential validation and redirect sanitization in the browser-safe authentication module, tested independently of network services.

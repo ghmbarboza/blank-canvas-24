@@ -1,23 +1,18 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Navigate, createFileRoute } from "@tanstack/react-router";
 
-// The home route ships no og:image, so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+import { useAuth } from "@/lib/auth";
+import { FullScreenLoader } from "@/components/layout/FullScreenLoader";
+import { pageHead } from "@/lib/page-head";
+import { useAuthDestination } from "@/hooks/use-auth-destination";
+
 export const Route = createFileRoute("/")({
+  head: () => pageHead("Nexus One", "Central de atendimento e vendas do Nexus One."),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
+  const { user, loading } = useAuth();
+  const { destination, ready } = useAuthDestination();
+  if (loading || !ready) return <FullScreenLoader />;
+  return <Navigate to={user ? destination : "/entrar"} replace />;
 }

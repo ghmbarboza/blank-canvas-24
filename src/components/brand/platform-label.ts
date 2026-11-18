@@ -1,0 +1,18 @@
+export const PLATFORM_LABEL: Record<string, string> = {
+  whatsapp: "WhatsApp",
+  instagram: "Instagram",
+  facebook: "Messenger",
+  linkedin: "LinkedIn",
+  tiktok: "TikTok",
+  telegram: "Telegram",
+  x: "X",
+  threads: "Threads",
+  bluesky: "Bluesky",
+  reddit: "Reddit",
+  youtube: "YouTube",
+  google_business: "Google Business",
+  sms: "SMS",
+  webchat: "Chat do site",
+  voice: "Ligação",
+  email: "E-mail",
+};

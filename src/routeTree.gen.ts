@@ -10,33 +10,1791 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppRouteImport } from './routes/_app'
+import { Route as BemVindoRouteImport } from './routes/bem-vindo'
+import { Route as EntrarRouteImport } from './routes/entrar'
+import { Route as RedefinirSenhaRouteImport } from './routes/redefinir-senha'
+import { Route as AppAgendaRouteImport } from './routes/_app/agenda'
+import { Route as AppAgendamentosRouteImport } from './routes/_app/agendamentos'
+import { Route as AppAjustesRouteImport } from './routes/_app/ajustes'
+import { Route as AppBibliotecaRouteImport } from './routes/_app/biblioteca'
+import { Route as AppCanaisRouteImport } from './routes/_app/canais'
+import { Route as AppConfigurarRouteImport } from './routes/_app/configurar'
+import { Route as AppCrmRouteImport } from './routes/_app/crm'
+import { Route as AppGestaoRouteImport } from './routes/_app/gestao'
+import { Route as AppInboxRouteImport } from './routes/_app/inbox'
+import { Route as AppIncidentesRouteImport } from './routes/_app/incidentes'
+import { Route as AppMetasRouteImport } from './routes/_app/metas'
+import { Route as AppMeuDiaRouteImport } from './routes/_app/meu-dia'
+import { Route as AppOrigemRouteImport } from './routes/_app/origem'
+import { Route as AppPainelRouteImport } from './routes/_app/painel'
+import { Route as AppPergunteRouteImport } from './routes/_app/pergunte'
+import { Route as AppQualidadeRouteImport } from './routes/_app/qualidade'
+import { Route as AppRelatoriosRouteImport } from './routes/_app/relatorios'
+import { Route as AppSdrRouteImport } from './routes/_app/sdr'
+import { Route as AppTreinoRouteImport } from './routes/_app/treino'
+import { Route as AgendarSlugRouteImport } from './routes/agendar.$slug'
+import { Route as AjudaSlugRouteImport } from './routes/ajuda.$slug'
+import { Route as ApiAgentsRouteImport } from './routes/api/agents'
+import { Route as ApiAiRouteImport } from './routes/api/ai'
+import { Route as ApiAutomationsRouteImport } from './routes/api/automations'
+import { Route as ApiCalendarRouteImport } from './routes/api/calendar'
+import { Route as ApiCallcenterRouteImport } from './routes/api/callcenter'
+import { Route as ApiEmailRouteImport } from './routes/api/email'
+import { Route as ApiGestaoRouteImport } from './routes/api/gestao'
+import { Route as ApiHealthRouteImport } from './routes/api/health'
+import { Route as ApiIntegrationsRouteImport } from './routes/api/integrations'
+import { Route as ApiMeetingsRouteImport } from './routes/api/meetings'
+import { Route as ApiNexaRouteImport } from './routes/api/nexa'
+import { Route as ApiPaymentsRouteImport } from './routes/api/payments'
+import { Route as ApiPlatformRouteImport } from './routes/api/platform'
+import { Route as ApiPrivacyRouteImport } from './routes/api/privacy'
+import { Route as ApiProposalsRouteImport } from './routes/api/proposals'
+import { Route as ApiPushRouteImport } from './routes/api/push'
+import { Route as ApiQualityRouteImport } from './routes/api/quality'
+import { Route as ApiSacRouteImport } from './routes/api/sac'
+import { Route as ApiSdrRouteImport } from './routes/api/sdr'
+import { Route as ApiSetupChatRouteImport } from './routes/api/setup-chat'
+import { Route as ApiSmsRouteImport } from './routes/api/sms'
+import { Route as ApiSupportRouteImport } from './routes/api/support'
+import { Route as ApiTelephonyRouteImport } from './routes/api/telephony'
+import { Route as ApiVoiceRouteImport } from './routes/api/voice'
+import { Route as ApiWebchatRouteImport } from './routes/api/webchat'
+import { Route as ApiWebhooksRouteImport } from './routes/api/webhooks'
+import { Route as ApiZernioRouteImport } from './routes/api/zernio'
+import { Route as ConviteTokenRouteImport } from './routes/convite.$token'
+import { Route as CsatTokenRouteImport } from './routes/csat.$token'
+import { Route as FFormIdRouteImport } from './routes/f.$formId'
+import { Route as NpsTokenRouteImport } from './routes/nps.$token'
+import { Route as PSlugRouteImport } from './routes/p.$slug'
+import { Route as PortalSlugRouteImport } from './routes/portal.$slug'
+import { Route as PropostaTokenRouteImport } from './routes/proposta.$token'
+import { Route as ReuniaoTokenRouteImport } from './routes/reuniao.$token'
+import { Route as SalaMeetingIdRouteImport } from './routes/sala.$meetingId'
+import { Route as StatusSlugRouteImport } from './routes/status.$slug'
+import { Route as AppAtendimentoIndexRouteImport } from './routes/_app/atendimento/index'
+import { Route as AppAtendimentoBaseRouteImport } from './routes/_app/atendimento/base'
+import { Route as AppAutomacoesIndexRouteImport } from './routes/_app/automacoes/index'
+import { Route as AppAutomacoesAutomationIdRouteImport } from './routes/_app/automacoes/$automationId'
+import { Route as AppCampanhasIndexRouteImport } from './routes/_app/campanhas/index'
+import { Route as AppCampanhasCampaignIdRouteImport } from './routes/_app/campanhas/$campaignId'
+import { Route as AppCampanhasModelosRouteImport } from './routes/_app/campanhas/modelos'
+import { Route as AppCampanhasWhatsappRouteImport } from './routes/_app/campanhas/whatsapp'
+import { Route as AppCentralDeAjudaIndexRouteImport } from './routes/_app/central-de-ajuda.index'
+import { Route as AppCentralDeAjudaSlugRouteImport } from './routes/_app/central-de-ajuda.$slug'
+import { Route as AppContatosIndexRouteImport } from './routes/_app/contatos/index'
+import { Route as AppContatosContactIdRouteImport } from './routes/_app/contatos/$contactId'
+import { Route as AppEmpresasIndexRouteImport } from './routes/_app/empresas/index'
+import { Route as AppEmpresasCompanyIdRouteImport } from './routes/_app/empresas/$companyId'
+import { Route as AppEquipeIaIndexRouteImport } from './routes/_app/equipe-ia/index'
+import { Route as AppEquipeIaFerramentasRouteImport } from './routes/_app/equipe-ia/ferramentas'
+import { Route as AppFilaIndexRouteImport } from './routes/_app/fila/index'
+import { Route as AppFilaPainelRouteImport } from './routes/_app/fila/painel'
+import { Route as AppFilaRoteamentoRouteImport } from './routes/_app/fila/roteamento'
+import { Route as AppFormulariosIndexRouteImport } from './routes/_app/formularios/index'
+import { Route as AppFormulariosFormIdRouteImport } from './routes/_app/formularios/$formId'
+import { Route as AppInboxIndexRouteImport } from './routes/_app/inbox/index'
+import { Route as AppInboxConversationIdRouteImport } from './routes/_app/inbox/$conversationId'
+import { Route as AppLigacoesIndexRouteImport } from './routes/_app/ligacoes/index'
+import { Route as AppLigacoesAgentesRouteImport } from './routes/_app/ligacoes/agentes'
+import { Route as AppLigacoesCampanhasRouteImport } from './routes/_app/ligacoes/campanhas'
+import { Route as AppLigacoesDiscadorRouteImport } from './routes/_app/ligacoes/discador'
+import { Route as AppReunioesIndexRouteImport } from './routes/_app/reunioes/index'
+import { Route as AppReunioesMeetingIdRouteImport } from './routes/_app/reunioes/$meetingId'
+import { Route as ApiAgentMeetingRouteImport } from './routes/api/agent/meeting'
+import { Route as ApiChannelsMetaEmbeddedRouteImport } from './routes/api/channels/meta-embedded'
+import { Route as ApiCoachRoleplayRouteImport } from './routes/api/coach/roleplay'
+import { Route as ApiPublicAsaasRouteImport } from './routes/api/public/asaas'
+import { Route as ApiPublicBookingRouteImport } from './routes/api/public/booking'
+import { Route as ApiPublicComposioRouteImport } from './routes/api/public/composio'
+import { Route as ApiPublicCronRouteImport } from './routes/api/public/cron'
+import { Route as ApiPublicFormRouteImport } from './routes/api/public/form'
+import { Route as ApiPublicGoogleLeadsRouteImport } from './routes/api/public/google-leads'
+import { Route as ApiPublicHelpRouteImport } from './routes/api/public/help'
+import { Route as ApiPublicLandingRouteImport } from './routes/api/public/landing'
+import { Route as ApiPublicLivekitRouteImport } from './routes/api/public/livekit'
+import { Route as ApiPublicMeetingJoinRouteImport } from './routes/api/public/meeting-join'
+import { Route as ApiPublicMeetingManageRouteImport } from './routes/api/public/meeting-manage'
+import { Route as ApiPublicMetaLeadsRouteImport } from './routes/api/public/meta-leads'
+import { Route as ApiPublicMetaWhatsappRouteImport } from './routes/api/public/meta-whatsapp'
+import { Route as ApiPublicPortalRouteImport } from './routes/api/public/portal'
+import { Route as ApiPublicProposalRouteImport } from './routes/api/public/proposal'
+import { Route as ApiPublicResendRouteImport } from './routes/api/public/resend'
+import { Route as ApiPublicSesRouteImport } from './routes/api/public/ses'
+import { Route as ApiPublicStatusRouteImport } from './routes/api/public/status'
+import { Route as ApiPublicSurveyRouteImport } from './routes/api/public/survey'
+import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
+import { Route as ApiPublicWebchatRouteImport } from './routes/api/public/webchat'
+import { Route as ApiPublicWidgetDotjsRouteImport } from './routes/api/public/widget[.]js'
+import { Route as ApiPublicZadarmaRouteImport } from './routes/api/public/zadarma'
+import { Route as ApiPublicZapsignRouteImport } from './routes/api/public/zapsign'
+import { Route as ApiPublicZernioRouteImport } from './routes/api/public/zernio'
+import { Route as ApiTicketsCreateRouteImport } from './routes/api/tickets/create'
+import { Route as ApiV1ContactsRouteImport } from './routes/api/v1/contacts'
+import { Route as ApiV1DealsRouteImport } from './routes/api/v1/deals'
+import { Route as ApiVozSplatRouteImport } from './routes/api/voz/$'
+import { Route as ApiVozLlmRouteImport } from './routes/api/voz/llm'
+import { Route as ApiWhatsappTemplatesRouteImport } from './routes/api/whatsapp/templates'
+import { Route as PropostaTokenImprimirRouteImport } from './routes/proposta.$token_.imprimir'
+import { Route as AppCampanhasCampaignIdEditarRouteImport } from './routes/_app/campanhas/$campaignId_.editar'
+import { Route as AppFormulariosPaginasIndexRouteImport } from './routes/_app/formularios/paginas/index'
+import { Route as AppFormulariosPaginasPageIdRouteImport } from './routes/_app/formularios/paginas/$pageId'
+import { Route as ApiPublicEmailInboundRouteImport } from './routes/api/public/email/inbound'
+import { Route as ApiPublicEmailUnsubscribeRouteImport } from './routes/api/public/email/unsubscribe'
+import { Route as ApiPublicFormsConfirmRouteImport } from './routes/api/public/forms/confirm'
+import { Route as ApiPublicFormsSubmitRouteImport } from './routes/api/public/forms/submit'
+import { Route as ApiPublicOauthProviderRouteImport } from './routes/api/public/oauth/$provider'
+import { Route as ApiPublicVoiceInitRouteImport } from './routes/api/public/voice/init'
+import { Route as ApiPublicVoicePostcallRouteImport } from './routes/api/public/voice/postcall'
+import { Route as ApiPublicVoiceToolRouteImport } from './routes/api/public/voice/tool'
+import { Route as ApiPublicEmailCIdRouteImport } from './routes/api/public/email/c.$id'
+import { Route as ApiPublicEmailOIdRouteImport } from './routes/api/public/email/o.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BemVindoRoute = BemVindoRouteImport.update({
+  id: '/bem-vindo',
+  path: '/bem-vindo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EntrarRoute = EntrarRouteImport.update({
+  id: '/entrar',
+  path: '/entrar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RedefinirSenhaRoute = RedefinirSenhaRouteImport.update({
+  id: '/redefinir-senha',
+  path: '/redefinir-senha',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppAgendaRoute = AppAgendaRouteImport.update({
+  id: '/agenda',
+  path: '/agenda',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAgendamentosRoute = AppAgendamentosRouteImport.update({
+  id: '/agendamentos',
+  path: '/agendamentos',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAjustesRoute = AppAjustesRouteImport.update({
+  id: '/ajustes',
+  path: '/ajustes',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBibliotecaRoute = AppBibliotecaRouteImport.update({
+  id: '/biblioteca',
+  path: '/biblioteca',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCanaisRoute = AppCanaisRouteImport.update({
+  id: '/canais',
+  path: '/canais',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppConfigurarRoute = AppConfigurarRouteImport.update({
+  id: '/configurar',
+  path: '/configurar',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCrmRoute = AppCrmRouteImport.update({
+  id: '/crm',
+  path: '/crm',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGestaoRoute = AppGestaoRouteImport.update({
+  id: '/gestao',
+  path: '/gestao',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInboxRoute = AppInboxRouteImport.update({
+  id: '/inbox',
+  path: '/inbox',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppIncidentesRoute = AppIncidentesRouteImport.update({
+  id: '/incidentes',
+  path: '/incidentes',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMetasRoute = AppMetasRouteImport.update({
+  id: '/metas',
+  path: '/metas',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMeuDiaRoute = AppMeuDiaRouteImport.update({
+  id: '/meu-dia',
+  path: '/meu-dia',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppOrigemRoute = AppOrigemRouteImport.update({
+  id: '/origem',
+  path: '/origem',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPainelRoute = AppPainelRouteImport.update({
+  id: '/painel',
+  path: '/painel',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPergunteRoute = AppPergunteRouteImport.update({
+  id: '/pergunte',
+  path: '/pergunte',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppQualidadeRoute = AppQualidadeRouteImport.update({
+  id: '/qualidade',
+  path: '/qualidade',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRelatoriosRoute = AppRelatoriosRouteImport.update({
+  id: '/relatorios',
+  path: '/relatorios',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSdrRoute = AppSdrRouteImport.update({
+  id: '/sdr',
+  path: '/sdr',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTreinoRoute = AppTreinoRouteImport.update({
+  id: '/treino',
+  path: '/treino',
+  getParentRoute: () => AppRoute,
+} as any)
+const AgendarSlugRoute = AgendarSlugRouteImport.update({
+  id: '/agendar/$slug',
+  path: '/agendar/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AjudaSlugRoute = AjudaSlugRouteImport.update({
+  id: '/ajuda/$slug',
+  path: '/ajuda/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAgentsRoute = ApiAgentsRouteImport.update({
+  id: '/api/agents',
+  path: '/api/agents',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAiRoute = ApiAiRouteImport.update({
+  id: '/api/ai',
+  path: '/api/ai',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAutomationsRoute = ApiAutomationsRouteImport.update({
+  id: '/api/automations',
+  path: '/api/automations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCalendarRoute = ApiCalendarRouteImport.update({
+  id: '/api/calendar',
+  path: '/api/calendar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCallcenterRoute = ApiCallcenterRouteImport.update({
+  id: '/api/callcenter',
+  path: '/api/callcenter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiEmailRoute = ApiEmailRouteImport.update({
+  id: '/api/email',
+  path: '/api/email',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGestaoRoute = ApiGestaoRouteImport.update({
+  id: '/api/gestao',
+  path: '/api/gestao',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiHealthRoute = ApiHealthRouteImport.update({
+  id: '/api/health',
+  path: '/api/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiIntegrationsRoute = ApiIntegrationsRouteImport.update({
+  id: '/api/integrations',
+  path: '/api/integrations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMeetingsRoute = ApiMeetingsRouteImport.update({
+  id: '/api/meetings',
+  path: '/api/meetings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiNexaRoute = ApiNexaRouteImport.update({
+  id: '/api/nexa',
+  path: '/api/nexa',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPaymentsRoute = ApiPaymentsRouteImport.update({
+  id: '/api/payments',
+  path: '/api/payments',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPlatformRoute = ApiPlatformRouteImport.update({
+  id: '/api/platform',
+  path: '/api/platform',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPrivacyRoute = ApiPrivacyRouteImport.update({
+  id: '/api/privacy',
+  path: '/api/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiProposalsRoute = ApiProposalsRouteImport.update({
+  id: '/api/proposals',
+  path: '/api/proposals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPushRoute = ApiPushRouteImport.update({
+  id: '/api/push',
+  path: '/api/push',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiQualityRoute = ApiQualityRouteImport.update({
+  id: '/api/quality',
+  path: '/api/quality',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSacRoute = ApiSacRouteImport.update({
+  id: '/api/sac',
+  path: '/api/sac',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSdrRoute = ApiSdrRouteImport.update({
+  id: '/api/sdr',
+  path: '/api/sdr',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSetupChatRoute = ApiSetupChatRouteImport.update({
+  id: '/api/setup-chat',
+  path: '/api/setup-chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSmsRoute = ApiSmsRouteImport.update({
+  id: '/api/sms',
+  path: '/api/sms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSupportRoute = ApiSupportRouteImport.update({
+  id: '/api/support',
+  path: '/api/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiTelephonyRoute = ApiTelephonyRouteImport.update({
+  id: '/api/telephony',
+  path: '/api/telephony',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiVoiceRoute = ApiVoiceRouteImport.update({
+  id: '/api/voice',
+  path: '/api/voice',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiWebchatRoute = ApiWebchatRouteImport.update({
+  id: '/api/webchat',
+  path: '/api/webchat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiWebhooksRoute = ApiWebhooksRouteImport.update({
+  id: '/api/webhooks',
+  path: '/api/webhooks',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiZernioRoute = ApiZernioRouteImport.update({
+  id: '/api/zernio',
+  path: '/api/zernio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConviteTokenRoute = ConviteTokenRouteImport.update({
+  id: '/convite/$token',
+  path: '/convite/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CsatTokenRoute = CsatTokenRouteImport.update({
+  id: '/csat/$token',
+  path: '/csat/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FFormIdRoute = FFormIdRouteImport.update({
+  id: '/f/$formId',
+  path: '/f/$formId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NpsTokenRoute = NpsTokenRouteImport.update({
+  id: '/nps/$token',
+  path: '/nps/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PSlugRoute = PSlugRouteImport.update({
+  id: '/p/$slug',
+  path: '/p/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalSlugRoute = PortalSlugRouteImport.update({
+  id: '/portal/$slug',
+  path: '/portal/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PropostaTokenRoute = PropostaTokenRouteImport.update({
+  id: '/proposta/$token',
+  path: '/proposta/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReuniaoTokenRoute = ReuniaoTokenRouteImport.update({
+  id: '/reuniao/$token',
+  path: '/reuniao/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SalaMeetingIdRoute = SalaMeetingIdRouteImport.update({
+  id: '/sala/$meetingId',
+  path: '/sala/$meetingId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StatusSlugRoute = StatusSlugRouteImport.update({
+  id: '/status/$slug',
+  path: '/status/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppAtendimentoIndexRoute = AppAtendimentoIndexRouteImport.update({
+  id: '/atendimento/',
+  path: '/atendimento/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAtendimentoBaseRoute = AppAtendimentoBaseRouteImport.update({
+  id: '/atendimento/base',
+  path: '/atendimento/base',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAutomacoesIndexRoute = AppAutomacoesIndexRouteImport.update({
+  id: '/automacoes/',
+  path: '/automacoes/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAutomacoesAutomationIdRoute =
+  AppAutomacoesAutomationIdRouteImport.update({
+    id: '/automacoes/$automationId',
+    path: '/automacoes/$automationId',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppCampanhasIndexRoute = AppCampanhasIndexRouteImport.update({
+  id: '/campanhas/',
+  path: '/campanhas/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCampanhasCampaignIdRoute = AppCampanhasCampaignIdRouteImport.update({
+  id: '/campanhas/$campaignId',
+  path: '/campanhas/$campaignId',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCampanhasModelosRoute = AppCampanhasModelosRouteImport.update({
+  id: '/campanhas/modelos',
+  path: '/campanhas/modelos',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCampanhasWhatsappRoute = AppCampanhasWhatsappRouteImport.update({
+  id: '/campanhas/whatsapp',
+  path: '/campanhas/whatsapp',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCentralDeAjudaIndexRoute = AppCentralDeAjudaIndexRouteImport.update({
+  id: '/central-de-ajuda/',
+  path: '/central-de-ajuda/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCentralDeAjudaSlugRoute = AppCentralDeAjudaSlugRouteImport.update({
+  id: '/central-de-ajuda/$slug',
+  path: '/central-de-ajuda/$slug',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppContatosIndexRoute = AppContatosIndexRouteImport.update({
+  id: '/contatos/',
+  path: '/contatos/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppContatosContactIdRoute = AppContatosContactIdRouteImport.update({
+  id: '/contatos/$contactId',
+  path: '/contatos/$contactId',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEmpresasIndexRoute = AppEmpresasIndexRouteImport.update({
+  id: '/empresas/',
+  path: '/empresas/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEmpresasCompanyIdRoute = AppEmpresasCompanyIdRouteImport.update({
+  id: '/empresas/$companyId',
+  path: '/empresas/$companyId',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEquipeIaIndexRoute = AppEquipeIaIndexRouteImport.update({
+  id: '/equipe-ia/',
+  path: '/equipe-ia/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEquipeIaFerramentasRoute = AppEquipeIaFerramentasRouteImport.update({
+  id: '/equipe-ia/ferramentas',
+  path: '/equipe-ia/ferramentas',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFilaIndexRoute = AppFilaIndexRouteImport.update({
+  id: '/fila/',
+  path: '/fila/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFilaPainelRoute = AppFilaPainelRouteImport.update({
+  id: '/fila/painel',
+  path: '/fila/painel',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFilaRoteamentoRoute = AppFilaRoteamentoRouteImport.update({
+  id: '/fila/roteamento',
+  path: '/fila/roteamento',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFormulariosIndexRoute = AppFormulariosIndexRouteImport.update({
+  id: '/formularios/',
+  path: '/formularios/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFormulariosFormIdRoute = AppFormulariosFormIdRouteImport.update({
+  id: '/formularios/$formId',
+  path: '/formularios/$formId',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInboxIndexRoute = AppInboxIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppInboxRoute,
+} as any)
+const AppInboxConversationIdRoute = AppInboxConversationIdRouteImport.update({
+  id: '/$conversationId',
+  path: '/$conversationId',
+  getParentRoute: () => AppInboxRoute,
+} as any)
+const AppLigacoesIndexRoute = AppLigacoesIndexRouteImport.update({
+  id: '/ligacoes/',
+  path: '/ligacoes/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppLigacoesAgentesRoute = AppLigacoesAgentesRouteImport.update({
+  id: '/ligacoes/agentes',
+  path: '/ligacoes/agentes',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppLigacoesCampanhasRoute = AppLigacoesCampanhasRouteImport.update({
+  id: '/ligacoes/campanhas',
+  path: '/ligacoes/campanhas',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppLigacoesDiscadorRoute = AppLigacoesDiscadorRouteImport.update({
+  id: '/ligacoes/discador',
+  path: '/ligacoes/discador',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppReunioesIndexRoute = AppReunioesIndexRouteImport.update({
+  id: '/reunioes/',
+  path: '/reunioes/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppReunioesMeetingIdRoute = AppReunioesMeetingIdRouteImport.update({
+  id: '/reunioes/$meetingId',
+  path: '/reunioes/$meetingId',
+  getParentRoute: () => AppRoute,
+} as any)
+const ApiAgentMeetingRoute = ApiAgentMeetingRouteImport.update({
+  id: '/api/agent/meeting',
+  path: '/api/agent/meeting',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiChannelsMetaEmbeddedRoute = ApiChannelsMetaEmbeddedRouteImport.update({
+  id: '/api/channels/meta-embedded',
+  path: '/api/channels/meta-embedded',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCoachRoleplayRoute = ApiCoachRoleplayRouteImport.update({
+  id: '/api/coach/roleplay',
+  path: '/api/coach/roleplay',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicAsaasRoute = ApiPublicAsaasRouteImport.update({
+  id: '/api/public/asaas',
+  path: '/api/public/asaas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicBookingRoute = ApiPublicBookingRouteImport.update({
+  id: '/api/public/booking',
+  path: '/api/public/booking',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicComposioRoute = ApiPublicComposioRouteImport.update({
+  id: '/api/public/composio',
+  path: '/api/public/composio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicCronRoute = ApiPublicCronRouteImport.update({
+  id: '/api/public/cron',
+  path: '/api/public/cron',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicFormRoute = ApiPublicFormRouteImport.update({
+  id: '/api/public/form',
+  path: '/api/public/form',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicGoogleLeadsRoute = ApiPublicGoogleLeadsRouteImport.update({
+  id: '/api/public/google-leads',
+  path: '/api/public/google-leads',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicHelpRoute = ApiPublicHelpRouteImport.update({
+  id: '/api/public/help',
+  path: '/api/public/help',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicLandingRoute = ApiPublicLandingRouteImport.update({
+  id: '/api/public/landing',
+  path: '/api/public/landing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicLivekitRoute = ApiPublicLivekitRouteImport.update({
+  id: '/api/public/livekit',
+  path: '/api/public/livekit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicMeetingJoinRoute = ApiPublicMeetingJoinRouteImport.update({
+  id: '/api/public/meeting-join',
+  path: '/api/public/meeting-join',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicMeetingManageRoute = ApiPublicMeetingManageRouteImport.update({
+  id: '/api/public/meeting-manage',
+  path: '/api/public/meeting-manage',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicMetaLeadsRoute = ApiPublicMetaLeadsRouteImport.update({
+  id: '/api/public/meta-leads',
+  path: '/api/public/meta-leads',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicMetaWhatsappRoute = ApiPublicMetaWhatsappRouteImport.update({
+  id: '/api/public/meta-whatsapp',
+  path: '/api/public/meta-whatsapp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicPortalRoute = ApiPublicPortalRouteImport.update({
+  id: '/api/public/portal',
+  path: '/api/public/portal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicProposalRoute = ApiPublicProposalRouteImport.update({
+  id: '/api/public/proposal',
+  path: '/api/public/proposal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicResendRoute = ApiPublicResendRouteImport.update({
+  id: '/api/public/resend',
+  path: '/api/public/resend',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicSesRoute = ApiPublicSesRouteImport.update({
+  id: '/api/public/ses',
+  path: '/api/public/ses',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicStatusRoute = ApiPublicStatusRouteImport.update({
+  id: '/api/public/status',
+  path: '/api/public/status',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicSurveyRoute = ApiPublicSurveyRouteImport.update({
+  id: '/api/public/survey',
+  path: '/api/public/survey',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicTrackRoute = ApiPublicTrackRouteImport.update({
+  id: '/api/public/track',
+  path: '/api/public/track',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicWebchatRoute = ApiPublicWebchatRouteImport.update({
+  id: '/api/public/webchat',
+  path: '/api/public/webchat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicWidgetDotjsRoute = ApiPublicWidgetDotjsRouteImport.update({
+  id: '/api/public/widget.js',
+  path: '/api/public/widget.js',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicZadarmaRoute = ApiPublicZadarmaRouteImport.update({
+  id: '/api/public/zadarma',
+  path: '/api/public/zadarma',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicZapsignRoute = ApiPublicZapsignRouteImport.update({
+  id: '/api/public/zapsign',
+  path: '/api/public/zapsign',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicZernioRoute = ApiPublicZernioRouteImport.update({
+  id: '/api/public/zernio',
+  path: '/api/public/zernio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiTicketsCreateRoute = ApiTicketsCreateRouteImport.update({
+  id: '/api/tickets/create',
+  path: '/api/tickets/create',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiV1ContactsRoute = ApiV1ContactsRouteImport.update({
+  id: '/api/v1/contacts',
+  path: '/api/v1/contacts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiV1DealsRoute = ApiV1DealsRouteImport.update({
+  id: '/api/v1/deals',
+  path: '/api/v1/deals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiVozSplatRoute = ApiVozSplatRouteImport.update({
+  id: '/api/voz/$',
+  path: '/api/voz/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiVozLlmRoute = ApiVozLlmRouteImport.update({
+  id: '/api/voz/llm',
+  path: '/api/voz/llm',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiWhatsappTemplatesRoute = ApiWhatsappTemplatesRouteImport.update({
+  id: '/api/whatsapp/templates',
+  path: '/api/whatsapp/templates',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PropostaTokenImprimirRoute = PropostaTokenImprimirRouteImport.update({
+  id: '/proposta/$token_/imprimir',
+  path: '/proposta/$token/imprimir',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppCampanhasCampaignIdEditarRoute =
+  AppCampanhasCampaignIdEditarRouteImport.update({
+    id: '/campanhas/$campaignId_/editar',
+    path: '/campanhas/$campaignId/editar',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppFormulariosPaginasIndexRoute =
+  AppFormulariosPaginasIndexRouteImport.update({
+    id: '/formularios/paginas/',
+    path: '/formularios/paginas/',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppFormulariosPaginasPageIdRoute =
+  AppFormulariosPaginasPageIdRouteImport.update({
+    id: '/formularios/paginas/$pageId',
+    path: '/formularios/paginas/$pageId',
+    getParentRoute: () => AppRoute,
+  } as any)
+const ApiPublicEmailInboundRoute = ApiPublicEmailInboundRouteImport.update({
+  id: '/api/public/email/inbound',
+  path: '/api/public/email/inbound',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicEmailUnsubscribeRoute =
+  ApiPublicEmailUnsubscribeRouteImport.update({
+    id: '/api/public/email/unsubscribe',
+    path: '/api/public/email/unsubscribe',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicFormsConfirmRoute = ApiPublicFormsConfirmRouteImport.update({
+  id: '/api/public/forms/confirm',
+  path: '/api/public/forms/confirm',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicFormsSubmitRoute = ApiPublicFormsSubmitRouteImport.update({
+  id: '/api/public/forms/submit',
+  path: '/api/public/forms/submit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicOauthProviderRoute = ApiPublicOauthProviderRouteImport.update({
+  id: '/api/public/oauth/$provider',
+  path: '/api/public/oauth/$provider',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicVoiceInitRoute = ApiPublicVoiceInitRouteImport.update({
+  id: '/api/public/voice/init',
+  path: '/api/public/voice/init',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicVoicePostcallRoute = ApiPublicVoicePostcallRouteImport.update({
+  id: '/api/public/voice/postcall',
+  path: '/api/public/voice/postcall',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicVoiceToolRoute = ApiPublicVoiceToolRouteImport.update({
+  id: '/api/public/voice/tool',
+  path: '/api/public/voice/tool',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicEmailCIdRoute = ApiPublicEmailCIdRouteImport.update({
+  id: '/api/public/email/c/$id',
+  path: '/api/public/email/c/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicEmailOIdRoute = ApiPublicEmailOIdRouteImport.update({
+  id: '/api/public/email/o/$id',
+  path: '/api/public/email/o/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/bem-vindo': typeof BemVindoRoute
+  '/entrar': typeof EntrarRoute
+  '/redefinir-senha': typeof RedefinirSenhaRoute
+  '/agenda': typeof AppAgendaRoute
+  '/agendamentos': typeof AppAgendamentosRoute
+  '/ajustes': typeof AppAjustesRoute
+  '/biblioteca': typeof AppBibliotecaRoute
+  '/canais': typeof AppCanaisRoute
+  '/configurar': typeof AppConfigurarRoute
+  '/crm': typeof AppCrmRoute
+  '/gestao': typeof AppGestaoRoute
+  '/inbox': typeof AppInboxRouteWithChildren
+  '/incidentes': typeof AppIncidentesRoute
+  '/metas': typeof AppMetasRoute
+  '/meu-dia': typeof AppMeuDiaRoute
+  '/origem': typeof AppOrigemRoute
+  '/painel': typeof AppPainelRoute
+  '/pergunte': typeof AppPergunteRoute
+  '/qualidade': typeof AppQualidadeRoute
+  '/relatorios': typeof AppRelatoriosRoute
+  '/sdr': typeof AppSdrRoute
+  '/treino': typeof AppTreinoRoute
+  '/agendar/$slug': typeof AgendarSlugRoute
+  '/ajuda/$slug': typeof AjudaSlugRoute
+  '/api/agents': typeof ApiAgentsRoute
+  '/api/ai': typeof ApiAiRoute
+  '/api/automations': typeof ApiAutomationsRoute
+  '/api/calendar': typeof ApiCalendarRoute
+  '/api/callcenter': typeof ApiCallcenterRoute
+  '/api/email': typeof ApiEmailRoute
+  '/api/gestao': typeof ApiGestaoRoute
+  '/api/health': typeof ApiHealthRoute
+  '/api/integrations': typeof ApiIntegrationsRoute
+  '/api/meetings': typeof ApiMeetingsRoute
+  '/api/nexa': typeof ApiNexaRoute
+  '/api/payments': typeof ApiPaymentsRoute
+  '/api/platform': typeof ApiPlatformRoute
+  '/api/privacy': typeof ApiPrivacyRoute
+  '/api/proposals': typeof ApiProposalsRoute
+  '/api/push': typeof ApiPushRoute
+  '/api/quality': typeof ApiQualityRoute
+  '/api/sac': typeof ApiSacRoute
+  '/api/sdr': typeof ApiSdrRoute
+  '/api/setup-chat': typeof ApiSetupChatRoute
+  '/api/sms': typeof ApiSmsRoute
+  '/api/support': typeof ApiSupportRoute
+  '/api/telephony': typeof ApiTelephonyRoute
+  '/api/voice': typeof ApiVoiceRoute
+  '/api/webchat': typeof ApiWebchatRoute
+  '/api/webhooks': typeof ApiWebhooksRoute
+  '/api/zernio': typeof ApiZernioRoute
+  '/convite/$token': typeof ConviteTokenRoute
+  '/csat/$token': typeof CsatTokenRoute
+  '/f/$formId': typeof FFormIdRoute
+  '/nps/$token': typeof NpsTokenRoute
+  '/p/$slug': typeof PSlugRoute
+  '/portal/$slug': typeof PortalSlugRoute
+  '/proposta/$token': typeof PropostaTokenRoute
+  '/reuniao/$token': typeof ReuniaoTokenRoute
+  '/sala/$meetingId': typeof SalaMeetingIdRoute
+  '/status/$slug': typeof StatusSlugRoute
+  '/atendimento/base': typeof AppAtendimentoBaseRoute
+  '/automacoes/$automationId': typeof AppAutomacoesAutomationIdRoute
+  '/campanhas/$campaignId': typeof AppCampanhasCampaignIdRoute
+  '/campanhas/modelos': typeof AppCampanhasModelosRoute
+  '/campanhas/whatsapp': typeof AppCampanhasWhatsappRoute
+  '/central-de-ajuda/$slug': typeof AppCentralDeAjudaSlugRoute
+  '/contatos/$contactId': typeof AppContatosContactIdRoute
+  '/empresas/$companyId': typeof AppEmpresasCompanyIdRoute
+  '/equipe-ia/ferramentas': typeof AppEquipeIaFerramentasRoute
+  '/fila/painel': typeof AppFilaPainelRoute
+  '/fila/roteamento': typeof AppFilaRoteamentoRoute
+  '/formularios/$formId': typeof AppFormulariosFormIdRoute
+  '/inbox/$conversationId': typeof AppInboxConversationIdRoute
+  '/ligacoes/agentes': typeof AppLigacoesAgentesRoute
+  '/ligacoes/campanhas': typeof AppLigacoesCampanhasRoute
+  '/ligacoes/discador': typeof AppLigacoesDiscadorRoute
+  '/reunioes/$meetingId': typeof AppReunioesMeetingIdRoute
+  '/api/agent/meeting': typeof ApiAgentMeetingRoute
+  '/api/channels/meta-embedded': typeof ApiChannelsMetaEmbeddedRoute
+  '/api/coach/roleplay': typeof ApiCoachRoleplayRoute
+  '/api/public/asaas': typeof ApiPublicAsaasRoute
+  '/api/public/booking': typeof ApiPublicBookingRoute
+  '/api/public/composio': typeof ApiPublicComposioRoute
+  '/api/public/cron': typeof ApiPublicCronRoute
+  '/api/public/form': typeof ApiPublicFormRoute
+  '/api/public/google-leads': typeof ApiPublicGoogleLeadsRoute
+  '/api/public/help': typeof ApiPublicHelpRoute
+  '/api/public/landing': typeof ApiPublicLandingRoute
+  '/api/public/livekit': typeof ApiPublicLivekitRoute
+  '/api/public/meeting-join': typeof ApiPublicMeetingJoinRoute
+  '/api/public/meeting-manage': typeof ApiPublicMeetingManageRoute
+  '/api/public/meta-leads': typeof ApiPublicMetaLeadsRoute
+  '/api/public/meta-whatsapp': typeof ApiPublicMetaWhatsappRoute
+  '/api/public/portal': typeof ApiPublicPortalRoute
+  '/api/public/proposal': typeof ApiPublicProposalRoute
+  '/api/public/resend': typeof ApiPublicResendRoute
+  '/api/public/ses': typeof ApiPublicSesRoute
+  '/api/public/status': typeof ApiPublicStatusRoute
+  '/api/public/survey': typeof ApiPublicSurveyRoute
+  '/api/public/track': typeof ApiPublicTrackRoute
+  '/api/public/webchat': typeof ApiPublicWebchatRoute
+  '/api/public/widget.js': typeof ApiPublicWidgetDotjsRoute
+  '/api/public/zadarma': typeof ApiPublicZadarmaRoute
+  '/api/public/zapsign': typeof ApiPublicZapsignRoute
+  '/api/public/zernio': typeof ApiPublicZernioRoute
+  '/api/tickets/create': typeof ApiTicketsCreateRoute
+  '/api/v1/contacts': typeof ApiV1ContactsRoute
+  '/api/v1/deals': typeof ApiV1DealsRoute
+  '/api/voz/$': typeof ApiVozSplatRoute
+  '/api/voz/llm': typeof ApiVozLlmRoute
+  '/api/whatsapp/templates': typeof ApiWhatsappTemplatesRoute
+  '/proposta/$token/imprimir': typeof PropostaTokenImprimirRoute
+  '/atendimento/': typeof AppAtendimentoIndexRoute
+  '/automacoes/': typeof AppAutomacoesIndexRoute
+  '/campanhas/': typeof AppCampanhasIndexRoute
+  '/central-de-ajuda/': typeof AppCentralDeAjudaIndexRoute
+  '/contatos/': typeof AppContatosIndexRoute
+  '/empresas/': typeof AppEmpresasIndexRoute
+  '/equipe-ia/': typeof AppEquipeIaIndexRoute
+  '/fila/': typeof AppFilaIndexRoute
+  '/formularios/': typeof AppFormulariosIndexRoute
+  '/inbox/': typeof AppInboxIndexRoute
+  '/ligacoes/': typeof AppLigacoesIndexRoute
+  '/reunioes/': typeof AppReunioesIndexRoute
+  '/campanhas/$campaignId/editar': typeof AppCampanhasCampaignIdEditarRoute
+  '/formularios/paginas/$pageId': typeof AppFormulariosPaginasPageIdRoute
+  '/api/public/email/inbound': typeof ApiPublicEmailInboundRoute
+  '/api/public/email/unsubscribe': typeof ApiPublicEmailUnsubscribeRoute
+  '/api/public/forms/confirm': typeof ApiPublicFormsConfirmRoute
+  '/api/public/forms/submit': typeof ApiPublicFormsSubmitRoute
+  '/api/public/oauth/$provider': typeof ApiPublicOauthProviderRoute
+  '/api/public/voice/init': typeof ApiPublicVoiceInitRoute
+  '/api/public/voice/postcall': typeof ApiPublicVoicePostcallRoute
+  '/api/public/voice/tool': typeof ApiPublicVoiceToolRoute
+  '/formularios/paginas/': typeof AppFormulariosPaginasIndexRoute
+  '/api/public/email/c/$id': typeof ApiPublicEmailCIdRoute
+  '/api/public/email/o/$id': typeof ApiPublicEmailOIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/bem-vindo': typeof BemVindoRoute
+  '/entrar': typeof EntrarRoute
+  '/redefinir-senha': typeof RedefinirSenhaRoute
+  '/agenda': typeof AppAgendaRoute
+  '/agendamentos': typeof AppAgendamentosRoute
+  '/ajustes': typeof AppAjustesRoute
+  '/biblioteca': typeof AppBibliotecaRoute
+  '/canais': typeof AppCanaisRoute
+  '/configurar': typeof AppConfigurarRoute
+  '/crm': typeof AppCrmRoute
+  '/gestao': typeof AppGestaoRoute
+  '/incidentes': typeof AppIncidentesRoute
+  '/metas': typeof AppMetasRoute
+  '/meu-dia': typeof AppMeuDiaRoute
+  '/origem': typeof AppOrigemRoute
+  '/painel': typeof AppPainelRoute
+  '/pergunte': typeof AppPergunteRoute
+  '/qualidade': typeof AppQualidadeRoute
+  '/relatorios': typeof AppRelatoriosRoute
+  '/sdr': typeof AppSdrRoute
+  '/treino': typeof AppTreinoRoute
+  '/agendar/$slug': typeof AgendarSlugRoute
+  '/ajuda/$slug': typeof AjudaSlugRoute
+  '/api/agents': typeof ApiAgentsRoute
+  '/api/ai': typeof ApiAiRoute
+  '/api/automations': typeof ApiAutomationsRoute
+  '/api/calendar': typeof ApiCalendarRoute
+  '/api/callcenter': typeof ApiCallcenterRoute
+  '/api/email': typeof ApiEmailRoute
+  '/api/gestao': typeof ApiGestaoRoute
+  '/api/health': typeof ApiHealthRoute
+  '/api/integrations': typeof ApiIntegrationsRoute
+  '/api/meetings': typeof ApiMeetingsRoute
+  '/api/nexa': typeof ApiNexaRoute
+  '/api/payments': typeof ApiPaymentsRoute
+  '/api/platform': typeof ApiPlatformRoute
+  '/api/privacy': typeof ApiPrivacyRoute
+  '/api/proposals': typeof ApiProposalsRoute
+  '/api/push': typeof ApiPushRoute
+  '/api/quality': typeof ApiQualityRoute
+  '/api/sac': typeof ApiSacRoute
+  '/api/sdr': typeof ApiSdrRoute
+  '/api/setup-chat': typeof ApiSetupChatRoute
+  '/api/sms': typeof ApiSmsRoute
+  '/api/support': typeof ApiSupportRoute
+  '/api/telephony': typeof ApiTelephonyRoute
+  '/api/voice': typeof ApiVoiceRoute
+  '/api/webchat': typeof ApiWebchatRoute
+  '/api/webhooks': typeof ApiWebhooksRoute
+  '/api/zernio': typeof ApiZernioRoute
+  '/convite/$token': typeof ConviteTokenRoute
+  '/csat/$token': typeof CsatTokenRoute
+  '/f/$formId': typeof FFormIdRoute
+  '/nps/$token': typeof NpsTokenRoute
+  '/p/$slug': typeof PSlugRoute
+  '/portal/$slug': typeof PortalSlugRoute
+  '/proposta/$token': typeof PropostaTokenRoute
+  '/reuniao/$token': typeof ReuniaoTokenRoute
+  '/sala/$meetingId': typeof SalaMeetingIdRoute
+  '/status/$slug': typeof StatusSlugRoute
+  '/atendimento/base': typeof AppAtendimentoBaseRoute
+  '/automacoes/$automationId': typeof AppAutomacoesAutomationIdRoute
+  '/campanhas/$campaignId': typeof AppCampanhasCampaignIdRoute
+  '/campanhas/modelos': typeof AppCampanhasModelosRoute
+  '/campanhas/whatsapp': typeof AppCampanhasWhatsappRoute
+  '/central-de-ajuda/$slug': typeof AppCentralDeAjudaSlugRoute
+  '/contatos/$contactId': typeof AppContatosContactIdRoute
+  '/empresas/$companyId': typeof AppEmpresasCompanyIdRoute
+  '/equipe-ia/ferramentas': typeof AppEquipeIaFerramentasRoute
+  '/fila/painel': typeof AppFilaPainelRoute
+  '/fila/roteamento': typeof AppFilaRoteamentoRoute
+  '/formularios/$formId': typeof AppFormulariosFormIdRoute
+  '/inbox/$conversationId': typeof AppInboxConversationIdRoute
+  '/ligacoes/agentes': typeof AppLigacoesAgentesRoute
+  '/ligacoes/campanhas': typeof AppLigacoesCampanhasRoute
+  '/ligacoes/discador': typeof AppLigacoesDiscadorRoute
+  '/reunioes/$meetingId': typeof AppReunioesMeetingIdRoute
+  '/api/agent/meeting': typeof ApiAgentMeetingRoute
+  '/api/channels/meta-embedded': typeof ApiChannelsMetaEmbeddedRoute
+  '/api/coach/roleplay': typeof ApiCoachRoleplayRoute
+  '/api/public/asaas': typeof ApiPublicAsaasRoute
+  '/api/public/booking': typeof ApiPublicBookingRoute
+  '/api/public/composio': typeof ApiPublicComposioRoute
+  '/api/public/cron': typeof ApiPublicCronRoute
+  '/api/public/form': typeof ApiPublicFormRoute
+  '/api/public/google-leads': typeof ApiPublicGoogleLeadsRoute
+  '/api/public/help': typeof ApiPublicHelpRoute
+  '/api/public/landing': typeof ApiPublicLandingRoute
+  '/api/public/livekit': typeof ApiPublicLivekitRoute
+  '/api/public/meeting-join': typeof ApiPublicMeetingJoinRoute
+  '/api/public/meeting-manage': typeof ApiPublicMeetingManageRoute
+  '/api/public/meta-leads': typeof ApiPublicMetaLeadsRoute
+  '/api/public/meta-whatsapp': typeof ApiPublicMetaWhatsappRoute
+  '/api/public/portal': typeof ApiPublicPortalRoute
+  '/api/public/proposal': typeof ApiPublicProposalRoute
+  '/api/public/resend': typeof ApiPublicResendRoute
+  '/api/public/ses': typeof ApiPublicSesRoute
+  '/api/public/status': typeof ApiPublicStatusRoute
+  '/api/public/survey': typeof ApiPublicSurveyRoute
+  '/api/public/track': typeof ApiPublicTrackRoute
+  '/api/public/webchat': typeof ApiPublicWebchatRoute
+  '/api/public/widget.js': typeof ApiPublicWidgetDotjsRoute
+  '/api/public/zadarma': typeof ApiPublicZadarmaRoute
+  '/api/public/zapsign': typeof ApiPublicZapsignRoute
+  '/api/public/zernio': typeof ApiPublicZernioRoute
+  '/api/tickets/create': typeof ApiTicketsCreateRoute
+  '/api/v1/contacts': typeof ApiV1ContactsRoute
+  '/api/v1/deals': typeof ApiV1DealsRoute
+  '/api/voz/$': typeof ApiVozSplatRoute
+  '/api/voz/llm': typeof ApiVozLlmRoute
+  '/api/whatsapp/templates': typeof ApiWhatsappTemplatesRoute
+  '/proposta/$token/imprimir': typeof PropostaTokenImprimirRoute
+  '/atendimento': typeof AppAtendimentoIndexRoute
+  '/automacoes': typeof AppAutomacoesIndexRoute
+  '/campanhas': typeof AppCampanhasIndexRoute
+  '/central-de-ajuda': typeof AppCentralDeAjudaIndexRoute
+  '/contatos': typeof AppContatosIndexRoute
+  '/empresas': typeof AppEmpresasIndexRoute
+  '/equipe-ia': typeof AppEquipeIaIndexRoute
+  '/fila': typeof AppFilaIndexRoute
+  '/formularios': typeof AppFormulariosIndexRoute
+  '/inbox': typeof AppInboxIndexRoute
+  '/ligacoes': typeof AppLigacoesIndexRoute
+  '/reunioes': typeof AppReunioesIndexRoute
+  '/campanhas/$campaignId/editar': typeof AppCampanhasCampaignIdEditarRoute
+  '/formularios/paginas/$pageId': typeof AppFormulariosPaginasPageIdRoute
+  '/api/public/email/inbound': typeof ApiPublicEmailInboundRoute
+  '/api/public/email/unsubscribe': typeof ApiPublicEmailUnsubscribeRoute
+  '/api/public/forms/confirm': typeof ApiPublicFormsConfirmRoute
+  '/api/public/forms/submit': typeof ApiPublicFormsSubmitRoute
+  '/api/public/oauth/$provider': typeof ApiPublicOauthProviderRoute
+  '/api/public/voice/init': typeof ApiPublicVoiceInitRoute
+  '/api/public/voice/postcall': typeof ApiPublicVoicePostcallRoute
+  '/api/public/voice/tool': typeof ApiPublicVoiceToolRoute
+  '/formularios/paginas': typeof AppFormulariosPaginasIndexRoute
+  '/api/public/email/c/$id': typeof ApiPublicEmailCIdRoute
+  '/api/public/email/o/$id': typeof ApiPublicEmailOIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_app': typeof AppRouteWithChildren
+  '/bem-vindo': typeof BemVindoRoute
+  '/entrar': typeof EntrarRoute
+  '/redefinir-senha': typeof RedefinirSenhaRoute
+  '/_app/agenda': typeof AppAgendaRoute
+  '/_app/agendamentos': typeof AppAgendamentosRoute
+  '/_app/ajustes': typeof AppAjustesRoute
+  '/_app/biblioteca': typeof AppBibliotecaRoute
+  '/_app/canais': typeof AppCanaisRoute
+  '/_app/configurar': typeof AppConfigurarRoute
+  '/_app/crm': typeof AppCrmRoute
+  '/_app/gestao': typeof AppGestaoRoute
+  '/_app/inbox': typeof AppInboxRouteWithChildren
+  '/_app/incidentes': typeof AppIncidentesRoute
+  '/_app/metas': typeof AppMetasRoute
+  '/_app/meu-dia': typeof AppMeuDiaRoute
+  '/_app/origem': typeof AppOrigemRoute
+  '/_app/painel': typeof AppPainelRoute
+  '/_app/pergunte': typeof AppPergunteRoute
+  '/_app/qualidade': typeof AppQualidadeRoute
+  '/_app/relatorios': typeof AppRelatoriosRoute
+  '/_app/sdr': typeof AppSdrRoute
+  '/_app/treino': typeof AppTreinoRoute
+  '/agendar/$slug': typeof AgendarSlugRoute
+  '/ajuda/$slug': typeof AjudaSlugRoute
+  '/api/agents': typeof ApiAgentsRoute
+  '/api/ai': typeof ApiAiRoute
+  '/api/automations': typeof ApiAutomationsRoute
+  '/api/calendar': typeof ApiCalendarRoute
+  '/api/callcenter': typeof ApiCallcenterRoute
+  '/api/email': typeof ApiEmailRoute
+  '/api/gestao': typeof ApiGestaoRoute
+  '/api/health': typeof ApiHealthRoute
+  '/api/integrations': typeof ApiIntegrationsRoute
+  '/api/meetings': typeof ApiMeetingsRoute
+  '/api/nexa': typeof ApiNexaRoute
+  '/api/payments': typeof ApiPaymentsRoute
+  '/api/platform': typeof ApiPlatformRoute
+  '/api/privacy': typeof ApiPrivacyRoute
+  '/api/proposals': typeof ApiProposalsRoute
+  '/api/push': typeof ApiPushRoute
+  '/api/quality': typeof ApiQualityRoute
+  '/api/sac': typeof ApiSacRoute
+  '/api/sdr': typeof ApiSdrRoute
+  '/api/setup-chat': typeof ApiSetupChatRoute
+  '/api/sms': typeof ApiSmsRoute
+  '/api/support': typeof ApiSupportRoute
+  '/api/telephony': typeof ApiTelephonyRoute
+  '/api/voice': typeof ApiVoiceRoute
+  '/api/webchat': typeof ApiWebchatRoute
+  '/api/webhooks': typeof ApiWebhooksRoute
+  '/api/zernio': typeof ApiZernioRoute
+  '/convite/$token': typeof ConviteTokenRoute
+  '/csat/$token': typeof CsatTokenRoute
+  '/f/$formId': typeof FFormIdRoute
+  '/nps/$token': typeof NpsTokenRoute
+  '/p/$slug': typeof PSlugRoute
+  '/portal/$slug': typeof PortalSlugRoute
+  '/proposta/$token': typeof PropostaTokenRoute
+  '/reuniao/$token': typeof ReuniaoTokenRoute
+  '/sala/$meetingId': typeof SalaMeetingIdRoute
+  '/status/$slug': typeof StatusSlugRoute
+  '/_app/atendimento/base': typeof AppAtendimentoBaseRoute
+  '/_app/automacoes/$automationId': typeof AppAutomacoesAutomationIdRoute
+  '/_app/campanhas/$campaignId': typeof AppCampanhasCampaignIdRoute
+  '/_app/campanhas/modelos': typeof AppCampanhasModelosRoute
+  '/_app/campanhas/whatsapp': typeof AppCampanhasWhatsappRoute
+  '/_app/central-de-ajuda/$slug': typeof AppCentralDeAjudaSlugRoute
+  '/_app/contatos/$contactId': typeof AppContatosContactIdRoute
+  '/_app/empresas/$companyId': typeof AppEmpresasCompanyIdRoute
+  '/_app/equipe-ia/ferramentas': typeof AppEquipeIaFerramentasRoute
+  '/_app/fila/painel': typeof AppFilaPainelRoute
+  '/_app/fila/roteamento': typeof AppFilaRoteamentoRoute
+  '/_app/formularios/$formId': typeof AppFormulariosFormIdRoute
+  '/_app/inbox/$conversationId': typeof AppInboxConversationIdRoute
+  '/_app/ligacoes/agentes': typeof AppLigacoesAgentesRoute
+  '/_app/ligacoes/campanhas': typeof AppLigacoesCampanhasRoute
+  '/_app/ligacoes/discador': typeof AppLigacoesDiscadorRoute
+  '/_app/reunioes/$meetingId': typeof AppReunioesMeetingIdRoute
+  '/api/agent/meeting': typeof ApiAgentMeetingRoute
+  '/api/channels/meta-embedded': typeof ApiChannelsMetaEmbeddedRoute
+  '/api/coach/roleplay': typeof ApiCoachRoleplayRoute
+  '/api/public/asaas': typeof ApiPublicAsaasRoute
+  '/api/public/booking': typeof ApiPublicBookingRoute
+  '/api/public/composio': typeof ApiPublicComposioRoute
+  '/api/public/cron': typeof ApiPublicCronRoute
+  '/api/public/form': typeof ApiPublicFormRoute
+  '/api/public/google-leads': typeof ApiPublicGoogleLeadsRoute
+  '/api/public/help': typeof ApiPublicHelpRoute
+  '/api/public/landing': typeof ApiPublicLandingRoute
+  '/api/public/livekit': typeof ApiPublicLivekitRoute
+  '/api/public/meeting-join': typeof ApiPublicMeetingJoinRoute
+  '/api/public/meeting-manage': typeof ApiPublicMeetingManageRoute
+  '/api/public/meta-leads': typeof ApiPublicMetaLeadsRoute
+  '/api/public/meta-whatsapp': typeof ApiPublicMetaWhatsappRoute
+  '/api/public/portal': typeof ApiPublicPortalRoute
+  '/api/public/proposal': typeof ApiPublicProposalRoute
+  '/api/public/resend': typeof ApiPublicResendRoute
+  '/api/public/ses': typeof ApiPublicSesRoute
+  '/api/public/status': typeof ApiPublicStatusRoute
+  '/api/public/survey': typeof ApiPublicSurveyRoute
+  '/api/public/track': typeof ApiPublicTrackRoute
+  '/api/public/webchat': typeof ApiPublicWebchatRoute
+  '/api/public/widget.js': typeof ApiPublicWidgetDotjsRoute
+  '/api/public/zadarma': typeof ApiPublicZadarmaRoute
+  '/api/public/zapsign': typeof ApiPublicZapsignRoute
+  '/api/public/zernio': typeof ApiPublicZernioRoute
+  '/api/tickets/create': typeof ApiTicketsCreateRoute
+  '/api/v1/contacts': typeof ApiV1ContactsRoute
+  '/api/v1/deals': typeof ApiV1DealsRoute
+  '/api/voz/$': typeof ApiVozSplatRoute
+  '/api/voz/llm': typeof ApiVozLlmRoute
+  '/api/whatsapp/templates': typeof ApiWhatsappTemplatesRoute
+  '/proposta/$token_/imprimir': typeof PropostaTokenImprimirRoute
+  '/_app/atendimento/': typeof AppAtendimentoIndexRoute
+  '/_app/automacoes/': typeof AppAutomacoesIndexRoute
+  '/_app/campanhas/': typeof AppCampanhasIndexRoute
+  '/_app/central-de-ajuda/': typeof AppCentralDeAjudaIndexRoute
+  '/_app/contatos/': typeof AppContatosIndexRoute
+  '/_app/empresas/': typeof AppEmpresasIndexRoute
+  '/_app/equipe-ia/': typeof AppEquipeIaIndexRoute
+  '/_app/fila/': typeof AppFilaIndexRoute
+  '/_app/formularios/': typeof AppFormulariosIndexRoute
+  '/_app/inbox/': typeof AppInboxIndexRoute
+  '/_app/ligacoes/': typeof AppLigacoesIndexRoute
+  '/_app/reunioes/': typeof AppReunioesIndexRoute
+  '/_app/campanhas/$campaignId_/editar': typeof AppCampanhasCampaignIdEditarRoute
+  '/_app/formularios/paginas/$pageId': typeof AppFormulariosPaginasPageIdRoute
+  '/api/public/email/inbound': typeof ApiPublicEmailInboundRoute
+  '/api/public/email/unsubscribe': typeof ApiPublicEmailUnsubscribeRoute
+  '/api/public/forms/confirm': typeof ApiPublicFormsConfirmRoute
+  '/api/public/forms/submit': typeof ApiPublicFormsSubmitRoute
+  '/api/public/oauth/$provider': typeof ApiPublicOauthProviderRoute
+  '/api/public/voice/init': typeof ApiPublicVoiceInitRoute
+  '/api/public/voice/postcall': typeof ApiPublicVoicePostcallRoute
+  '/api/public/voice/tool': typeof ApiPublicVoiceToolRoute
+  '/_app/formularios/paginas/': typeof AppFormulariosPaginasIndexRoute
+  '/api/public/email/c/$id': typeof ApiPublicEmailCIdRoute
+  '/api/public/email/o/$id': typeof ApiPublicEmailOIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/bem-vindo'
+    | '/entrar'
+    | '/redefinir-senha'
+    | '/agenda'
+    | '/agendamentos'
+    | '/ajustes'
+    | '/biblioteca'
+    | '/canais'
+    | '/configurar'
+    | '/crm'
+    | '/gestao'
+    | '/inbox'
+    | '/incidentes'
+    | '/metas'
+    | '/meu-dia'
+    | '/origem'
+    | '/painel'
+    | '/pergunte'
+    | '/qualidade'
+    | '/relatorios'
+    | '/sdr'
+    | '/treino'
+    | '/agendar/$slug'
+    | '/ajuda/$slug'
+    | '/api/agents'
+    | '/api/ai'
+    | '/api/automations'
+    | '/api/calendar'
+    | '/api/callcenter'
+    | '/api/email'
+    | '/api/gestao'
+    | '/api/health'
+    | '/api/integrations'
+    | '/api/meetings'
+    | '/api/nexa'
+    | '/api/payments'
+    | '/api/platform'
+    | '/api/privacy'
+    | '/api/proposals'
+    | '/api/push'
+    | '/api/quality'
+    | '/api/sac'
+    | '/api/sdr'
+    | '/api/setup-chat'
+    | '/api/sms'
+    | '/api/support'
+    | '/api/telephony'
+    | '/api/voice'
+    | '/api/webchat'
+    | '/api/webhooks'
+    | '/api/zernio'
+    | '/convite/$token'
+    | '/csat/$token'
+    | '/f/$formId'
+    | '/nps/$token'
+    | '/p/$slug'
+    | '/portal/$slug'
+    | '/proposta/$token'
+    | '/reuniao/$token'
+    | '/sala/$meetingId'
+    | '/status/$slug'
+    | '/atendimento/base'
+    | '/automacoes/$automationId'
+    | '/campanhas/$campaignId'
+    | '/campanhas/modelos'
+    | '/campanhas/whatsapp'
+    | '/central-de-ajuda/$slug'
+    | '/contatos/$contactId'
+    | '/empresas/$companyId'
+    | '/equipe-ia/ferramentas'
+    | '/fila/painel'
+    | '/fila/roteamento'
+    | '/formularios/$formId'
+    | '/inbox/$conversationId'
+    | '/ligacoes/agentes'
+    | '/ligacoes/campanhas'
+    | '/ligacoes/discador'
+    | '/reunioes/$meetingId'
+    | '/api/agent/meeting'
+    | '/api/channels/meta-embedded'
+    | '/api/coach/roleplay'
+    | '/api/public/asaas'
+    | '/api/public/booking'
+    | '/api/public/composio'
+    | '/api/public/cron'
+    | '/api/public/form'
+    | '/api/public/google-leads'
+    | '/api/public/help'
+    | '/api/public/landing'
+    | '/api/public/livekit'
+    | '/api/public/meeting-join'
+    | '/api/public/meeting-manage'
+    | '/api/public/meta-leads'
+    | '/api/public/meta-whatsapp'
+    | '/api/public/portal'
+    | '/api/public/proposal'
+    | '/api/public/resend'
+    | '/api/public/ses'
+    | '/api/public/status'
+    | '/api/public/survey'
+    | '/api/public/track'
+    | '/api/public/webchat'
+    | '/api/public/widget.js'
+    | '/api/public/zadarma'
+    | '/api/public/zapsign'
+    | '/api/public/zernio'
+    | '/api/tickets/create'
+    | '/api/v1/contacts'
+    | '/api/v1/deals'
+    | '/api/voz/$'
+    | '/api/voz/llm'
+    | '/api/whatsapp/templates'
+    | '/proposta/$token/imprimir'
+    | '/atendimento/'
+    | '/automacoes/'
+    | '/campanhas/'
+    | '/central-de-ajuda/'
+    | '/contatos/'
+    | '/empresas/'
+    | '/equipe-ia/'
+    | '/fila/'
+    | '/formularios/'
+    | '/inbox/'
+    | '/ligacoes/'
+    | '/reunioes/'
+    | '/campanhas/$campaignId/editar'
+    | '/formularios/paginas/$pageId'
+    | '/api/public/email/inbound'
+    | '/api/public/email/unsubscribe'
+    | '/api/public/forms/confirm'
+    | '/api/public/forms/submit'
+    | '/api/public/oauth/$provider'
+    | '/api/public/voice/init'
+    | '/api/public/voice/postcall'
+    | '/api/public/voice/tool'
+    | '/formularios/paginas/'
+    | '/api/public/email/c/$id'
+    | '/api/public/email/o/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/bem-vindo'
+    | '/entrar'
+    | '/redefinir-senha'
+    | '/agenda'
+    | '/agendamentos'
+    | '/ajustes'
+    | '/biblioteca'
+    | '/canais'
+    | '/configurar'
+    | '/crm'
+    | '/gestao'
+    | '/incidentes'
+    | '/metas'
+    | '/meu-dia'
+    | '/origem'
+    | '/painel'
+    | '/pergunte'
+    | '/qualidade'
+    | '/relatorios'
+    | '/sdr'
+    | '/treino'
+    | '/agendar/$slug'
+    | '/ajuda/$slug'
+    | '/api/agents'
+    | '/api/ai'
+    | '/api/automations'
+    | '/api/calendar'
+    | '/api/callcenter'
+    | '/api/email'
+    | '/api/gestao'
+    | '/api/health'
+    | '/api/integrations'
+    | '/api/meetings'
+    | '/api/nexa'
+    | '/api/payments'
+    | '/api/platform'
+    | '/api/privacy'
+    | '/api/proposals'
+    | '/api/push'
+    | '/api/quality'
+    | '/api/sac'
+    | '/api/sdr'
+    | '/api/setup-chat'
+    | '/api/sms'
+    | '/api/support'
+    | '/api/telephony'
+    | '/api/voice'
+    | '/api/webchat'
+    | '/api/webhooks'
+    | '/api/zernio'
+    | '/convite/$token'
+    | '/csat/$token'
+    | '/f/$formId'
+    | '/nps/$token'
+    | '/p/$slug'
+    | '/portal/$slug'
+    | '/proposta/$token'
+    | '/reuniao/$token'
+    | '/sala/$meetingId'
+    | '/status/$slug'
+    | '/atendimento/base'
+    | '/automacoes/$automationId'
+    | '/campanhas/$campaignId'
+    | '/campanhas/modelos'
+    | '/campanhas/whatsapp'
+    | '/central-de-ajuda/$slug'
+    | '/contatos/$contactId'
+    | '/empresas/$companyId'
+    | '/equipe-ia/ferramentas'
+    | '/fila/painel'
+    | '/fila/roteamento'
+    | '/formularios/$formId'
+    | '/inbox/$conversationId'
+    | '/ligacoes/agentes'
+    | '/ligacoes/campanhas'
+    | '/ligacoes/discador'
+    | '/reunioes/$meetingId'
+    | '/api/agent/meeting'
+    | '/api/channels/meta-embedded'
+    | '/api/coach/roleplay'
+    | '/api/public/asaas'
+    | '/api/public/booking'
+    | '/api/public/composio'
+    | '/api/public/cron'
+    | '/api/public/form'
+    | '/api/public/google-leads'
+    | '/api/public/help'
+    | '/api/public/landing'
+    | '/api/public/livekit'
+    | '/api/public/meeting-join'
+    | '/api/public/meeting-manage'
+    | '/api/public/meta-leads'
+    | '/api/public/meta-whatsapp'
+    | '/api/public/portal'
+    | '/api/public/proposal'
+    | '/api/public/resend'
+    | '/api/public/ses'
+    | '/api/public/status'
+    | '/api/public/survey'
+    | '/api/public/track'
+    | '/api/public/webchat'
+    | '/api/public/widget.js'
+    | '/api/public/zadarma'
+    | '/api/public/zapsign'
+    | '/api/public/zernio'
+    | '/api/tickets/create'
+    | '/api/v1/contacts'
+    | '/api/v1/deals'
+    | '/api/voz/$'
+    | '/api/voz/llm'
+    | '/api/whatsapp/templates'
+    | '/proposta/$token/imprimir'
+    | '/atendimento'
+    | '/automacoes'
+    | '/campanhas'
+    | '/central-de-ajuda'
+    | '/contatos'
+    | '/empresas'
+    | '/equipe-ia'
+    | '/fila'
+    | '/formularios'
+    | '/inbox'
+    | '/ligacoes'
+    | '/reunioes'
+    | '/campanhas/$campaignId/editar'
+    | '/formularios/paginas/$pageId'
+    | '/api/public/email/inbound'
+    | '/api/public/email/unsubscribe'
+    | '/api/public/forms/confirm'
+    | '/api/public/forms/submit'
+    | '/api/public/oauth/$provider'
+    | '/api/public/voice/init'
+    | '/api/public/voice/postcall'
+    | '/api/public/voice/tool'
+    | '/formularios/paginas'
+    | '/api/public/email/c/$id'
+    | '/api/public/email/o/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/_app'
+    | '/bem-vindo'
+    | '/entrar'
+    | '/redefinir-senha'
+    | '/_app/agenda'
+    | '/_app/agendamentos'
+    | '/_app/ajustes'
+    | '/_app/biblioteca'
+    | '/_app/canais'
+    | '/_app/configurar'
+    | '/_app/crm'
+    | '/_app/gestao'
+    | '/_app/inbox'
+    | '/_app/incidentes'
+    | '/_app/metas'
+    | '/_app/meu-dia'
+    | '/_app/origem'
+    | '/_app/painel'
+    | '/_app/pergunte'
+    | '/_app/qualidade'
+    | '/_app/relatorios'
+    | '/_app/sdr'
+    | '/_app/treino'
+    | '/agendar/$slug'
+    | '/ajuda/$slug'
+    | '/api/agents'
+    | '/api/ai'
+    | '/api/automations'
+    | '/api/calendar'
+    | '/api/callcenter'
+    | '/api/email'
+    | '/api/gestao'
+    | '/api/health'
+    | '/api/integrations'
+    | '/api/meetings'
+    | '/api/nexa'
+    | '/api/payments'
+    | '/api/platform'
+    | '/api/privacy'
+    | '/api/proposals'
+    | '/api/push'
+    | '/api/quality'
+    | '/api/sac'
+    | '/api/sdr'
+    | '/api/setup-chat'
+    | '/api/sms'
+    | '/api/support'
+    | '/api/telephony'
+    | '/api/voice'
+    | '/api/webchat'
+    | '/api/webhooks'
+    | '/api/zernio'
+    | '/convite/$token'
+    | '/csat/$token'
+    | '/f/$formId'
+    | '/nps/$token'
+    | '/p/$slug'
+    | '/portal/$slug'
+    | '/proposta/$token'
+    | '/reuniao/$token'
+    | '/sala/$meetingId'
+    | '/status/$slug'
+    | '/_app/atendimento/base'
+    | '/_app/automacoes/$automationId'
+    | '/_app/campanhas/$campaignId'
+    | '/_app/campanhas/modelos'
+    | '/_app/campanhas/whatsapp'
+    | '/_app/central-de-ajuda/$slug'
+    | '/_app/contatos/$contactId'
+    | '/_app/empresas/$companyId'
+    | '/_app/equipe-ia/ferramentas'
+    | '/_app/fila/painel'
+    | '/_app/fila/roteamento'
+    | '/_app/formularios/$formId'
+    | '/_app/inbox/$conversationId'
+    | '/_app/ligacoes/agentes'
+    | '/_app/ligacoes/campanhas'
+    | '/_app/ligacoes/discador'
+    | '/_app/reunioes/$meetingId'
+    | '/api/agent/meeting'
+    | '/api/channels/meta-embedded'
+    | '/api/coach/roleplay'
+    | '/api/public/asaas'
+    | '/api/public/booking'
+    | '/api/public/composio'
+    | '/api/public/cron'
+    | '/api/public/form'
+    | '/api/public/google-leads'
+    | '/api/public/help'
+    | '/api/public/landing'
+    | '/api/public/livekit'
+    | '/api/public/meeting-join'
+    | '/api/public/meeting-manage'
+    | '/api/public/meta-leads'
+    | '/api/public/meta-whatsapp'
+    | '/api/public/portal'
+    | '/api/public/proposal'
+    | '/api/public/resend'
+    | '/api/public/ses'
+    | '/api/public/status'
+    | '/api/public/survey'
+    | '/api/public/track'
+    | '/api/public/webchat'
+    | '/api/public/widget.js'
+    | '/api/public/zadarma'
+    | '/api/public/zapsign'
+    | '/api/public/zernio'
+    | '/api/tickets/create'
+    | '/api/v1/contacts'
+    | '/api/v1/deals'
+    | '/api/voz/$'
+    | '/api/voz/llm'
+    | '/api/whatsapp/templates'
+    | '/proposta/$token_/imprimir'
+    | '/_app/atendimento/'
+    | '/_app/automacoes/'
+    | '/_app/campanhas/'
+    | '/_app/central-de-ajuda/'
+    | '/_app/contatos/'
+    | '/_app/empresas/'
+    | '/_app/equipe-ia/'
+    | '/_app/fila/'
+    | '/_app/formularios/'
+    | '/_app/inbox/'
+    | '/_app/ligacoes/'
+    | '/_app/reunioes/'
+    | '/_app/campanhas/$campaignId_/editar'
+    | '/_app/formularios/paginas/$pageId'
+    | '/api/public/email/inbound'
+    | '/api/public/email/unsubscribe'
+    | '/api/public/forms/confirm'
+    | '/api/public/forms/submit'
+    | '/api/public/oauth/$provider'
+    | '/api/public/voice/init'
+    | '/api/public/voice/postcall'
+    | '/api/public/voice/tool'
+    | '/_app/formularios/paginas/'
+    | '/api/public/email/c/$id'
+    | '/api/public/email/o/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
+  BemVindoRoute: typeof BemVindoRoute
+  EntrarRoute: typeof EntrarRoute
+  RedefinirSenhaRoute: typeof RedefinirSenhaRoute
+  AgendarSlugRoute: typeof AgendarSlugRoute
+  AjudaSlugRoute: typeof AjudaSlugRoute
+  ApiAgentsRoute: typeof ApiAgentsRoute
+  ApiAiRoute: typeof ApiAiRoute
+  ApiAutomationsRoute: typeof ApiAutomationsRoute
+  ApiCalendarRoute: typeof ApiCalendarRoute
+  ApiCallcenterRoute: typeof ApiCallcenterRoute
+  ApiEmailRoute: typeof ApiEmailRoute
+  ApiGestaoRoute: typeof ApiGestaoRoute
+  ApiHealthRoute: typeof ApiHealthRoute
+  ApiIntegrationsRoute: typeof ApiIntegrationsRoute
+  ApiMeetingsRoute: typeof ApiMeetingsRoute
+  ApiNexaRoute: typeof ApiNexaRoute
+  ApiPaymentsRoute: typeof ApiPaymentsRoute
+  ApiPlatformRoute: typeof ApiPlatformRoute
+  ApiPrivacyRoute: typeof ApiPrivacyRoute
+  ApiProposalsRoute: typeof ApiProposalsRoute
+  ApiPushRoute: typeof ApiPushRoute
+  ApiQualityRoute: typeof ApiQualityRoute
+  ApiSacRoute: typeof ApiSacRoute
+  ApiSdrRoute: typeof ApiSdrRoute
+  ApiSetupChatRoute: typeof ApiSetupChatRoute
+  ApiSmsRoute: typeof ApiSmsRoute
+  ApiSupportRoute: typeof ApiSupportRoute
+  ApiTelephonyRoute: typeof ApiTelephonyRoute
+  ApiVoiceRoute: typeof ApiVoiceRoute
+  ApiWebchatRoute: typeof ApiWebchatRoute
+  ApiWebhooksRoute: typeof ApiWebhooksRoute
+  ApiZernioRoute: typeof ApiZernioRoute
+  ConviteTokenRoute: typeof ConviteTokenRoute
+  CsatTokenRoute: typeof CsatTokenRoute
+  FFormIdRoute: typeof FFormIdRoute
+  NpsTokenRoute: typeof NpsTokenRoute
+  PSlugRoute: typeof PSlugRoute
+  PortalSlugRoute: typeof PortalSlugRoute
+  PropostaTokenRoute: typeof PropostaTokenRoute
+  ReuniaoTokenRoute: typeof ReuniaoTokenRoute
+  SalaMeetingIdRoute: typeof SalaMeetingIdRoute
+  StatusSlugRoute: typeof StatusSlugRoute
+  ApiAgentMeetingRoute: typeof ApiAgentMeetingRoute
+  ApiChannelsMetaEmbeddedRoute: typeof ApiChannelsMetaEmbeddedRoute
+  ApiCoachRoleplayRoute: typeof ApiCoachRoleplayRoute
+  ApiPublicAsaasRoute: typeof ApiPublicAsaasRoute
+  ApiPublicBookingRoute: typeof ApiPublicBookingRoute
+  ApiPublicComposioRoute: typeof ApiPublicComposioRoute
+  ApiPublicCronRoute: typeof ApiPublicCronRoute
+  ApiPublicFormRoute: typeof ApiPublicFormRoute
+  ApiPublicGoogleLeadsRoute: typeof ApiPublicGoogleLeadsRoute
+  ApiPublicHelpRoute: typeof ApiPublicHelpRoute
+  ApiPublicLandingRoute: typeof ApiPublicLandingRoute
+  ApiPublicLivekitRoute: typeof ApiPublicLivekitRoute
+  ApiPublicMeetingJoinRoute: typeof ApiPublicMeetingJoinRoute
+  ApiPublicMeetingManageRoute: typeof ApiPublicMeetingManageRoute
+  ApiPublicMetaLeadsRoute: typeof ApiPublicMetaLeadsRoute
+  ApiPublicMetaWhatsappRoute: typeof ApiPublicMetaWhatsappRoute
+  ApiPublicPortalRoute: typeof ApiPublicPortalRoute
+  ApiPublicProposalRoute: typeof ApiPublicProposalRoute
+  ApiPublicResendRoute: typeof ApiPublicResendRoute
+  ApiPublicSesRoute: typeof ApiPublicSesRoute
+  ApiPublicStatusRoute: typeof ApiPublicStatusRoute
+  ApiPublicSurveyRoute: typeof ApiPublicSurveyRoute
+  ApiPublicTrackRoute: typeof ApiPublicTrackRoute
+  ApiPublicWebchatRoute: typeof ApiPublicWebchatRoute
+  ApiPublicWidgetDotjsRoute: typeof ApiPublicWidgetDotjsRoute
+  ApiPublicZadarmaRoute: typeof ApiPublicZadarmaRoute
+  ApiPublicZapsignRoute: typeof ApiPublicZapsignRoute
+  ApiPublicZernioRoute: typeof ApiPublicZernioRoute
+  ApiTicketsCreateRoute: typeof ApiTicketsCreateRoute
+  ApiV1ContactsRoute: typeof ApiV1ContactsRoute
+  ApiV1DealsRoute: typeof ApiV1DealsRoute
+  ApiVozSplatRoute: typeof ApiVozSplatRoute
+  ApiVozLlmRoute: typeof ApiVozLlmRoute
+  ApiWhatsappTemplatesRoute: typeof ApiWhatsappTemplatesRoute
+  PropostaTokenImprimirRoute: typeof PropostaTokenImprimirRoute
+  ApiPublicEmailInboundRoute: typeof ApiPublicEmailInboundRoute
+  ApiPublicEmailUnsubscribeRoute: typeof ApiPublicEmailUnsubscribeRoute
+  ApiPublicFormsConfirmRoute: typeof ApiPublicFormsConfirmRoute
+  ApiPublicFormsSubmitRoute: typeof ApiPublicFormsSubmitRoute
+  ApiPublicOauthProviderRoute: typeof ApiPublicOauthProviderRoute
+  ApiPublicVoiceInitRoute: typeof ApiPublicVoiceInitRoute
+  ApiPublicVoicePostcallRoute: typeof ApiPublicVoicePostcallRoute
+  ApiPublicVoiceToolRoute: typeof ApiPublicVoiceToolRoute
+  ApiPublicEmailCIdRoute: typeof ApiPublicEmailCIdRoute
+  ApiPublicEmailOIdRoute: typeof ApiPublicEmailOIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +1806,1192 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bem-vindo': {
+      id: '/bem-vindo'
+      path: '/bem-vindo'
+      fullPath: '/bem-vindo'
+      preLoaderRoute: typeof BemVindoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/entrar': {
+      id: '/entrar'
+      path: '/entrar'
+      fullPath: '/entrar'
+      preLoaderRoute: typeof EntrarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/redefinir-senha': {
+      id: '/redefinir-senha'
+      path: '/redefinir-senha'
+      fullPath: '/redefinir-senha'
+      preLoaderRoute: typeof RedefinirSenhaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app/agenda': {
+      id: '/_app/agenda'
+      path: '/agenda'
+      fullPath: '/agenda'
+      preLoaderRoute: typeof AppAgendaRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/agendamentos': {
+      id: '/_app/agendamentos'
+      path: '/agendamentos'
+      fullPath: '/agendamentos'
+      preLoaderRoute: typeof AppAgendamentosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/ajustes': {
+      id: '/_app/ajustes'
+      path: '/ajustes'
+      fullPath: '/ajustes'
+      preLoaderRoute: typeof AppAjustesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/biblioteca': {
+      id: '/_app/biblioteca'
+      path: '/biblioteca'
+      fullPath: '/biblioteca'
+      preLoaderRoute: typeof AppBibliotecaRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/canais': {
+      id: '/_app/canais'
+      path: '/canais'
+      fullPath: '/canais'
+      preLoaderRoute: typeof AppCanaisRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/configurar': {
+      id: '/_app/configurar'
+      path: '/configurar'
+      fullPath: '/configurar'
+      preLoaderRoute: typeof AppConfigurarRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/crm': {
+      id: '/_app/crm'
+      path: '/crm'
+      fullPath: '/crm'
+      preLoaderRoute: typeof AppCrmRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/gestao': {
+      id: '/_app/gestao'
+      path: '/gestao'
+      fullPath: '/gestao'
+      preLoaderRoute: typeof AppGestaoRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/inbox': {
+      id: '/_app/inbox'
+      path: '/inbox'
+      fullPath: '/inbox'
+      preLoaderRoute: typeof AppInboxRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/incidentes': {
+      id: '/_app/incidentes'
+      path: '/incidentes'
+      fullPath: '/incidentes'
+      preLoaderRoute: typeof AppIncidentesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/metas': {
+      id: '/_app/metas'
+      path: '/metas'
+      fullPath: '/metas'
+      preLoaderRoute: typeof AppMetasRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/meu-dia': {
+      id: '/_app/meu-dia'
+      path: '/meu-dia'
+      fullPath: '/meu-dia'
+      preLoaderRoute: typeof AppMeuDiaRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/origem': {
+      id: '/_app/origem'
+      path: '/origem'
+      fullPath: '/origem'
+      preLoaderRoute: typeof AppOrigemRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/painel': {
+      id: '/_app/painel'
+      path: '/painel'
+      fullPath: '/painel'
+      preLoaderRoute: typeof AppPainelRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/pergunte': {
+      id: '/_app/pergunte'
+      path: '/pergunte'
+      fullPath: '/pergunte'
+      preLoaderRoute: typeof AppPergunteRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/qualidade': {
+      id: '/_app/qualidade'
+      path: '/qualidade'
+      fullPath: '/qualidade'
+      preLoaderRoute: typeof AppQualidadeRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/relatorios': {
+      id: '/_app/relatorios'
+      path: '/relatorios'
+      fullPath: '/relatorios'
+      preLoaderRoute: typeof AppRelatoriosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/sdr': {
+      id: '/_app/sdr'
+      path: '/sdr'
+      fullPath: '/sdr'
+      preLoaderRoute: typeof AppSdrRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/treino': {
+      id: '/_app/treino'
+      path: '/treino'
+      fullPath: '/treino'
+      preLoaderRoute: typeof AppTreinoRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/agendar/$slug': {
+      id: '/agendar/$slug'
+      path: '/agendar/$slug'
+      fullPath: '/agendar/$slug'
+      preLoaderRoute: typeof AgendarSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ajuda/$slug': {
+      id: '/ajuda/$slug'
+      path: '/ajuda/$slug'
+      fullPath: '/ajuda/$slug'
+      preLoaderRoute: typeof AjudaSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/agents': {
+      id: '/api/agents'
+      path: '/api/agents'
+      fullPath: '/api/agents'
+      preLoaderRoute: typeof ApiAgentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/ai': {
+      id: '/api/ai'
+      path: '/api/ai'
+      fullPath: '/api/ai'
+      preLoaderRoute: typeof ApiAiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/automations': {
+      id: '/api/automations'
+      path: '/api/automations'
+      fullPath: '/api/automations'
+      preLoaderRoute: typeof ApiAutomationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/calendar': {
+      id: '/api/calendar'
+      path: '/api/calendar'
+      fullPath: '/api/calendar'
+      preLoaderRoute: typeof ApiCalendarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/callcenter': {
+      id: '/api/callcenter'
+      path: '/api/callcenter'
+      fullPath: '/api/callcenter'
+      preLoaderRoute: typeof ApiCallcenterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/email': {
+      id: '/api/email'
+      path: '/api/email'
+      fullPath: '/api/email'
+      preLoaderRoute: typeof ApiEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/gestao': {
+      id: '/api/gestao'
+      path: '/api/gestao'
+      fullPath: '/api/gestao'
+      preLoaderRoute: typeof ApiGestaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/health': {
+      id: '/api/health'
+      path: '/api/health'
+      fullPath: '/api/health'
+      preLoaderRoute: typeof ApiHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/integrations': {
+      id: '/api/integrations'
+      path: '/api/integrations'
+      fullPath: '/api/integrations'
+      preLoaderRoute: typeof ApiIntegrationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/meetings': {
+      id: '/api/meetings'
+      path: '/api/meetings'
+      fullPath: '/api/meetings'
+      preLoaderRoute: typeof ApiMeetingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/nexa': {
+      id: '/api/nexa'
+      path: '/api/nexa'
+      fullPath: '/api/nexa'
+      preLoaderRoute: typeof ApiNexaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/payments': {
+      id: '/api/payments'
+      path: '/api/payments'
+      fullPath: '/api/payments'
+      preLoaderRoute: typeof ApiPaymentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/platform': {
+      id: '/api/platform'
+      path: '/api/platform'
+      fullPath: '/api/platform'
+      preLoaderRoute: typeof ApiPlatformRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/privacy': {
+      id: '/api/privacy'
+      path: '/api/privacy'
+      fullPath: '/api/privacy'
+      preLoaderRoute: typeof ApiPrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/proposals': {
+      id: '/api/proposals'
+      path: '/api/proposals'
+      fullPath: '/api/proposals'
+      preLoaderRoute: typeof ApiProposalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/push': {
+      id: '/api/push'
+      path: '/api/push'
+      fullPath: '/api/push'
+      preLoaderRoute: typeof ApiPushRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/quality': {
+      id: '/api/quality'
+      path: '/api/quality'
+      fullPath: '/api/quality'
+      preLoaderRoute: typeof ApiQualityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/sac': {
+      id: '/api/sac'
+      path: '/api/sac'
+      fullPath: '/api/sac'
+      preLoaderRoute: typeof ApiSacRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/sdr': {
+      id: '/api/sdr'
+      path: '/api/sdr'
+      fullPath: '/api/sdr'
+      preLoaderRoute: typeof ApiSdrRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/setup-chat': {
+      id: '/api/setup-chat'
+      path: '/api/setup-chat'
+      fullPath: '/api/setup-chat'
+      preLoaderRoute: typeof ApiSetupChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/sms': {
+      id: '/api/sms'
+      path: '/api/sms'
+      fullPath: '/api/sms'
+      preLoaderRoute: typeof ApiSmsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/support': {
+      id: '/api/support'
+      path: '/api/support'
+      fullPath: '/api/support'
+      preLoaderRoute: typeof ApiSupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/telephony': {
+      id: '/api/telephony'
+      path: '/api/telephony'
+      fullPath: '/api/telephony'
+      preLoaderRoute: typeof ApiTelephonyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/voice': {
+      id: '/api/voice'
+      path: '/api/voice'
+      fullPath: '/api/voice'
+      preLoaderRoute: typeof ApiVoiceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/webchat': {
+      id: '/api/webchat'
+      path: '/api/webchat'
+      fullPath: '/api/webchat'
+      preLoaderRoute: typeof ApiWebchatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/webhooks': {
+      id: '/api/webhooks'
+      path: '/api/webhooks'
+      fullPath: '/api/webhooks'
+      preLoaderRoute: typeof ApiWebhooksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/zernio': {
+      id: '/api/zernio'
+      path: '/api/zernio'
+      fullPath: '/api/zernio'
+      preLoaderRoute: typeof ApiZernioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/convite/$token': {
+      id: '/convite/$token'
+      path: '/convite/$token'
+      fullPath: '/convite/$token'
+      preLoaderRoute: typeof ConviteTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/csat/$token': {
+      id: '/csat/$token'
+      path: '/csat/$token'
+      fullPath: '/csat/$token'
+      preLoaderRoute: typeof CsatTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/f/$formId': {
+      id: '/f/$formId'
+      path: '/f/$formId'
+      fullPath: '/f/$formId'
+      preLoaderRoute: typeof FFormIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/nps/$token': {
+      id: '/nps/$token'
+      path: '/nps/$token'
+      fullPath: '/nps/$token'
+      preLoaderRoute: typeof NpsTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/$slug': {
+      id: '/p/$slug'
+      path: '/p/$slug'
+      fullPath: '/p/$slug'
+      preLoaderRoute: typeof PSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portal/$slug': {
+      id: '/portal/$slug'
+      path: '/portal/$slug'
+      fullPath: '/portal/$slug'
+      preLoaderRoute: typeof PortalSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/proposta/$token': {
+      id: '/proposta/$token'
+      path: '/proposta/$token'
+      fullPath: '/proposta/$token'
+      preLoaderRoute: typeof PropostaTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reuniao/$token': {
+      id: '/reuniao/$token'
+      path: '/reuniao/$token'
+      fullPath: '/reuniao/$token'
+      preLoaderRoute: typeof ReuniaoTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sala/$meetingId': {
+      id: '/sala/$meetingId'
+      path: '/sala/$meetingId'
+      fullPath: '/sala/$meetingId'
+      preLoaderRoute: typeof SalaMeetingIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/status/$slug': {
+      id: '/status/$slug'
+      path: '/status/$slug'
+      fullPath: '/status/$slug'
+      preLoaderRoute: typeof StatusSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app/atendimento/': {
+      id: '/_app/atendimento/'
+      path: '/atendimento'
+      fullPath: '/atendimento/'
+      preLoaderRoute: typeof AppAtendimentoIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/atendimento/base': {
+      id: '/_app/atendimento/base'
+      path: '/atendimento/base'
+      fullPath: '/atendimento/base'
+      preLoaderRoute: typeof AppAtendimentoBaseRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/automacoes/': {
+      id: '/_app/automacoes/'
+      path: '/automacoes'
+      fullPath: '/automacoes/'
+      preLoaderRoute: typeof AppAutomacoesIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/automacoes/$automationId': {
+      id: '/_app/automacoes/$automationId'
+      path: '/automacoes/$automationId'
+      fullPath: '/automacoes/$automationId'
+      preLoaderRoute: typeof AppAutomacoesAutomationIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/campanhas/': {
+      id: '/_app/campanhas/'
+      path: '/campanhas'
+      fullPath: '/campanhas/'
+      preLoaderRoute: typeof AppCampanhasIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/campanhas/$campaignId': {
+      id: '/_app/campanhas/$campaignId'
+      path: '/campanhas/$campaignId'
+      fullPath: '/campanhas/$campaignId'
+      preLoaderRoute: typeof AppCampanhasCampaignIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/campanhas/modelos': {
+      id: '/_app/campanhas/modelos'
+      path: '/campanhas/modelos'
+      fullPath: '/campanhas/modelos'
+      preLoaderRoute: typeof AppCampanhasModelosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/campanhas/whatsapp': {
+      id: '/_app/campanhas/whatsapp'
+      path: '/campanhas/whatsapp'
+      fullPath: '/campanhas/whatsapp'
+      preLoaderRoute: typeof AppCampanhasWhatsappRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/central-de-ajuda/': {
+      id: '/_app/central-de-ajuda/'
+      path: '/central-de-ajuda'
+      fullPath: '/central-de-ajuda/'
+      preLoaderRoute: typeof AppCentralDeAjudaIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/central-de-ajuda/$slug': {
+      id: '/_app/central-de-ajuda/$slug'
+      path: '/central-de-ajuda/$slug'
+      fullPath: '/central-de-ajuda/$slug'
+      preLoaderRoute: typeof AppCentralDeAjudaSlugRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/contatos/': {
+      id: '/_app/contatos/'
+      path: '/contatos'
+      fullPath: '/contatos/'
+      preLoaderRoute: typeof AppContatosIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/contatos/$contactId': {
+      id: '/_app/contatos/$contactId'
+      path: '/contatos/$contactId'
+      fullPath: '/contatos/$contactId'
+      preLoaderRoute: typeof AppContatosContactIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/empresas/': {
+      id: '/_app/empresas/'
+      path: '/empresas'
+      fullPath: '/empresas/'
+      preLoaderRoute: typeof AppEmpresasIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/empresas/$companyId': {
+      id: '/_app/empresas/$companyId'
+      path: '/empresas/$companyId'
+      fullPath: '/empresas/$companyId'
+      preLoaderRoute: typeof AppEmpresasCompanyIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/equipe-ia/': {
+      id: '/_app/equipe-ia/'
+      path: '/equipe-ia'
+      fullPath: '/equipe-ia/'
+      preLoaderRoute: typeof AppEquipeIaIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/equipe-ia/ferramentas': {
+      id: '/_app/equipe-ia/ferramentas'
+      path: '/equipe-ia/ferramentas'
+      fullPath: '/equipe-ia/ferramentas'
+      preLoaderRoute: typeof AppEquipeIaFerramentasRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/fila/': {
+      id: '/_app/fila/'
+      path: '/fila'
+      fullPath: '/fila/'
+      preLoaderRoute: typeof AppFilaIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/fila/painel': {
+      id: '/_app/fila/painel'
+      path: '/fila/painel'
+      fullPath: '/fila/painel'
+      preLoaderRoute: typeof AppFilaPainelRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/fila/roteamento': {
+      id: '/_app/fila/roteamento'
+      path: '/fila/roteamento'
+      fullPath: '/fila/roteamento'
+      preLoaderRoute: typeof AppFilaRoteamentoRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/formularios/': {
+      id: '/_app/formularios/'
+      path: '/formularios'
+      fullPath: '/formularios/'
+      preLoaderRoute: typeof AppFormulariosIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/formularios/$formId': {
+      id: '/_app/formularios/$formId'
+      path: '/formularios/$formId'
+      fullPath: '/formularios/$formId'
+      preLoaderRoute: typeof AppFormulariosFormIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/inbox/': {
+      id: '/_app/inbox/'
+      path: '/'
+      fullPath: '/inbox/'
+      preLoaderRoute: typeof AppInboxIndexRouteImport
+      parentRoute: typeof AppInboxRoute
+    }
+    '/_app/inbox/$conversationId': {
+      id: '/_app/inbox/$conversationId'
+      path: '/$conversationId'
+      fullPath: '/inbox/$conversationId'
+      preLoaderRoute: typeof AppInboxConversationIdRouteImport
+      parentRoute: typeof AppInboxRoute
+    }
+    '/_app/ligacoes/': {
+      id: '/_app/ligacoes/'
+      path: '/ligacoes'
+      fullPath: '/ligacoes/'
+      preLoaderRoute: typeof AppLigacoesIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/ligacoes/agentes': {
+      id: '/_app/ligacoes/agentes'
+      path: '/ligacoes/agentes'
+      fullPath: '/ligacoes/agentes'
+      preLoaderRoute: typeof AppLigacoesAgentesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/ligacoes/campanhas': {
+      id: '/_app/ligacoes/campanhas'
+      path: '/ligacoes/campanhas'
+      fullPath: '/ligacoes/campanhas'
+      preLoaderRoute: typeof AppLigacoesCampanhasRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/ligacoes/discador': {
+      id: '/_app/ligacoes/discador'
+      path: '/ligacoes/discador'
+      fullPath: '/ligacoes/discador'
+      preLoaderRoute: typeof AppLigacoesDiscadorRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/reunioes/': {
+      id: '/_app/reunioes/'
+      path: '/reunioes'
+      fullPath: '/reunioes/'
+      preLoaderRoute: typeof AppReunioesIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/reunioes/$meetingId': {
+      id: '/_app/reunioes/$meetingId'
+      path: '/reunioes/$meetingId'
+      fullPath: '/reunioes/$meetingId'
+      preLoaderRoute: typeof AppReunioesMeetingIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/api/agent/meeting': {
+      id: '/api/agent/meeting'
+      path: '/api/agent/meeting'
+      fullPath: '/api/agent/meeting'
+      preLoaderRoute: typeof ApiAgentMeetingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/channels/meta-embedded': {
+      id: '/api/channels/meta-embedded'
+      path: '/api/channels/meta-embedded'
+      fullPath: '/api/channels/meta-embedded'
+      preLoaderRoute: typeof ApiChannelsMetaEmbeddedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/coach/roleplay': {
+      id: '/api/coach/roleplay'
+      path: '/api/coach/roleplay'
+      fullPath: '/api/coach/roleplay'
+      preLoaderRoute: typeof ApiCoachRoleplayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/asaas': {
+      id: '/api/public/asaas'
+      path: '/api/public/asaas'
+      fullPath: '/api/public/asaas'
+      preLoaderRoute: typeof ApiPublicAsaasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/booking': {
+      id: '/api/public/booking'
+      path: '/api/public/booking'
+      fullPath: '/api/public/booking'
+      preLoaderRoute: typeof ApiPublicBookingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/composio': {
+      id: '/api/public/composio'
+      path: '/api/public/composio'
+      fullPath: '/api/public/composio'
+      preLoaderRoute: typeof ApiPublicComposioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/cron': {
+      id: '/api/public/cron'
+      path: '/api/public/cron'
+      fullPath: '/api/public/cron'
+      preLoaderRoute: typeof ApiPublicCronRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/form': {
+      id: '/api/public/form'
+      path: '/api/public/form'
+      fullPath: '/api/public/form'
+      preLoaderRoute: typeof ApiPublicFormRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/google-leads': {
+      id: '/api/public/google-leads'
+      path: '/api/public/google-leads'
+      fullPath: '/api/public/google-leads'
+      preLoaderRoute: typeof ApiPublicGoogleLeadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/help': {
+      id: '/api/public/help'
+      path: '/api/public/help'
+      fullPath: '/api/public/help'
+      preLoaderRoute: typeof ApiPublicHelpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/landing': {
+      id: '/api/public/landing'
+      path: '/api/public/landing'
+      fullPath: '/api/public/landing'
+      preLoaderRoute: typeof ApiPublicLandingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/livekit': {
+      id: '/api/public/livekit'
+      path: '/api/public/livekit'
+      fullPath: '/api/public/livekit'
+      preLoaderRoute: typeof ApiPublicLivekitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/meeting-join': {
+      id: '/api/public/meeting-join'
+      path: '/api/public/meeting-join'
+      fullPath: '/api/public/meeting-join'
+      preLoaderRoute: typeof ApiPublicMeetingJoinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/meeting-manage': {
+      id: '/api/public/meeting-manage'
+      path: '/api/public/meeting-manage'
+      fullPath: '/api/public/meeting-manage'
+      preLoaderRoute: typeof ApiPublicMeetingManageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/meta-leads': {
+      id: '/api/public/meta-leads'
+      path: '/api/public/meta-leads'
+      fullPath: '/api/public/meta-leads'
+      preLoaderRoute: typeof ApiPublicMetaLeadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/meta-whatsapp': {
+      id: '/api/public/meta-whatsapp'
+      path: '/api/public/meta-whatsapp'
+      fullPath: '/api/public/meta-whatsapp'
+      preLoaderRoute: typeof ApiPublicMetaWhatsappRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/portal': {
+      id: '/api/public/portal'
+      path: '/api/public/portal'
+      fullPath: '/api/public/portal'
+      preLoaderRoute: typeof ApiPublicPortalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/proposal': {
+      id: '/api/public/proposal'
+      path: '/api/public/proposal'
+      fullPath: '/api/public/proposal'
+      preLoaderRoute: typeof ApiPublicProposalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/resend': {
+      id: '/api/public/resend'
+      path: '/api/public/resend'
+      fullPath: '/api/public/resend'
+      preLoaderRoute: typeof ApiPublicResendRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/ses': {
+      id: '/api/public/ses'
+      path: '/api/public/ses'
+      fullPath: '/api/public/ses'
+      preLoaderRoute: typeof ApiPublicSesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/status': {
+      id: '/api/public/status'
+      path: '/api/public/status'
+      fullPath: '/api/public/status'
+      preLoaderRoute: typeof ApiPublicStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/survey': {
+      id: '/api/public/survey'
+      path: '/api/public/survey'
+      fullPath: '/api/public/survey'
+      preLoaderRoute: typeof ApiPublicSurveyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/track': {
+      id: '/api/public/track'
+      path: '/api/public/track'
+      fullPath: '/api/public/track'
+      preLoaderRoute: typeof ApiPublicTrackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/webchat': {
+      id: '/api/public/webchat'
+      path: '/api/public/webchat'
+      fullPath: '/api/public/webchat'
+      preLoaderRoute: typeof ApiPublicWebchatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/widget.js': {
+      id: '/api/public/widget.js'
+      path: '/api/public/widget.js'
+      fullPath: '/api/public/widget.js'
+      preLoaderRoute: typeof ApiPublicWidgetDotjsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/zadarma': {
+      id: '/api/public/zadarma'
+      path: '/api/public/zadarma'
+      fullPath: '/api/public/zadarma'
+      preLoaderRoute: typeof ApiPublicZadarmaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/zapsign': {
+      id: '/api/public/zapsign'
+      path: '/api/public/zapsign'
+      fullPath: '/api/public/zapsign'
+      preLoaderRoute: typeof ApiPublicZapsignRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/zernio': {
+      id: '/api/public/zernio'
+      path: '/api/public/zernio'
+      fullPath: '/api/public/zernio'
+      preLoaderRoute: typeof ApiPublicZernioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/tickets/create': {
+      id: '/api/tickets/create'
+      path: '/api/tickets/create'
+      fullPath: '/api/tickets/create'
+      preLoaderRoute: typeof ApiTicketsCreateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/contacts': {
+      id: '/api/v1/contacts'
+      path: '/api/v1/contacts'
+      fullPath: '/api/v1/contacts'
+      preLoaderRoute: typeof ApiV1ContactsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/deals': {
+      id: '/api/v1/deals'
+      path: '/api/v1/deals'
+      fullPath: '/api/v1/deals'
+      preLoaderRoute: typeof ApiV1DealsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/voz/$': {
+      id: '/api/voz/$'
+      path: '/api/voz/$'
+      fullPath: '/api/voz/$'
+      preLoaderRoute: typeof ApiVozSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/voz/llm': {
+      id: '/api/voz/llm'
+      path: '/api/voz/llm'
+      fullPath: '/api/voz/llm'
+      preLoaderRoute: typeof ApiVozLlmRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/whatsapp/templates': {
+      id: '/api/whatsapp/templates'
+      path: '/api/whatsapp/templates'
+      fullPath: '/api/whatsapp/templates'
+      preLoaderRoute: typeof ApiWhatsappTemplatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/proposta/$token_/imprimir': {
+      id: '/proposta/$token_/imprimir'
+      path: '/proposta/$token/imprimir'
+      fullPath: '/proposta/$token/imprimir'
+      preLoaderRoute: typeof PropostaTokenImprimirRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app/campanhas/$campaignId_/editar': {
+      id: '/_app/campanhas/$campaignId_/editar'
+      path: '/campanhas/$campaignId/editar'
+      fullPath: '/campanhas/$campaignId/editar'
+      preLoaderRoute: typeof AppCampanhasCampaignIdEditarRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/formularios/paginas/': {
+      id: '/_app/formularios/paginas/'
+      path: '/formularios/paginas'
+      fullPath: '/formularios/paginas/'
+      preLoaderRoute: typeof AppFormulariosPaginasIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/formularios/paginas/$pageId': {
+      id: '/_app/formularios/paginas/$pageId'
+      path: '/formularios/paginas/$pageId'
+      fullPath: '/formularios/paginas/$pageId'
+      preLoaderRoute: typeof AppFormulariosPaginasPageIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/api/public/email/inbound': {
+      id: '/api/public/email/inbound'
+      path: '/api/public/email/inbound'
+      fullPath: '/api/public/email/inbound'
+      preLoaderRoute: typeof ApiPublicEmailInboundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/email/unsubscribe': {
+      id: '/api/public/email/unsubscribe'
+      path: '/api/public/email/unsubscribe'
+      fullPath: '/api/public/email/unsubscribe'
+      preLoaderRoute: typeof ApiPublicEmailUnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/forms/confirm': {
+      id: '/api/public/forms/confirm'
+      path: '/api/public/forms/confirm'
+      fullPath: '/api/public/forms/confirm'
+      preLoaderRoute: typeof ApiPublicFormsConfirmRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/forms/submit': {
+      id: '/api/public/forms/submit'
+      path: '/api/public/forms/submit'
+      fullPath: '/api/public/forms/submit'
+      preLoaderRoute: typeof ApiPublicFormsSubmitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/oauth/$provider': {
+      id: '/api/public/oauth/$provider'
+      path: '/api/public/oauth/$provider'
+      fullPath: '/api/public/oauth/$provider'
+      preLoaderRoute: typeof ApiPublicOauthProviderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/voice/init': {
+      id: '/api/public/voice/init'
+      path: '/api/public/voice/init'
+      fullPath: '/api/public/voice/init'
+      preLoaderRoute: typeof ApiPublicVoiceInitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/voice/postcall': {
+      id: '/api/public/voice/postcall'
+      path: '/api/public/voice/postcall'
+      fullPath: '/api/public/voice/postcall'
+      preLoaderRoute: typeof ApiPublicVoicePostcallRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/voice/tool': {
+      id: '/api/public/voice/tool'
+      path: '/api/public/voice/tool'
+      fullPath: '/api/public/voice/tool'
+      preLoaderRoute: typeof ApiPublicVoiceToolRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/email/c/$id': {
+      id: '/api/public/email/c/$id'
+      path: '/api/public/email/c/$id'
+      fullPath: '/api/public/email/c/$id'
+      preLoaderRoute: typeof ApiPublicEmailCIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/email/o/$id': {
+      id: '/api/public/email/o/$id'
+      path: '/api/public/email/o/$id'
+      fullPath: '/api/public/email/o/$id'
+      preLoaderRoute: typeof ApiPublicEmailOIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface AppInboxRouteChildren {
+  AppInboxConversationIdRoute: typeof AppInboxConversationIdRoute
+  AppInboxIndexRoute: typeof AppInboxIndexRoute
+}
+
+const AppInboxRouteChildren: AppInboxRouteChildren = {
+  AppInboxConversationIdRoute: AppInboxConversationIdRoute,
+  AppInboxIndexRoute: AppInboxIndexRoute,
+}
+
+const AppInboxRouteWithChildren = AppInboxRoute._addFileChildren(
+  AppInboxRouteChildren,
+)
+
+interface AppRouteChildren {
+  AppAgendaRoute: typeof AppAgendaRoute
+  AppAgendamentosRoute: typeof AppAgendamentosRoute
+  AppAjustesRoute: typeof AppAjustesRoute
+  AppBibliotecaRoute: typeof AppBibliotecaRoute
+  AppCanaisRoute: typeof AppCanaisRoute
+  AppConfigurarRoute: typeof AppConfigurarRoute
+  AppCrmRoute: typeof AppCrmRoute
+  AppGestaoRoute: typeof AppGestaoRoute
+  AppInboxRoute: typeof AppInboxRouteWithChildren
+  AppIncidentesRoute: typeof AppIncidentesRoute
+  AppMetasRoute: typeof AppMetasRoute
+  AppMeuDiaRoute: typeof AppMeuDiaRoute
+  AppOrigemRoute: typeof AppOrigemRoute
+  AppPainelRoute: typeof AppPainelRoute
+  AppPergunteRoute: typeof AppPergunteRoute
+  AppQualidadeRoute: typeof AppQualidadeRoute
+  AppRelatoriosRoute: typeof AppRelatoriosRoute
+  AppSdrRoute: typeof AppSdrRoute
+  AppTreinoRoute: typeof AppTreinoRoute
+  AppAtendimentoBaseRoute: typeof AppAtendimentoBaseRoute
+  AppAutomacoesAutomationIdRoute: typeof AppAutomacoesAutomationIdRoute
+  AppCampanhasCampaignIdRoute: typeof AppCampanhasCampaignIdRoute
+  AppCampanhasModelosRoute: typeof AppCampanhasModelosRoute
+  AppCampanhasWhatsappRoute: typeof AppCampanhasWhatsappRoute
+  AppCentralDeAjudaSlugRoute: typeof AppCentralDeAjudaSlugRoute
+  AppContatosContactIdRoute: typeof AppContatosContactIdRoute
+  AppEmpresasCompanyIdRoute: typeof AppEmpresasCompanyIdRoute
+  AppEquipeIaFerramentasRoute: typeof AppEquipeIaFerramentasRoute
+  AppFilaPainelRoute: typeof AppFilaPainelRoute
+  AppFilaRoteamentoRoute: typeof AppFilaRoteamentoRoute
+  AppFormulariosFormIdRoute: typeof AppFormulariosFormIdRoute
+  AppLigacoesAgentesRoute: typeof AppLigacoesAgentesRoute
+  AppLigacoesCampanhasRoute: typeof AppLigacoesCampanhasRoute
+  AppLigacoesDiscadorRoute: typeof AppLigacoesDiscadorRoute
+  AppReunioesMeetingIdRoute: typeof AppReunioesMeetingIdRoute
+  AppAtendimentoIndexRoute: typeof AppAtendimentoIndexRoute
+  AppAutomacoesIndexRoute: typeof AppAutomacoesIndexRoute
+  AppCampanhasIndexRoute: typeof AppCampanhasIndexRoute
+  AppCentralDeAjudaIndexRoute: typeof AppCentralDeAjudaIndexRoute
+  AppContatosIndexRoute: typeof AppContatosIndexRoute
+  AppEmpresasIndexRoute: typeof AppEmpresasIndexRoute
+  AppEquipeIaIndexRoute: typeof AppEquipeIaIndexRoute
+  AppFilaIndexRoute: typeof AppFilaIndexRoute
+  AppFormulariosIndexRoute: typeof AppFormulariosIndexRoute
+  AppLigacoesIndexRoute: typeof AppLigacoesIndexRoute
+  AppReunioesIndexRoute: typeof AppReunioesIndexRoute
+  AppCampanhasCampaignIdEditarRoute: typeof AppCampanhasCampaignIdEditarRoute
+  AppFormulariosPaginasPageIdRoute: typeof AppFormulariosPaginasPageIdRoute
+  AppFormulariosPaginasIndexRoute: typeof AppFormulariosPaginasIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppAgendaRoute: AppAgendaRoute,
+  AppAgendamentosRoute: AppAgendamentosRoute,
+  AppAjustesRoute: AppAjustesRoute,
+  AppBibliotecaRoute: AppBibliotecaRoute,
+  AppCanaisRoute: AppCanaisRoute,
+  AppConfigurarRoute: AppConfigurarRoute,
+  AppCrmRoute: AppCrmRoute,
+  AppGestaoRoute: AppGestaoRoute,
+  AppInboxRoute: AppInboxRouteWithChildren,
+  AppIncidentesRoute: AppIncidentesRoute,
+  AppMetasRoute: AppMetasRoute,
+  AppMeuDiaRoute: AppMeuDiaRoute,
+  AppOrigemRoute: AppOrigemRoute,
+  AppPainelRoute: AppPainelRoute,
+  AppPergunteRoute: AppPergunteRoute,
+  AppQualidadeRoute: AppQualidadeRoute,
+  AppRelatoriosRoute: AppRelatoriosRoute,
+  AppSdrRoute: AppSdrRoute,
+  AppTreinoRoute: AppTreinoRoute,
+  AppAtendimentoBaseRoute: AppAtendimentoBaseRoute,
+  AppAutomacoesAutomationIdRoute: AppAutomacoesAutomationIdRoute,
+  AppCampanhasCampaignIdRoute: AppCampanhasCampaignIdRoute,
+  AppCampanhasModelosRoute: AppCampanhasModelosRoute,
+  AppCampanhasWhatsappRoute: AppCampanhasWhatsappRoute,
+  AppCentralDeAjudaSlugRoute: AppCentralDeAjudaSlugRoute,
+  AppContatosContactIdRoute: AppContatosContactIdRoute,
+  AppEmpresasCompanyIdRoute: AppEmpresasCompanyIdRoute,
+  AppEquipeIaFerramentasRoute: AppEquipeIaFerramentasRoute,
+  AppFilaPainelRoute: AppFilaPainelRoute,
+  AppFilaRoteamentoRoute: AppFilaRoteamentoRoute,
+  AppFormulariosFormIdRoute: AppFormulariosFormIdRoute,
+  AppLigacoesAgentesRoute: AppLigacoesAgentesRoute,
+  AppLigacoesCampanhasRoute: AppLigacoesCampanhasRoute,
+  AppLigacoesDiscadorRoute: AppLigacoesDiscadorRoute,
+  AppReunioesMeetingIdRoute: AppReunioesMeetingIdRoute,
+  AppAtendimentoIndexRoute: AppAtendimentoIndexRoute,
+  AppAutomacoesIndexRoute: AppAutomacoesIndexRoute,
+  AppCampanhasIndexRoute: AppCampanhasIndexRoute,
+  AppCentralDeAjudaIndexRoute: AppCentralDeAjudaIndexRoute,
+  AppContatosIndexRoute: AppContatosIndexRoute,
+  AppEmpresasIndexRoute: AppEmpresasIndexRoute,
+  AppEquipeIaIndexRoute: AppEquipeIaIndexRoute,
+  AppFilaIndexRoute: AppFilaIndexRoute,
+  AppFormulariosIndexRoute: AppFormulariosIndexRoute,
+  AppLigacoesIndexRoute: AppLigacoesIndexRoute,
+  AppReunioesIndexRoute: AppReunioesIndexRoute,
+  AppCampanhasCampaignIdEditarRoute: AppCampanhasCampaignIdEditarRoute,
+  AppFormulariosPaginasPageIdRoute: AppFormulariosPaginasPageIdRoute,
+  AppFormulariosPaginasIndexRoute: AppFormulariosPaginasIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
+  BemVindoRoute: BemVindoRoute,
+  EntrarRoute: EntrarRoute,
+  RedefinirSenhaRoute: RedefinirSenhaRoute,
+  AgendarSlugRoute: AgendarSlugRoute,
+  AjudaSlugRoute: AjudaSlugRoute,
+  ApiAgentsRoute: ApiAgentsRoute,
+  ApiAiRoute: ApiAiRoute,
+  ApiAutomationsRoute: ApiAutomationsRoute,
+  ApiCalendarRoute: ApiCalendarRoute,
+  ApiCallcenterRoute: ApiCallcenterRoute,
+  ApiEmailRoute: ApiEmailRoute,
+  ApiGestaoRoute: ApiGestaoRoute,
+  ApiHealthRoute: ApiHealthRoute,
+  ApiIntegrationsRoute: ApiIntegrationsRoute,
+  ApiMeetingsRoute: ApiMeetingsRoute,
+  ApiNexaRoute: ApiNexaRoute,
+  ApiPaymentsRoute: ApiPaymentsRoute,
+  ApiPlatformRoute: ApiPlatformRoute,
+  ApiPrivacyRoute: ApiPrivacyRoute,
+  ApiProposalsRoute: ApiProposalsRoute,
+  ApiPushRoute: ApiPushRoute,
+  ApiQualityRoute: ApiQualityRoute,
+  ApiSacRoute: ApiSacRoute,
+  ApiSdrRoute: ApiSdrRoute,
+  ApiSetupChatRoute: ApiSetupChatRoute,
+  ApiSmsRoute: ApiSmsRoute,
+  ApiSupportRoute: ApiSupportRoute,
+  ApiTelephonyRoute: ApiTelephonyRoute,
+  ApiVoiceRoute: ApiVoiceRoute,
+  ApiWebchatRoute: ApiWebchatRoute,
+  ApiWebhooksRoute: ApiWebhooksRoute,
+  ApiZernioRoute: ApiZernioRoute,
+  ConviteTokenRoute: ConviteTokenRoute,
+  CsatTokenRoute: CsatTokenRoute,
+  FFormIdRoute: FFormIdRoute,
+  NpsTokenRoute: NpsTokenRoute,
+  PSlugRoute: PSlugRoute,
+  PortalSlugRoute: PortalSlugRoute,
+  PropostaTokenRoute: PropostaTokenRoute,
+  ReuniaoTokenRoute: ReuniaoTokenRoute,
+  SalaMeetingIdRoute: SalaMeetingIdRoute,
+  StatusSlugRoute: StatusSlugRoute,
+  ApiAgentMeetingRoute: ApiAgentMeetingRoute,
+  ApiChannelsMetaEmbeddedRoute: ApiChannelsMetaEmbeddedRoute,
+  ApiCoachRoleplayRoute: ApiCoachRoleplayRoute,
+  ApiPublicAsaasRoute: ApiPublicAsaasRoute,
+  ApiPublicBookingRoute: ApiPublicBookingRoute,
+  ApiPublicComposioRoute: ApiPublicComposioRoute,
+  ApiPublicCronRoute: ApiPublicCronRoute,
+  ApiPublicFormRoute: ApiPublicFormRoute,
+  ApiPublicGoogleLeadsRoute: ApiPublicGoogleLeadsRoute,
+  ApiPublicHelpRoute: ApiPublicHelpRoute,
+  ApiPublicLandingRoute: ApiPublicLandingRoute,
+  ApiPublicLivekitRoute: ApiPublicLivekitRoute,
+  ApiPublicMeetingJoinRoute: ApiPublicMeetingJoinRoute,
+  ApiPublicMeetingManageRoute: ApiPublicMeetingManageRoute,
+  ApiPublicMetaLeadsRoute: ApiPublicMetaLeadsRoute,
+  ApiPublicMetaWhatsappRoute: ApiPublicMetaWhatsappRoute,
+  ApiPublicPortalRoute: ApiPublicPortalRoute,
+  ApiPublicProposalRoute: ApiPublicProposalRoute,
+  ApiPublicResendRoute: ApiPublicResendRoute,
+  ApiPublicSesRoute: ApiPublicSesRoute,
+  ApiPublicStatusRoute: ApiPublicStatusRoute,
+  ApiPublicSurveyRoute: ApiPublicSurveyRoute,
+  ApiPublicTrackRoute: ApiPublicTrackRoute,
+  ApiPublicWebchatRoute: ApiPublicWebchatRoute,
+  ApiPublicWidgetDotjsRoute: ApiPublicWidgetDotjsRoute,
+  ApiPublicZadarmaRoute: ApiPublicZadarmaRoute,
+  ApiPublicZapsignRoute: ApiPublicZapsignRoute,
+  ApiPublicZernioRoute: ApiPublicZernioRoute,
+  ApiTicketsCreateRoute: ApiTicketsCreateRoute,
+  ApiV1ContactsRoute: ApiV1ContactsRoute,
+  ApiV1DealsRoute: ApiV1DealsRoute,
+  ApiVozSplatRoute: ApiVozSplatRoute,
+  ApiVozLlmRoute: ApiVozLlmRoute,
+  ApiWhatsappTemplatesRoute: ApiWhatsappTemplatesRoute,
+  PropostaTokenImprimirRoute: PropostaTokenImprimirRoute,
+  ApiPublicEmailInboundRoute: ApiPublicEmailInboundRoute,
+  ApiPublicEmailUnsubscribeRoute: ApiPublicEmailUnsubscribeRoute,
+  ApiPublicFormsConfirmRoute: ApiPublicFormsConfirmRoute,
+  ApiPublicFormsSubmitRoute: ApiPublicFormsSubmitRoute,
+  ApiPublicOauthProviderRoute: ApiPublicOauthProviderRoute,
+  ApiPublicVoiceInitRoute: ApiPublicVoiceInitRoute,
+  ApiPublicVoicePostcallRoute: ApiPublicVoicePostcallRoute,
+  ApiPublicVoiceToolRoute: ApiPublicVoiceToolRoute,
+  ApiPublicEmailCIdRoute: ApiPublicEmailCIdRoute,
+  ApiPublicEmailOIdRoute: ApiPublicEmailOIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

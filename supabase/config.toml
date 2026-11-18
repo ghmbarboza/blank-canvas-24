@@ -1,1 +1,36 @@
 project_id = "vrhvjaxeiyvkcrccgfzh"
+
+# Webhooks recebem chamadas de provedores sem JWT; validam assinatura no código.
+[functions.webhook-evolution]
+verify_jwt = false
+
+[functions.webhook-zernio]
+verify_jwt = false
+
+[functions.webhook-whatsapp]
+verify_jwt = false
+
+# Funções do app validam o JWT do usuário no código (requireMember), o que funciona
+# também com as chaves novas sb_publishable_*, que o gateway não aceita como JWT.
+[functions.send-message]
+verify_jwt = false
+
+[functions.channels]
+verify_jwt = false
+
+[functions.ai]
+verify_jwt = false
+
+# Auth. Vale só para o Supabase CLI local e para quem migrar para Supabase próprio: no Lovable
+# Cloud a configuração de Auth é do painel (Cloud › Users › Authentication settings).
+# "Confirm email" LIGADO (critério de cadastro da revisão): o link de confirmação volta para
+# /entrar?redirect=<destino> (o convite, quando houver). Depois do primeiro dono, o cadastro é só por
+# convite, conferido no banco. Endereço local; em produção cada instalação usa o próprio endereço
+# (no painel: URL Configuration com <endereço>/** nas URLs de redirecionamento).
+[auth]
+site_url = "http://localhost:8080"
+additional_redirect_urls = ["http://localhost:8080/**"]
+
+[auth.email]
+enable_signup = true
+enable_confirmations = true

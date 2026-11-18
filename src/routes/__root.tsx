@@ -12,60 +12,64 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { AuthProvider } from "@/lib/auth-provider";
+import { AccountProvider } from "@/lib/account-provider";
+import { ThemeProvider } from "@/lib/theme-provider";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
+        <p className="font-display text-7xl font-semibold text-foreground">404</p>
+        <h1 className="mt-4 text-xl font-medium text-foreground">Página não encontrada</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+          O endereço não existe ou mudou de lugar.
         </p>
-        <div className="mt-6">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Go home
-          </Link>
-        </div>
+        <Link
+          to="/"
+          className="mt-6 inline-flex h-9 items-center rounded-lg bg-primary px-4 text-[13px] font-medium text-primary-foreground hover:bg-primary-hover"
+        >
+          Voltar ao início
+        </Link>
       </div>
     </div>
   );
 }
 
 function ErrorComponent({ error, reset }: ErrorComponentProps) {
-  console.error(error);
   const router = useRouter();
   useEffect(() => {
+    console.error(error);
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page didn't load
+        <h1 className="text-xl font-medium tracking-tight text-foreground">
+          Esta tela não carregou
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
+          Algo falhou do nosso lado. Tente de novo; se continuar, volte ao início.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
+            type="button"
             onClick={() => {
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex h-9 items-center rounded-lg bg-primary px-4 text-[13px] font-medium text-primary-foreground hover:bg-primary-hover"
           >
-            Try again
+            Tentar de novo
           </button>
           <a
             href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            className="inline-flex h-9 items-center rounded-lg border border-border bg-surface px-4 text-[13px] font-medium text-foreground hover:bg-surface-2"
           >
-            Go home
+            Voltar ao início
           </a>
         </div>
       </div>
@@ -74,28 +78,32 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  // App autenticado: renderiza no cliente (SSR só do shell). Ver vite.config.ts.
+  ssr: false,
   head: () => ({
-    // Replace these placeholders with the app's name and description when first building the app.
-    // Each content route, / included, must still set its own head(). Never add og:image or
-    // twitter:image here: every page without its own would inherit the root's preview image.
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Nexus One · Atendimento e vendas em todos os canais" },
+      {
+        name: "description",
+        content:
+          "Caixa única de WhatsApp, Instagram, Messenger, TikTok e Telegram, com CRM, agenda e IA que classifica cada lead.",
+      },
+      { property: "og:title", content: "Nexus One" },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "theme-color", content: "#0A1F3B" },
     ],
     links: [
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: appCss,
+        href: "https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap",
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "stylesheet", href: appCss },
+      { rel: "icon", href: "/brand/via-icon.png", type: "image/png" },
+      { rel: "apple-touch-icon", href: "/brand/via-icon.png" },
     ],
   }),
   shellComponent: RootShell,
@@ -106,9 +114,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="pt-BR" suppressHydrationWarning>
       <head>
         <HeadContent />
+        {/* Aplica o tema antes da primeira pintura para não piscar. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{var t=localStorage.getItem('nexus-theme');var d=t==='dark'||(t==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);if(d)document.documentElement.classList.add('dark')}catch(e){}",
+          }}
+        />
       </head>
       <body>
         {children}
@@ -123,8 +138,17 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <ThemeProvider>
+        <AuthProvider>
+          <AccountProvider>
+            <TooltipProvider delayDuration={250}>
+              {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+              <Outlet />
+              <Toaster position="bottom-right" richColors closeButton />
+            </TooltipProvider>
+          </AccountProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
