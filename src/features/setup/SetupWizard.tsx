@@ -1,7 +1,8 @@
 // Onboarding ÚNICO: o roteiro do servidor é a única fonte do que falta. Este provider mostra o
 // passo a passo (Primeiros passos, com formulário e botão em cada passo) e a conversa com a Cris,
 // que fica como ajuda ao lado. Ele:
-// - abre o passo a passo sozinho a cada acesso (uma vez por aba) enquanto faltar obrigatório;
+// - no primeiro acesso (nada feito ainda) abre as boas-vindas, onde a pessoa escolhe conversa ou
+//   formulário; depois, abre o passo a passo sozinho a cada acesso enquanto faltar obrigatório;
 // - expõe openNexa para o indicador do layout, o cartão do Painel e a rota /configurar: enquanto
 //   houver passo pendente ela abre o passo a passo; depois, a conversa com a Cris.
 import {
@@ -23,6 +24,7 @@ import { callApi } from "@/lib/api";
 
 import { roteiroKey, useRoteiro } from "./progress";
 import { SetupGuide } from "./SetupGuide";
+import { SetupWelcome } from "./SetupWelcome";
 import { useSetupSettings } from "./state";
 
 interface SetupCtx {
@@ -55,6 +57,7 @@ export function SetupProvider({ children }: { children: ReactNode }) {
   const [guideOpen, setGuideOpen] = useState(false);
   const [guideStep, setGuideStep] = useState<string | null>(null);
   const [viOpen, setViOpen] = useState(false);
+  const [welcomeOpen, setWelcomeOpen] = useState(false);
   const pending = roteiro.data?.requiredPending ?? 0;
   const remaining = roteiro.data?.remaining ?? 0;
 
@@ -68,7 +71,9 @@ export function SetupProvider({ children }: { children: ReactNode }) {
     } catch {
       /* sem sessionStorage: abre assim mesmo */
     }
-    setGuideOpen(true);
+    // conta zerada: boas-vindas com a escolha do caminho; quem já começou volta direto ao passo a passo
+    if ((roteiro.data.mainDone ?? 0) === 0) setWelcomeOpen(true);
+    else setGuideOpen(true);
   }, [accountId, isAdmin, roteiro.data, pending]);
 
   const qc = useQueryClient();
@@ -76,11 +81,13 @@ export function SetupProvider({ children }: { children: ReactNode }) {
   const [round, setRound] = useState(0);
 
   const openGuide = useCallback((step?: string) => {
+    setWelcomeOpen(false);
     setViOpen(false);
     setGuideStep(step ?? null);
     setGuideOpen(true);
   }, []);
   const openVi = useCallback(() => {
+    setWelcomeOpen(false);
     setGuideOpen(false);
     setViOpen(true);
   }, []);
@@ -107,6 +114,12 @@ export function SetupProvider({ children }: { children: ReactNode }) {
       {children}
       {accountId && isAdmin ? (
         <>
+          <SetupWelcome
+            open={welcomeOpen}
+            onOpenChange={setWelcomeOpen}
+            onChat={openVi}
+            onForm={() => openGuide()}
+          />
           <SetupGuide
             accountId={accountId}
             open={guideOpen}
