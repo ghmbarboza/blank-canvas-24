@@ -142,7 +142,12 @@ export function Thread({
     if (!working && !error && last?.role !== "user" && firstNew) {
       const el = box.current?.querySelector<HTMLElement>(`[data-turn="${firstNew.id}"]`);
       if (el) {
-        el.scrollIntoView({ block: "start", behavior: "smooth" });
+        // Mensagem que traz formulário (endereço do servidor, chave): o botão de enviar ficava
+        // escondido atrás da caixa de conversa e a pessoa não achava onde clicar. Com formulário,
+        // quem fica no meio da tela é ele; sem formulário, a leitura começa do início da fala.
+        const form = el.querySelector<HTMLElement>("form");
+        if (form) form.scrollIntoView({ block: "center", behavior: "smooth" });
+        else el.scrollIntoView({ block: "start", behavior: "smooth" });
         return;
       }
     }

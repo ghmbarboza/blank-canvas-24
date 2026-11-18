@@ -450,7 +450,7 @@ function editionDescription(name: string, edition: Edition): string | null {
   if (edition.allIntegrations) return null;
   const official = hasChannel("whatsapp_official", edition);
   if (name === "conectar_zernio" && !official)
-    return "Para ligar o Instagram: salva a chave da Zernio que a pessoa colou (a Zernio é o serviço que traz as mensagens do Instagram para a central). Depois use link_zernio com a opção instagram.";
+    return "Para ligar o Instagram: salva a chave da Zernio que a pessoa colou (a Zernio é o serviço que traz as mensagens do Instagram para a central). Depois use link_zernio com a opção instagram. Ao pedir a chave, diga SEMPRE onde ela fica, em uma frase: a pessoa entra em zernio.com, abre Settings e depois API Keys, cria uma chave e copia (começa com sk_). Quem ainda não tem conta na Zernio cria uma grátis no mesmo site antes.";
   if (name === "conferir_zernio")
     return `Pergunta à Zernio, ao vivo, o que está conectado com a chave da empresa (${zernioOptionsText(edition)}). Use depois que a chave for salva e quando a pessoa perguntar se a conexão deu certo.`;
   if (name === "link_zernio")
