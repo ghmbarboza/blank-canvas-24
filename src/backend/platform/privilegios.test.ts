@@ -21,17 +21,17 @@ describe("ensurePrivileges", () => {
     expect(rpc).toHaveBeenCalledTimes(2); // privilégios + tempo real
   });
 
-  it("pedidos simultâneos não esperam a promessa um do outro: cada um faz a sua chamada", async () => {
+  it("pedidos simultâneos: só um executa, o outro segue sem esperar nem repetir", async () => {
     rpc.mockResolvedValue({ error: null });
     await Promise.all([ensurePrivileges(), ensurePrivileges()]);
-    expect(rpc).toHaveBeenCalledTimes(4);
+    expect(rpc).toHaveBeenCalledTimes(2); // privilégios + tempo real, uma vez só
   });
 
-  it("falha não derruba o pedido e a próxima chamada tenta de novo", async () => {
+  it("falha não derruba o pedido e não vira rajada: só tenta de novo depois de um minuto", async () => {
     rpc.mockResolvedValueOnce({ error: new Error("fora do ar") });
     await expect(ensurePrivileges()).resolves.toBeUndefined();
     rpc.mockResolvedValue({ error: null });
     await ensurePrivileges();
-    expect(rpc).toHaveBeenCalledTimes(3);
+    expect(rpc).toHaveBeenCalledTimes(1);
   });
 });
