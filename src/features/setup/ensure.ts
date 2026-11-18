@@ -15,6 +15,30 @@ export interface EnsureResult {
 }
 
 const FLAG = "nexus:platform-ensured";
+const RETRY_DELAYS_MS = [3_000, 8_000];
+
+type EnsureOutcome = { ok: true } | { ok: false; error: unknown };
+
+/** Na cópia recém-criada a primeira chamada às vezes falha e a seguinte passa (visto em 18/11):
+ *  tenta de novo sozinho antes de mostrar erro para a pessoa. */
+export async function ensureWithRetry(
+  call: () => Promise<unknown>,
+  delays: readonly number[] = RETRY_DELAYS_MS,
+  wait: (ms: number) => Promise<void> = (ms) => new Promise((r) => setTimeout(r, ms)),
+): Promise<EnsureOutcome> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt <= delays.length; attempt += 1) {
+    try {
+      await call();
+      return { ok: true };
+    } catch (error) {
+      lastError = error;
+      const delay = delays[attempt];
+      if (delay !== undefined) await wait(delay);
+    }
+  }
+  return { ok: false, error: lastError };
+}
 
 // Remix pronto sozinho (#20): no primeiro acesso de um dono/admin em cada aba, a plataforma
 // cria o que falta (segredos, tarefas agendadas, endereço, chaves de push). Idempotente.
@@ -27,22 +51,24 @@ export function useEnsurePlatform(accountId: string | null, isAdmin: boolean): v
       /* sem sessionStorage: segue e chama assim mesmo */
     }
     let alive = true;
-    callApi<EnsureResult>("/api/platform", { accountId })
-      .then(() => {
+    void ensureWithRetry(() => callApi<EnsureResult>("/api/platform", { accountId })).then(
+      (outcome) => {
         if (!alive) return;
-        try {
-          sessionStorage.setItem(FLAG, accountId);
-        } catch {
-          /* ignora */
+        if (outcome.ok) {
+          try {
+            sessionStorage.setItem(FLAG, accountId);
+          } catch {
+            /* ignora */
+          }
+          return;
         }
-      })
-      .catch((e: unknown) => {
         // não trava o app, mas não cala: sem isso as rotinas automáticas ficam paradas
         toast.error(
-          `Não deu para preparar as rotinas automáticas (${errorMessage(e)}). Recarregue a página e tente de novo.`,
+          `Não deu para preparar as rotinas automáticas (${errorMessage(outcome.error)}). Recarregue a página e tente de novo.`,
           { id: "platform-ensure" },
         );
-      });
+      },
+    );
     return () => {
       alive = false;
     };
