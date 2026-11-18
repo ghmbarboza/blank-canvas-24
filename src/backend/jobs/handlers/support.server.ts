@@ -9,6 +9,8 @@ import { registerJob } from "../registry.server";
 const DEFAULT_DEBOUNCE = 2;
 /** Cliente ainda digitando: se a última mensagem chegou há menos que isto, espera mais um pouco. */
 const BURST_MS = 1_200;
+/** Espera fixa antes de responder, só para juntar mensagens em rajada (o BURST_MS cobre o resto). */
+const REPLY_DELAY_MS = 1_000;
 // a resposta fora do horário espera a IA (debounce de ~8 s + resposta) para não falar por cima dela
 const AWAY_DELAY_MS = 45_000;
 
@@ -112,7 +114,7 @@ onDomainEvents(async (events) => {
       if (ag?.enabled && e.entity_id && p.type !== "audio") {
         // espera curta só para juntar mensagens mandadas em sequência; o piso antigo de 5 s somado à
         // fila de 5 s dava 14 s até o atendente COMEÇAR (medido em 18/11)
-        const runAt = new Date(Date.now() + Math.min(Math.max(1, ag.debounce), 3) * 1000);
+        const runAt = new Date(Date.now() + REPLY_DELAY_MS);
         await enqueue(
           e.account_id,
           "ai.reply",
