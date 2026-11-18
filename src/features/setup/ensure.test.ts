@@ -22,3 +22,15 @@ describe("ensureWithRetry", () => {
     expect(call).toHaveBeenCalledTimes(3);
   });
 });
+
+describe("needsPublish", () => {
+  it("pede para publicar quando não há endereço gravado", async () => {
+    const { needsPublish } = await import("./ensure");
+    expect(needsPublish({ app_base_url: null })).toBe(true);
+    expect(needsPublish(null)).toBe(true);
+  });
+  it("não avisa quando o endereço publicado já está gravado", async () => {
+    const { needsPublish } = await import("./ensure");
+    expect(needsPublish({ app_base_url: "https://minha.lovable.app" })).toBe(false);
+  });
+});
