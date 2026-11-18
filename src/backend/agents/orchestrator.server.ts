@@ -228,10 +228,17 @@ export async function runAgentTurn(input: TurnInput): Promise<TurnOutcome> {
   let cost = 0;
   let model = "";
   for (let step = 0; step < MAX_TOOL_STEPS; step += 1) {
+    // A busca na base JÁ foi feita para esta mensagem antes de chamar o modelo (preloadContext) e
+    // os trechos estão no contexto. Deixar kb_search disponível fazia o modelo buscar de novo, duas
+    // vezes, antes de responder: três idas ao modelo e 7 s (medido em 18/11). Com trechos na mão a
+    // busca sai da lista; sem nenhum trecho, o modelo pode buscar UMA vez com outras palavras.
+    const kbSearches = called.filter((name) => name === "kb_search").length;
+    const allowKbSearch = ctxData.kb.length === 0 && kbSearches === 0;
+    const stepTools = allowKbSearch ? tools : tools.filter((t) => t.name !== "kb_search");
     const r = await callTools(input.accountId, input.dryRun ? "agent_eval" : "agent_team", {
       system,
       turns,
-      tools,
+      tools: stepTools,
       maxTokens: 1500,
     });
     cost += r.costUsd;
