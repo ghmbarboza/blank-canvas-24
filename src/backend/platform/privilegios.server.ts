@@ -21,6 +21,10 @@ async function run(): Promise<void> {
     setTimeout(() => reject(new Error("garantir_privilegios: tempo esgotado")), TIMEOUT_MS),
   );
   await Promise.race([call, timeout]);
+  // O remix também não copia a lista de tabelas "ao vivo": sem ela a Caixa de entrada não atualiza
+  // sozinha. Falha aqui não impede o resto (função ainda não existe em banco antigo).
+  const { error } = await supabaseAdmin.rpc("garantir_realtime" as never);
+  if (error) console.error("[realtime]", error.message);
 }
 
 /** Uma vez por isolate; falha não derruba o pedido, mas tenta de novo no próximo. */
