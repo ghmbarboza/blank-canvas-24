@@ -116,6 +116,8 @@ async function drainJobs(started: number, budgetMs: number, report: TickReport):
 }
 
 const FAST_MS = 20_000;
+/** Esperas dentro da via rápida para pegar a resposta da IA sem depender da próxima batida. */
+const REPLY_WAITS_MS = [1_300, 1_000, 1_300] as const;
 
 /**
  * Via rápida (pg_cron a cada 5 s): só eventos e trabalhos vencidos, sem tarefas periódicas nem
@@ -135,6 +137,14 @@ export async function runFastTick(): Promise<TickReport> {
   report.events = dispatched.count;
   report.subscriber_errors = dispatched.errors;
   await drainJobs(started, FAST_MS, report);
+  // Chegou mensagem nesta rodada: a resposta da IA foi agendada para daqui a 1 a 3 s. Em vez de
+  // devolver e esperar a próxima batida do agendador (mais 0 a 5 s), espera aqui e roda de novo.
+  if (dispatched.count > 0) {
+    for (const waitMs of REPLY_WAITS_MS) {
+      await new Promise((resolve) => setTimeout(resolve, waitMs));
+      await drainJobs(started, FAST_MS, report);
+    }
+  }
   report.ms = Date.now() - started;
   return report;
 }

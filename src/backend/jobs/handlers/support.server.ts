@@ -7,6 +7,8 @@ import { registerJob } from "../registry.server";
 // 8 s: o job ainda adia enquanto o cliente manda mensagens seguidas (janela de 8 s), então
 // rajadas viram uma resposta só sem a espera longa de antes (era 20 s).
 const DEFAULT_DEBOUNCE = 2;
+/** Cliente ainda digitando: se a última mensagem chegou há menos que isto, espera mais um pouco. */
+const BURST_MS = 1_200;
 // a resposta fora do horário espera a IA (debounce de ~8 s + resposta) para não falar por cima dela
 const AWAY_DELAY_MS = 45_000;
 
@@ -108,7 +110,9 @@ onDomainEvents(async (events) => {
         );
       const ag = agentOn.get(e.account_id);
       if (ag?.enabled && e.entity_id && p.type !== "audio") {
-        const runAt = new Date(Date.now() + Math.max(5, ag.debounce) * 1000);
+        // espera curta só para juntar mensagens mandadas em sequência; o piso antigo de 5 s somado à
+        // fila de 5 s dava 14 s até o atendente COMEÇAR (medido em 18/11)
+        const runAt = new Date(Date.now() + Math.min(Math.max(1, ag.debounce), 3) * 1000);
         await enqueue(
           e.account_id,
           "ai.reply",
@@ -143,8 +147,8 @@ registerJob("ai.reply", async (job) => {
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
-  if (last && last.direction === "in" && Date.now() - new Date(last.created_at).getTime() < 8_000) {
-    await enqueue(job.account_id!, "ai.reply", p, new Date(Date.now() + 10_000));
+  if (last && last.direction === "in" && Date.now() - new Date(last.created_at).getTime() < BURST_MS) {
+    await enqueue(job.account_id!, "ai.reply", p, new Date(Date.now() + BURST_MS));
     return { postponed: true };
   }
   // equipe de IA ativa assume; sem ela, o agente do SAC de sempre (comportamento antigo intacto)

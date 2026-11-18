@@ -304,6 +304,9 @@ export async function ingestMessage(
   if (msg.direction === "in" && contactId && !msg.isGroup) {
     scheduleClassification(channel.account_id, contactId);
   }
+  // Mensagem de cliente: acorda o app agora, sem esperar a batida de 5 s do agendador. Vale para
+  // WhatsApp e Instagram (os dois gravam por aqui). Falha não atrapalha: o agendador pega depois.
+  if (msg.direction === "in" && !msg.isGroup) await wakeApp();
   return { messageId: data.id, conversationId, contactId, duplicate: false };
 }
 
@@ -365,4 +368,29 @@ export async function markEvent(
     .from("inbound_events")
     .update({ status, error: err ?? null })
     .eq("id", id);
+}
+
+
+declare const EdgeRuntime: { waitUntil(p: Promise<unknown>): void } | undefined;
+
+/**
+ * Chama a via rápida do app (a mesma do agendador) para a IA responder em segundos. Não espera a
+ * rodada terminar (ela leva alguns segundos) nem corta a chamada: cortar cancelaria a rodada.
+ */
+async function wakeApp(): Promise<void> {
+  try {
+    const { data } = await adminClient().rpc("cron_config");
+    const cfg = (data ?? {}) as { base_url?: string | null; secret?: string | null };
+    if (!cfg.base_url || !cfg.secret) return;
+    const call = fetch(`${cfg.base_url.replace(/\/+$/, "")}/api/public/cron?fast=1`, {
+      method: "POST",
+      headers: { "x-cron-secret": cfg.secret, "content-type": "application/json" },
+      body: "{}",
+    })
+      .then((r) => r.body?.cancel())
+      .catch(() => undefined);
+    if (typeof EdgeRuntime !== "undefined") EdgeRuntime.waitUntil(call);
+  } catch {
+    /* o agendador de 5 s cobre */
+  }
 }

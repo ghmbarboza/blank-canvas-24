@@ -11,6 +11,8 @@ import type { AgentStyle } from "@/features/agents/catalog";
 import { splitMessage, typingDelayMs } from "./humanize";
 
 const GRAPH = `https://graph.facebook.com/${process.env["META_GRAPH_VERSION"] ?? "v26.0"}`;
+/** Pausa máxima entre as partes de uma resposta dividida. */
+const MAX_PART_PAUSE_MS = 900;
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 interface ConvChannel {
@@ -370,9 +372,11 @@ export async function sendHumanized(
   const parts = o.style.split ? splitMessage(text, o.style.max_part_chars) : [text.trim()];
   let first: string | null = null;
   for (const [i, part] of parts.entries()) {
-    const wait = typingDelayMs(part, o.style);
+    // A primeira parte sai na hora: o cliente já esperou a IA pensar. O "digitando" com pausa fica
+    // só entre as partes seguintes, e curto (antes eram até 5 s por parte, pagos duas vezes).
+    const wait = i === 0 ? 0 : Math.min(typingDelayMs(part, o.style), MAX_PART_PAUSE_MS);
     if (o.style.typing && wait > 0) await showTyping(c, o.inboundExternalId, wait);
-    if (wait > 0 && (i > 0 || o.style.typing)) await sleep(wait);
+    if (wait > 0) await sleep(wait);
     const meta = { ...o.metadata, part: i + 1, parts: parts.length };
     const sentId =
       c.channel.provider === "webchat"
