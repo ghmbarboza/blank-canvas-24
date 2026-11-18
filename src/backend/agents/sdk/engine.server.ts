@@ -42,14 +42,15 @@ export type SdkOutcome = TurnOutcome & {
 
 type Sdk = typeof import("@openai/agents");
 
-let loaded: Promise<Sdk> | null = null;
+// guarda o módulo já carregado, não a promessa: pedido não espera promessa criada por outro pedido
+let loaded: Sdk | null = null;
 // carga preguiçosa: só a rota que usa o piloto automático paga o peso do SDK
 async function sdk(): Promise<Sdk> {
-  loaded ??= import("@openai/agents").then((m) => {
-    m.setTracingDisabled(true);
-    return m;
-  });
-  return loaded;
+  if (loaded) return loaded;
+  const m = await import("@openai/agents");
+  m.setTracingDisabled(true);
+  loaded = m;
+  return m;
 }
 
 /** Carrega o SDK e o provedor da conta antes da 1ª vez (a voz aquece ao discar). */

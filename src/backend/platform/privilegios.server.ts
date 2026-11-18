@@ -5,7 +5,12 @@
 // o app). Também roda dentro de claim_first_account e garantir_plataforma.
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-let done: Promise<void> | null = null;
+// Só um SIM/NÃO fica guardado entre pedidos, nunca a promessa: no runtime do Lovable (workerd) um
+// pedido não pode esperar a promessa de rede criada por outro. Se o primeiro pedido termina antes,
+// o segundo morre com "This promise was created by a request that has since ended" e o app abre
+// na tela de erro (visto na prévia logo depois de um remix, quando vários pedidos chegam juntos
+// num isolate frio). A função do banco é idempotente: rodar duas vezes em paralelo não faz mal.
+let done = false;
 const TIMEOUT_MS = 4_000;
 
 async function run(): Promise<void> {
@@ -20,11 +25,16 @@ async function run(): Promise<void> {
 
 /** Uma vez por isolate; falha não derruba o pedido, mas tenta de novo no próximo. */
 export async function ensurePrivileges(): Promise<void> {
-  if (!done) {
-    done = run().catch((err: unknown) => {
-      console.error("[privilegios]", err);
-      done = null;
-    });
+  if (done) return;
+  try {
+    await run();
+    done = true;
+  } catch (err: unknown) {
+    console.error("[privilegios]", err);
   }
-  await done;
+}
+
+/** Só para teste. */
+export function resetPrivilegesForTest(): void {
+  done = false;
 }
